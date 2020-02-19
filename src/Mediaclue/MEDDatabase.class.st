@@ -36,13 +36,13 @@ MEDDatabase >> createMongoIndexes [
 
 { #category : #'as yet unclassified' }
 MEDDatabase >> ensureAdminExists [
-	(self db findUserByEmail: 'andreas.brodbeck@mindclue.ch') ifNil: [
+	(self db findUserByEmail: self globalConfiguration sysAdminEmailAddress) ifNil: [
 		MEDUser new
-			email: 'andreas.brodbeck@mindclue.ch';
-			firstName: 'Andreas';
-			lastName: 'Brodbeck';
+			email: self globalConfiguration sysAdminEmailAddress;
+			firstName: 'A.';
+			lastName: 'Administrator';
 			beAdmin;
-			password: 'test123';
+			password: 'me123and', self globalConfiguration organizationShortName;
 			save.
 	]
 ]
