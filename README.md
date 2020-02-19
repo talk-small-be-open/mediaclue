@@ -1,6 +1,8 @@
-# mediaclue, web based media assets management
+![logo](/main/web_root/img/logo.png)
 
-(German: Mediendatenbank)
+# Web based media assets management
+
+(German: __Mediendatenbank__)
 
 Mediaclue is an open source digital assets management application. It is mainly targeted for schools.
 Mediaclue was developed from mindclue gmbh (www.mindclue.ch) in cooperation with
@@ -17,13 +19,13 @@ Andreas Brodbeck, mindclue GmbH, andreas.brodbeck@mindclue.ch
 
 # License
 
-GNU AGPLv3, see LICENSE.md
+GNU AGPLv3, see [LICENSE](LICENSE.md)
 
 # Features
 
 * HTML5
 * Responsive and mobile device ready
-* Very sophisticated, user friendly upload process, suitable for uploading multiple files and folders at once. Made possible through the integration of http://plupload.com.
+* Very sophisticated, user friendly upload process, suitable for uploading multiple files and folders at once. Made possible through the integration of www.plupload.com.
 * Suitable for many document types. Images, office documents, movies, zip packages, raw data files etc.
 * Let users organize their collected media in collections. A media can be in more than one collection. You can even add media from other users to your collections (given that you have access permission to it).
 * Generates previews of a number of widely used document formats: Virtually all image formats, Word, Excel, PowerPoint, OpenOffice documents, flash movies, quicktime movies, etc.
@@ -35,21 +37,21 @@ GNU AGPLv3, see LICENSE.md
 * Visually sort your media in a collection with drag & drop
 * Lets users order their collections on their personal overview page.
 * Automatically shows a list of my collections, grouped by the most used tags.
-* Etc.
+* TBD
 
 # Installation
 
 TBD
 
 * Get a fresh Linux server, e.g. Ubuntu Server, where mediaclue should be installed.
-* Clone this repository and its submodules to your development machine: git clone --recurse-submodules <URL> .
+* Clone this repository and its submodules to your development machine: `git clone --recurse-submodules <URL>` .
 * Get ansible on your development machine: http://ansible.com
 * Choose a short code for your the mediaclue instance. For example your organization name ("tesla"), or application purpose ("media") or similar short name.
 * Create a ansible vault password in a file and set it in ansible.cfg
 * Put your public key(s) which should be SSH authorized in the server into the directory files/ssh/authorized_keys/
-* Create a deployment inventory for ansible: Create inventory\_<name>.yml file from the template file inventory\_template.yml
-* Create a configuration for mediaclue: Create mediaclue_<name>.yml file from the template file mediaclue\_template.yml
-* Use the script install.sh <name>
+* Create a deployment inventory for ansible: Create inventory_yourname.yml file from the template file inventory_template.yml
+* Create a configuration for mediaclue: Create mediaclue_yourname.yml file from the template file mediaclue_template.yml
+* Use the script install.sh yourname
 
 # Deployment updates
 
@@ -65,7 +67,7 @@ Once your mediaclue server is up and running, you will use these scripts:
 * Developed with Pharo Smalltalk (www.pharo.org) and the Seaside web framework (www.seaside.st)
 * Autostarts an OpenOffice server instance in the background for document conversion.
 * Keeps original file stored on disk. Separates generated preview files in an other folder structure. Making it easy for backing up the original files.
-* As a developer you can connect to the Pharo UI using xpra (xpra.org). Get the client for your OS and attach to xpra display number 100 on the server
+* As a developer you can connect to the Pharo UI using xpra (xpra.org). Get the client for your OS and attach to xpra display number 100 on the server. You need SSH access privileges for this to work.
 
 # Credits
 
