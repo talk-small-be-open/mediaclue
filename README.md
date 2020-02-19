@@ -21,6 +21,10 @@ Andreas Brodbeck, mindclue GmbH, andreas.brodbeck at mindclue.ch
 
 GNU AGPLv3, see [LICENSE](LICENSE.md)
 
+# Demo
+
+https://demo.mediaclue.ch
+
 # Features
 
 * HTML5
