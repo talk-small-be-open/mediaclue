@@ -8,14 +8,14 @@ Mediaclue is an open source digital assets management application. It is mainly 
 Mediaclue was developed from mindclue gmbh (www.mindclue.ch) in cooperation with
 Gymnasium Hohe Promenade, Zürich (www.kshp.ch).
 
-Official website: http://www.mediaclue.ch
+Official website: www.mediaclue.ch
 
 (This version has been rewritten from scratch from the previous Rails based application.
 Ruby and Rails is cool, but hey, Smalltalk and Seaside is just, hm, you know, just feels alot better! ;-) )
 
 # Contact, support & installation service
 
-Andreas Brodbeck, mindclue GmbH, andreas.brodbeck@mindclue.ch
+Andreas Brodbeck, mindclue GmbH, andreas.brodbeck at mindclue.ch
 
 # License
 
@@ -45,7 +45,7 @@ TBD
 
 * Get a fresh Linux server, e.g. Ubuntu Server, where mediaclue should be installed.
 * Clone this repository and its submodules to your development machine: `git clone --recurse-submodules <URL>` .
-* Get ansible on your development machine: http://ansible.com
+* Get ansible on your development machine: www.ansible.com
 * Choose a short code for your the mediaclue instance. For example your organization name ("tesla"), or application purpose ("media") or similar short name.
 * Create a ansible vault password in a file and set it in ansible.cfg
 * Put your public key(s) which should be SSH authorized in the server into the directory files/ssh/authorized_keys/
@@ -72,4 +72,4 @@ Once your mediaclue server is up and running, you will use these scripts:
 # Credits
 
 * Andreas Brodbeck (andreas.brodbeck at mindclue.ch), developer and maintainer of the project.
-* Armin Frischknecht (www.hoppingmad.ch), for design stuff and the making of the official website www.mediaclue.ch and the advertising in his environment.
+* Armin Frischknecht (www.hoppingmad.ch), for design stuff and the making of the official website and the advertising in his environment.
