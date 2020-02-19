@@ -1,0 +1,9 @@
+inventory_*.yml
+!inventory_template.yml
+
+mediaclue_*.yml
+!mediaclue_template.yml
+
+kjewrfkjhasdfkjhw.txt
+*.retry
+xpra_to_mediaclue_server.sh

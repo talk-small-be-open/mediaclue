@@ -1,0 +1,31 @@
+"Update Script des mediaclue Smalltalk Code"
+
+"TODO: Warum muss man per Iceberg UND Metacello laden? Metacello schaffte es nicht,
+den neuen Code vom git-Repository zu holen, strange."
+
+"Per Iceberg die Config und Code updaten"
+(Iceberg mcRepositoryFor: '{{mediaclue.metacelloUrl}}') repository pull.
+
+"Config von Webbase updaten"
+Gofer new
+	url: 'http://monticello.mindclue.dyndns.org:8753/mindclue';
+	package: 'BaselineOfWebbase';
+	load.
+
+
+"App laden per Metacello"
+Metacello new
+	baseline: 'Mediaclue';
+	onConflictUseLoaded;
+	onLock: [ :ex :loaded :incoming | ex honor ];
+	ignoreImage;
+	onWarningLog;
+	load.
+
+"Update Trigger der App"
+MEDApplicationManager
+	update;
+	afterDeployment.
+
+"Speichern und quit"
+Smalltalk snapshot: true andQuit: true.

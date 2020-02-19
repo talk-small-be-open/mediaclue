@@ -1,0 +1,22 @@
+---
+
+#
+# Nur die simplen Datei-Updates, ohne Applikation Code und Neustart etc.
+#
+
+# - import_playbook: handlers.yml
+
+- hosts: all
+  become_user: root
+  become: true
+  roles:
+    - common
+  vars_files:
+    - mediaclue_{{customerCode}}.yml
+  vars:
+    remoteUser: "{{ansible_user}}"
+  tasks:
+
+  - include_tasks: tasks_git_update.yml    
+
+  - include_tasks: tasks_common.yml

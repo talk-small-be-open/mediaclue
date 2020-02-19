@@ -1,0 +1,98 @@
+// -*- less-css-compile-at-save: t -*-
+
+@media print {
+		
+		body {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				// Turn off kerning to prevent odd spacing problem when copying and pasting from PDFs on Windows
+				text-rendering: optimize-speed;
+				font-size: 12pt;
+		}
+
+		a {
+				text-decoration: none;
+		}
+
+		table {
+				font-family: sans-serif;
+				font-size: 80%;
+		}
+
+		div.alwaysPageBreak {
+				page-break-before: always;
+		}
+
+		div.noPageBreak {
+				&:before {
+						clear:both;
+				}
+
+				page-break-inside: avoid;
+		}
+
+		.noPrint,
+		div.backButton
+		{
+				display: none;
+		}
+
+		div.imageGalleryForPrint {
+				div.imageIndex {
+						padding: 1cm 2cm;
+						table.imageIndexTable {
+								font-size: 60%;
+								width: 100%;
+								border-collapse: collapse;
+								border: 1px solid black;
+								th {
+										background-color: silver;
+								}
+
+								tr {
+										border: 1px solid black;
+								}
+
+								// a.jumpToImage {
+								// 		display: inline-block;
+								// 		margin: 0 0.5em;
+								// 		font-weight: bold;
+								// }
+						}
+				}
+
+				div.imagesOverview {
+						padding: 1cm 2cm;
+						div.imagePreview {
+								width: 10%;
+								margin: 0.3em;
+								display: inline-block;
+								
+								a {
+										display: inline-block;
+
+										img {
+												width: 100%;
+										}
+								}
+						}
+
+				}
+				
+				div.imagePage {
+						background-color: black;
+						padding: 2cm 2cm;
+						text-align: center;
+						height: 29cm;
+						box-sizing: border-box;
+						
+						img {
+								max-height: 100%;
+								max-width: 100%;
+						}
+				}
+		}
+
+}
+

@@ -1,0 +1,297 @@
+---
+
+- hosts: all
+  become_user: root
+  become: true
+  roles:
+    - common
+  vars_files:
+    - mediaclue_{{customerCode}}.yml
+  vars:
+    remoteUser: "{{ansible_user}}"
+    
+  tasks:
+  - name: set timezone to Switzerland
+    timezone:
+      name: Europe/Zurich
+      
+  - name: Add group mediaclue
+    group:
+      name: "{{remoteUser}}"
+
+  - name: Add user
+    user:
+      name: "{{remoteUser}}"
+      group: adm
+      groups: "sudo, {{remoteUser}}"
+      shell: /bin/bash
+
+  - name: Create /etc/mediaclue
+    file:
+      path: /etc/mediaclue
+      state: directory
+      owner: root
+      group: root
+
+  - name: Create .ssh folder
+    file:
+      path: "/home/{{remoteUser}}/.ssh"
+      state: directory
+      owner: "{{remoteUser}}"
+      group: "{{remoteUser}}"
+
+  - name: make sure SSH private key is installed (optional)
+    when: mediaclue.sshPrivateKey
+    no_log: true
+    copy:
+      content: "{{mediaclue.sshPrivateKey}}"
+      dest: "/home/{{remoteUser}}/.ssh/id_rsa"
+      owner: "{{remoteUser}}"
+      group: "{{remoteUser}}"
+      mode: 0600
+
+  - name: Copy SSH public key
+    when: mediaclue.sshPrivateKey
+    copy:
+      src: files/ssh/mediaclue_id.pub
+      dest: "/home/{{remoteUser}}/.ssh/id_rsa.pub"
+      owner: "{{remoteUser}}"
+      group: "{{remoteUser}}"
+      mode: 0644
+
+  # Not anymore. Using git via https.
+  # - name: tell the host about our servers it might want to ssh to
+  #   become_user: root
+  #   known_hosts:
+  #     path: /etc/ssh/ssh_known_hosts
+  #     name: "*******"
+  #     key: "{{ lookup('file', 'pubkeys/******') }}"
+
+  - name: Add apt repo for certbot
+    apt_repository:
+      repo: ppa:certbot/certbot
+      
+  - name: Run the equivalent of "apt-get update" as a separate step
+    apt:
+      update_cache: yes
+     
+  - name: Create installation folder
+    file:
+      path: "{{mediaclue.installationPath}}"
+      state: directory
+      mode: 0755
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
+
+  - include_tasks: tasks_git_update.yml    
+  
+  - name: Create misc installation folders
+    file:
+      path: "{{item}}"
+      state: directory
+      mode: 0755
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
+    with_items:
+    - "{{mediaclue.installationPath}}/install"
+          
+    
+  - name: Create working folders and symlinks
+    file:
+      path: "{{item}}"
+      state: directory
+      mode: 0755
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
+    with_items:
+      - "{{mediaclue.installationPath}}/main/tmp"
+      - "{{mediaclue.installationPath}}/main/log"
+      - "{{mediaclue.installationPath}}/main/preview_storage"
+      - "{{mediaclue.mediaStoragePath}}"
+
+  - name: media_storage link to (external) (big) volume
+    file:
+      path: "{{mediaclue.installationPath}}/main/media_storage"
+      src: "{{mediaclue.mediaStoragePath}}"
+      state: link
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
+
+   - name: Copy dummy organization logo
+     copy:
+       src: files/img/company-logo.png
+       dest: "{{mediaclue.installationPath}}/main/web_root/img/company-logo.png"
+       force: no
+     
+
+  #    
+  # CRON JOBS
+  #
+  - name: cronjob backup MongoDB
+    cron:
+      name: mongodb backup
+      user: "{{remoteUser}}"
+      minute: "5"
+      hour: "*/6"
+      job: "cd {{mediaclue.installationPath}}/server && ./backup-mongodb.sh"
+  - name: cronjob backup Pharo image
+    cron:
+      name: pharo backup
+      user: "{{remoteUser}}"
+      minute: "10"
+      hour: "*/6"
+      job: "cd {{mediaclue.installationPath}}/server && ./backup-image-snapshot.sh"
+  - name: certbot renew weekly
+    when: mediaclue.useSsl
+    cron:
+      name: certbot renew
+      user: root
+      minute: "1"
+      hour: "1"
+      weekday: "0"
+      job: "certbot renew"
+  - name: trigger mediaclue hourly
+    cron:
+      name: hourly trigger
+      user: "{{remoteUser}}"
+      minute: "0"
+      hour: "*"
+      job: "cd {{mediaclue.installationPath}}/server && ./run-task.sh runHourlyTasks 240"
+  - name: trigger mediaclue 5 minutely
+    cron:
+      name: 5minutely trigger
+      user: "{{remoteUser}}"
+      minute: "*/5"
+      hour: "*"
+      job: "cd {{mediaclue.installationPath}}/server && ./run-task.sh run5MinutelyTasks"
+  - name: trigger mediaclue nightly
+    cron:
+      name: nightly trigger
+      user: "{{remoteUser}}"
+      minute: "0"
+      hour: "2"
+      job: "cd {{mediaclue.installationPath}}/server && ./run-task.sh runNightlyTasks 240"
+
+  #
+  # NGINX WEBSERVER
+  #
+  - name: nginx package
+    apt: pkg=nginx
+  - name: nginx certbot plugin
+    apt: pkg=python-certbot-nginx
+  - name: User {{remoteUser}} is in group www-data (uploaded files permission)
+    user:
+      name: "{{remoteUser}}"
+      append: true
+      groups: www-data
+
+    
+  #
+  # MONIT
+  #
+  - name: monit init.d file
+    copy:
+      src: files/initd_monit
+      dest: /etc/init.d/monit
+      owner: 'root'
+      group: 'root'
+
+
+  #
+  # MOLLY-GUARD
+  #
+  - name: molly-guard package
+    apt: pkg=molly-guard
+  - name: molly-guard default message file
+    copy:
+      src: files/mollyguard_message
+      dest: /etc/molly-guard/messages.d/default
+      owner: 'root'
+      group: 'root'
+  - name: Remove default mollyguard query hostname file
+    file:
+      path: /etc/molly-guard/run.d/30-query-hostname
+      state: absent
+    
+
+  #
+  # MONGO DB
+  #
+  - name: Mongo package
+    apt:
+      name: ['mongodb']
+      state: present
+  - name: pymongo package, in bestimmer version fuer mongodb_user ansible modul
+    pip:
+      name: pymongo==2.4.2
+
+  #
+  # Postfix Mail
+  #
+  - name: postfix package
+    apt: pkg=postfix
+
+    
+  - include_tasks: tasks_common.yml
+
+  # Create working folders and symlinks
+  - name: Directory for Pharo
+    file:
+      path: "{{mediaclue.installationPath}}/pharo"
+      state: directory
+      mode: 0755
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
+      
+      
+  - name: Create Smalltalk Installer script
+    template:
+      src: files/install/installMediaclue.st.j2
+      dest: "{{mediaclue.installationPath}}/install/installMediaclue.st"
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
+      mode: "u=rwx,g=rwx,o=rx"
+
+  
+  # SSL-Zertifikate holen
+  - name: Ensure port 80 not in use by nginx
+    when: mediaclue.useSsl
+    service:
+      name: nginx
+      enabled: yes
+      state: stopped
+  - name: certbot get Certificates
+    when: mediaclue.useSsl
+    shell: certbot --standalone -n --agree-tos --email {{mediaclue.adminEmail}} --cert-name "{{mediaclue.appDomain}}"  --domains "{{mediaclue.appDomain}},{{mediaclue.appDomain2}}" certonly
+    args:
+      creates: "/etc/letsencrypt/live/{{mediaclue.appDomain}}/fullchain.pem"
+
+
+    
+  #
+  # PHARO SMALLTALK
+  #
+  # TODO: auf 80+vm statt 80+vmLatest zurück, sobald die VM mindestens vom November 2019 ist (GC bug).
+  - name: Download pharo smalltalk
+    become_user: "{{remoteUser}}"
+    shell: curl get.pharo.org/64/80+vmLatest | bash && mv Pharo.image mediaclue.image && mv Pharo.changes mediaclue.changes
+    args:
+      chdir: "{{mediaclue.installationPath}}/pharo"
+      creates: "{{mediaclue.installationPath}}/pharo/mediaclue.image"
+      warn: no
+
+
+
+  #
+  # MEDIACLUE
+  #
+  - name: Install Mediaclue code in pharo image
+    become_user: "{{remoteUser}}"
+    shell: "{{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/installMediaclue.st > mediaclue_install.log 2>&1  && touch mediaclueIsInstalled"
+    args:
+      chdir: "{{mediaclue.installationPath}}/pharo"
+      creates: "{{mediaclue.installationPath}}/pharo/mediaclueIsInstalled"
+  - name: Running Mediaclue
+    shell: monit reload && sleep 2 && monit start mediaclue_pharo
+    
+  - include_tasks: tasks_common_end.yml

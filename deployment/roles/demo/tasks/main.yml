@@ -1,0 +1,13 @@
+# Tasks for demo server
+
+# For example:
+# - name: Scripts for demo server
+#   copy:
+#     src: files/demo
+#     dest: /opt/mediaclue/
+# - name: cronjob for resetting demo
+#   cron:
+#     user: ubuntu
+#     minute: "45"
+#     hour: "23"
+#     job: "/opt/mediaclue/pharo/pharo mediaclue.image --no-default-preferences st /opt/mediaclue/demo/resetDemo.st"

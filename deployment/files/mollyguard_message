@@ -1,0 +1,3 @@
+Lieber Admin. Der shutdown/reboot Vorgang wird erst durchgeführt, nachdem Pharo
+kontrolliert heruntergefahren ist und ein Backup gemacht hat. Diese Funktionalität wird mittels dem
+molly-guard Programm erreicht. Dies dauert bis zu einigen Minuten! Nicht unterbrechen!

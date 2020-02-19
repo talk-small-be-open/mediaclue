@@ -1,0 +1,140 @@
+user  www-data;
+worker_processes auto;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    # Komisch, warum, aber gegoogelt
+    server_names_hash_bucket_size 64;
+    
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                     '$status $body_bytes_sent "$http_referer" '
+                     '"$http_user_agent" "$http_x_forwarded_for"';
+
+    # access_log  /opt/local/var/log/access.log  main;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    client_max_body_size 0; # disable limit
+
+    # Mediaclue-Pharo Server
+    server {
+
+				{% if mediaclue.useSsl %}
+				
+					listen 443 ssl http2;
+
+					ssl_certificate /etc/letsencrypt/live/{{mediaclue.appDomain}}/fullchain.pem;
+					ssl_certificate_key /etc/letsencrypt/live/{{mediaclue.appDomain}}/privkey.pem;
+					include /etc/letsencrypt/options-ssl-nginx.conf;
+					ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+				{% else %}
+					 listen 80;
+				{% endif %}
+
+
+
+        server_name {{mediaclue.appDomain}} {{mediaclue.appDomain2}};
+
+        root {{mediaclue.installationPath}}/main/web_root;
+
+        # # Abblocken, wenn per IP direkt
+        # if ($host != "server.daz-app.ch") {
+        #     return 444;
+        # }
+
+
+        # Pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        # Für Uploader PlUpload
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+        }
+
+        # Platzhalter alle Vorschau Bilder, die noch nicht existieren
+        location ~ /p/.*\.jpg$ {
+            root {{mediaclue.installationPath}}/main/web_root;
+            expires -1;
+            add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate";
+            try_files $uri /img/nopreview-thumbnail.png;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+        
+
+        location / {
+
+						{% if mediaclue.isBeta %}
+            	 # BETA TEST
+            	 auth_basic           "App Beta-Test";
+            	 auth_basic_user_file htpasswd_betatest;
+						{% endif %}
+            
+            root {{mediaclue.installationPath}}/main/web_root;
+            try_files $uri @pharo;
+        }
+
+        location @pharo {
+            expires -1;
+            add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate";
+            proxy_pass   http://127.0.0.1:8087;
+            proxy_set_header Host            $host;
+            proxy_set_header X-Forwarded-For $remote_addr;
+        }
+
+        # X-Sendfile
+        location {{mediaclue.installationPath}}/main/tmp {
+            internal;
+            root /;
+        }
+
+        # X-Sendfile
+        location {{mediaclue.installationPath}}/main/media_storage {
+            internal;
+            root /;
+        }
+
+    }
+
+		{% if mediaclue.useSsl %}
+    	 # Redirect HTTP->HTTPS
+			 server {
+         listen     80;
+     		 server_name {{mediaclue.appDomain}} {{mediaclue.appDomain2}};
+       	 return 301 https://$host$request_uri;
+    	}
+		{% endif %}
+
+
+    # Direkter Zugriff mit IP verhindern
+    server {
+				listen 80 default_server;
+
+				{% if mediaclue.useSsl %}
+				
+					listen 443 ssl http2 default_server;
+
+					ssl_certificate /etc/letsencrypt/live/{{mediaclue.appDomain}}/fullchain.pem;
+					ssl_certificate_key /etc/letsencrypt/live/{{mediaclue.appDomain}}/privkey.pem;
+					include /etc/letsencrypt/options-ssl-nginx.conf;
+					ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+				{% endif %}
+
+        server_name _;
+
+        return 444; #Code von nginx, bricht ohne Antwort ab
+    }
+
+
+}

@@ -1,0 +1,87 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          mediaclue
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: mediaclue (Pharo Smalltalk)
+# Description:       mediaclue (Pharo Smalltalk)
+#
+### END INIT INFO
+
+# Author: Andreas Brodbeck (andreas.brodbeck@mindclue.ch)
+#
+
+# PATH should only include /usr/* if it runs after the mountnfs.sh script
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="mediaclue"
+NAME=mediaclue
+DAEMON=/usr/sbin/$NAME
+DAEMON_ARGS="--options args"
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+#. /lib/lsb/init-functions
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+        # Start via monit
+        /usr/bin/monit -c /etc/monit/monitrc monitor mediaclue_pharo
+        sleep 2
+        /usr/bin/monit -c /etc/monit/monitrc start mediaclue_pharo
+}
+
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+        /usr/bin/monit -c /etc/monit/monitrc stop mediaclue_pharo
+}
+
+#
+# Function that restarts the daemon/service
+#
+do_restart()
+{
+        /usr/bin/monit -c /etc/monit/monitrc restart mediaclue_pharo
+}
+
+case "$1" in
+  start)
+        do_start
+        ;;
+  stop)
+        do_stop
+        ;;
+  status)
+        /usr/bin/monit -c /etc/monit/monitrc status
+       ;;
+  restart|force-reload)
+        #
+        # If the "reload" option is implemented then remove the
+        # 'force-reload' alias
+        #
+        do_restart
+        ;;
+  *)
+        #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+        echo "Usage: $SCRIPTNAME {start|stop|status|restart}" >&2
+        exit 3
+        ;;
+esac
+
+:

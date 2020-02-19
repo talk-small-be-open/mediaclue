@@ -1,0 +1,9 @@
+set alert {{mediaclue.adminEmail}}
+
+check process mediaclue_pharo with pidfile /opt/mediaclue/pharo/mediaclue.pid
+			start program = "/bin/bash --login -c 'cd /opt/mediaclue/server && ./start-mediaclue.sh'" as uid {{remoteUser}} and gid {{remoteUser}}
+			stop program = "/bin/bash --login -c 'cd /opt/mediaclue/server && ./stop-mediaclue.sh'" as uid {{remoteUser}} and gid {{remoteUser}} with timeout 90 seconds
+ 			if 7 restarts within 10 cycles then stop
+			if failed url http://127.0.0.1:{{mediaclue.pharoPort}}/ping and content == "OK" for 2 cycles then alert
+			if totalmem > 700 Mb then alert
+			if cpu > 60% for 4 cycles then alert

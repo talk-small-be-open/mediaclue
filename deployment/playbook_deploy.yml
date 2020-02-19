@@ -1,0 +1,61 @@
+---
+
+#
+# TEAR DOWN, UPDATE, BRING UP
+#
+
+- hosts: all
+  become_user: root
+  become: true
+  roles:
+    - common
+  vars_files:
+    - mediaclue_{{customerCode}}.yml
+  vars:
+    remoteUser: "{{ansible_user}}"
+
+  tasks:
+  
+  # TODO
+  # - name: Install maintenance screen
+  # - name: Do backup of data
+
+  - include_tasks: tasks_git_update.yml    
+
+  - name: Create Smalltalk Updater script
+    template:
+      src: files/install/updateMediaclue.st.j2
+      dest: "{{mediaclue.installationPath}}/install/updateMediaclue.st"
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
+      mode: "u=rwx,g=rwx,o=rx"
+
+    
+  - include_tasks: tasks_common.yml
+
+  - name: Stopping Mediaclue
+    shell: monit stop mediaclue_pharo
+
+  - name: Do backup pharo image
+    become_user: "{{remoteUser}}"
+    shell: "./backup-image-snapshot.sh"
+    args:
+      chdir: "{{mediaclue.installationPath}}/server"
+
+#  - name: certbot renew
+
+  # UPDATE TO NEWEST SERVER STATE
+  #
+  # MEDIACLUE
+  #
+  - name: Update Mediaclue code in pharo image (saves and stops at the end)
+    become_user: "{{remoteUser}}"
+    shell: "{{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/updateMediaclue.st > mediaclue_update.log 2>&1"
+    args:
+      chdir: "{{mediaclue.installationPath}}/pharo"
+  
+  - name: Running Mediaclue
+    shell: monit start mediaclue_pharo
+
+# TODO
+#  - name: Remove maintenance screen

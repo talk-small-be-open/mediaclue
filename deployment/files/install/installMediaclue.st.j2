@@ -1,0 +1,48 @@
+| version code |
+
+Author fullName: 'AndreasBrodbeck'.
+PharoLightTheme beCurrent.
+
+"Im Package Transcript-Tool Smalltalk tools transcript openLabel: 'Log transcript'."
+
+
+"Per Iceberg die Config und Code updaten, für den Fall, dass diese schon auf der Disk vorhanden ist"
+(Iceberg mcRepositoryFor: '{{mediaclue.metacelloUrl}}') repository pull.
+
+"Neuste Metacello Config holen"
+"Es braucht eine erste Init mit password, sonst klappts nicht mit repo"
+"Webbase"
+Gofer new
+	url: 'http://monticello.mindclue.dyndns.org:8753/mindclue' username: 'metacelloReadonly' password: 'kjsdjdhtewj*kdfHHieK-sdf24J';
+	package: 'BaselineOfWebbase';
+	load.
+
+"Laden"
+Metacello new
+	baseline: 'Mediaclue';
+	repository: '{{mediaclue.metacelloUrl}}';
+	onConflictUseLoaded;
+	onLock: [ :ex :loaded :incoming | ex honor ];
+	ignoreImage;
+	onWarningLog;
+	load.
+
+"Install"
+MEDApplicationManager
+	beProduction;
+	install.
+
+"Kundenkonfiguration"
+MEDDatabase current globalConfiguration
+	appDomain: '{{mediaclue.appDomain}}';
+	emailDomain: '{{mediaclue.emailDomain}}';
+	sysAdminEmailAddress: '{{mediaclue.adminEmail}}';
+	assetsBasePath: '{{mediaclue.installationPath}}/main/media_storage';
+	previewsBasePath: '{{mediaclue.installationPath}}/main/preview_storage';
+	organizationName: '{{mediaclue.organizationName}}';
+	organizationShortName: '{{mediaclue.organizationShortName}}';
+	save.
+
+
+"Speichern und quit"
+Smalltalk snapshot: true andQuit: true.

@@ -1,0 +1,205 @@
+  - include_tasks: tasks_firewall.yml
+
+  # - name: Give mediaclue sudo permission. Will be removed at the end of installation.
+  #   copy:
+  #     content: 'mediaclue ALL=(ALL) NOPASSWD:ALL'
+  #     dest: /etc/sudoers.d/mediaclue
+  #     owner: root
+  #     group: root
+
+
+  #
+  # Sysctl settings
+  #
+  - name: Reduce swappiness. Use memory first. Better for MongoDB.
+    sysctl:
+      name: vm.swappiness
+      value: 1
+      state: present
+
+
+  - name: Environment file
+    become_user: root
+    template:
+      src: files/mediaclue.env.j2
+      dest: /etc/mediaclue/mediaclue.env
+      owner: root
+      group: root
+
+  - name: Copy SSH config
+    copy:
+      src: files/ssh/config
+      dest: "/home/{{remoteUser}}/.ssh/config"
+      owner: "{{remoteUser}}"
+      group: "{{remoteUser}}"
+
+  - name: Set up multiple authorized keys
+    authorized_key:
+      user: "{{remoteUser}}"
+      state: present
+      key: '{{ item }}'
+    with_fileglob:
+      - ssh/authorized_keys/*
+
+  #
+  # hosts file
+  #
+  - name: Replace a localhost entry with our own
+    lineinfile:
+      path: /etc/hosts
+      regexp: '^127\.0\.0\.1'
+      line: 127.0.0.1 localhost mediaclue.local
+      owner: root
+      group: root
+      mode: '0644'
+    
+        
+  - name: Install basic apt packages
+    apt:
+      name: ['unattended-upgrades', 'git', 'imagemagick', 'xauth', 'xpra', 'monit', 'htop', 'unzip', 'zip', 'aptitude', 'mosh', 'python3-pip', 'qrencode', 'siege', 'libreoffice', 'libimage-exiftool-perl', 'mediainfo', 'ffmpeg']
+      state: present
+
+  - name: Check if wkhtmltopdf is present
+    stat:
+      path: /usr/local/bin/wkhtmltopdf
+    register: result
+    
+  - name: Install special version of wkhtmltopdf
+    apt:
+      deb: https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+    when: result.stat.exists == false
+
+  - name: Check if pdftk is present
+    stat:
+      path: /usr/bin/pdftk
+    register: result
+      
+  - name: Install special version of pdftk (snap Version hat zu wenig Filerechte)
+    apt:
+      deb: http://de.archive.ubuntu.com/ubuntu/pool/universe/p/pdftk-java/pdftk-java_3.0.2-2_all.deb
+    when: result.stat.exists == false
+
+  - name: ImageMagick policy File (to allow processing of PDF, ...)
+    copy:
+      src: files/imagemagick/policy.xml
+      dest: /etc/ImageMagick-6/policy.xml
+      owner: 'root'
+      group: 'root'
+      
+      
+  # - name: Install snaps
+  #   snap:
+  #     name:
+  #       - pdftk
+    
+
+
+  # PHP (NGINX Upload helper)
+  - name: PHP for nginx
+    apt: pkg=php-fpm
+  - name: mediaclue php.ini settings
+    copy:
+      src: files/nginx/php.ini
+      dest: /etc/php/7.2/fpm/conf.d/99-mediaclue.ini
+      owner: 'root'
+      group: 'root'
+
+  
+  #
+  # NGINX WEBSERVER
+  #
+  - name: nginx.conf file
+    template:
+      src: files/nginx/nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      owner: 'root'
+      group: 'root'
+    notify:
+      - restart nginx
+
+  - name: lib für htpasswd module
+    when: mediaclue.isBeta
+    apt: pkg=python3-passlib
+  - name: htpasswd_betatest file
+    when: mediaclue.isBeta
+    htpasswd:
+      path: /etc/nginx/htpasswd_betatest
+      name: betatester
+      password: 'beta'
+      owner: root
+      group: www-data
+      mode: 0640
+    
+  - name: options-ssl-nginx.conf file
+    copy:
+      src: files/nginx/options-ssl-nginx.conf
+      dest: /etc/letsencrypt/options-ssl-nginx.conf
+      owner: 'root'
+      group: 'root'
+  - name: ssl-dhparams.pem file
+    copy:
+      src: files/nginx/ssl-dhparams.pem
+      dest: /etc/letsencrypt/ssl-dhparams.pem
+      owner: 'root'
+      group: 'root'
+
+    
+  #
+  # MONIT
+  #
+  - name: monitrc file
+    copy:
+      src: files/monitrc
+      dest: /etc/monit/monitrc
+      owner: 'root'
+      group: 'root'
+  - name: monit config for mediaclue
+    template:
+      src: files/monit_mediaclue.j2
+      dest: /etc/monit/conf.d/mediaclue
+      owner: 'root'
+      group: 'root'
+
+      
+  #
+  # MOLLY-GUARD
+  #
+  - name: molly-guard shutdown mediaclue file
+    copy:
+      src: files/mollyguard_mediaclue
+      dest: /etc/molly-guard/run.d/50-shutdown-mediaclue-and-wait
+      owner: 'root'
+      group: 'root'
+      mode: "u+x,g+x"
+
+
+  #
+  # MONGO DB
+  #
+  - name: mongodb.conf file
+    copy:
+      src: files/mongodb/mongodb.conf
+      dest: /etc/mongodb.conf
+      owner: 'root'
+      group: 'root'
+  - name: MongoDB restart
+    service:
+      name: mongodb
+      enabled: yes
+      state: restarted
+
+  #
+  # Postfix Mail
+  #
+  - name: main.cf file
+    template:
+      src: files/postfix/main.cf.j2
+      dest: /etc/postfix/main.cf
+      owner: 'root'
+      group: 'root'
+  - name: postfix restart
+    service:
+      name: postfix
+      enabled: yes
+      state: restarted
+

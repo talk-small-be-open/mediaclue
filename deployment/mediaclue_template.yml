@@ -1,0 +1,28 @@
+---
+
+mediaclue:
+  installationPath: "/opt/mediaclue"
+  mediaStoragePath: "/var/mediaclue-files"
+  # metacelloUrl: "github://dassi/mediaclue2"
+  # metacelloUsername: ""
+  # metacelloPassword: ""
+  # version: "stable"
+  appDomain: "your.host.domain"
+  appDomain2: "alternative.host.domain"
+  emailDomain: "email.host.domain"
+  pharoPort: 8087
+  adminEmail: "you@email.host.domain"
+  smtpRelayhost: "your.smtp.host.domain"
+  useSsl: false
+  isBeta: false
+  organizationName: 'Your Cool Organization'
+  organizationShortName: 'YCO'
+
+  # Use this, if you need to set the privat key of your servers user
+  # sshPrivateKey: !vault |
+  #   $ANSIBLE_VAULT;1.1;AES256
+  #   PUT YOUR ENCRYPTED TEXT HERE
+
+  # mongoDbPassword: !vault |
+  #   $ANSIBLE_VAULT;1.1;AES256
+  #   PUT YOUR ENCRYPTED TEXT HERE
