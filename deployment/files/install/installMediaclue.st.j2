@@ -27,10 +27,8 @@ Metacello new
 	onWarningLog;
 	load.
 
-"Install"
-MEDApplicationManager
-	beProduction;
-	install.
+"Init DB & Config"
+MEDApplicationManager beProduction.
 
 "Kundenkonfiguration"
 MEDDatabase current globalConfiguration
@@ -42,6 +40,9 @@ MEDDatabase current globalConfiguration
 	organizationName: '{{mediaclue.organizationName}}';
 	organizationShortName: '{{mediaclue.organizationShortName}}';
 	save.
+
+"Install"
+MEDApplicationManager install.
 
 
 "Speichern und quit"
