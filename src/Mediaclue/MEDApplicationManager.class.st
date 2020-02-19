@@ -13,14 +13,14 @@ MEDApplicationManager class >> beDevelopment [
 
 	self globalConfiguration
 		appDomain: 'mediaclue';
-		emailDomain: 'mediaclue.ch';
-		smtpServer: 'mail.mindclue.ch';
-		smtpUsername: 'smtp.versand@mindclue.ch';
+		emailDomain: 'mediaclue.local';
+		smtpServer: 'localhost';
+		smtpUsername: '';
 		smtpPassword: '';
-		sysAdminEmailAddress: 'andreas.brodbeck@mindclue.ch';
-		assetsBasePath: '/Users/dassi/code/smalltalk/seaside/mediaclue/main/media_storage';
+		sysAdminEmailAddress: 'guru@you.com';
+		assetsBasePath: '/pathto/mediaclue/main/media_storage';
 		assetsUrlBasePath: '/m';
-		previewsBasePath: '/Users/dassi/code/smalltalk/seaside/mediaclue/main/tmp/preview_storage';
+		previewsBasePath: '/pathto/mediaclue/main/tmp/preview_storage';
 		previewsUrlBasePath: '/p';
 		unwantedExifTags: self defaultUnwantedExifTags;
 		organizationShortName: 'XY';
@@ -28,7 +28,7 @@ MEDApplicationManager class >> beDevelopment [
 		ldapServers: 'localhost';
 		ldapBaseDn: '';
 		ldapUser: '';
-		ldapPassword: 'secret';
+		ldapPassword: '';
 		ldapUidField: 'uid';
 		ldapCustomUidField: '';
 		save.
