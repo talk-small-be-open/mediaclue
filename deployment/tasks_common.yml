@@ -13,8 +13,8 @@
   #
   - name: Reduce swappiness. Use memory first. Better for MongoDB.
     sysctl:
-      name: vm.swappiness
-      value: 1
+      name: "vm.swappiness"
+      value: "1"
       state: present
 
 
@@ -37,9 +37,9 @@
     authorized_key:
       user: "{{remoteUser}}"
       state: present
-      key: '{{ item }}'
+      key: "{{lookup('file', item)}}"
     with_fileglob:
-      - ssh/authorized_keys/*
+      - "files/ssh/authorized_keys/*"
 
   #
   # hosts file
@@ -125,7 +125,7 @@
     htpasswd:
       path: /etc/nginx/htpasswd_betatest
       name: betatester
-      password: 'beta'
+      password: "{{mediaclue.betaPassword}}"
       owner: root
       group: www-data
       mode: 0640

@@ -5,22 +5,16 @@ PharoLightTheme beCurrent.
 
 "Im Package Transcript-Tool Smalltalk tools transcript openLabel: 'Log transcript'."
 
-
 "Per Iceberg die Config und Code updaten, für den Fall, dass diese schon auf der Disk vorhanden ist"
-(Iceberg mcRepositoryFor: '{{mediaclue.metacelloUrl}}') repository pull.
+(Iceberg mcRepositoryFor: '{{mediaclue.metacelloRepositoryUrl}}') repository pull.
 
-"Neuste Metacello Config holen"
-"Es braucht eine erste Init mit password, sonst klappts nicht mit repo"
-"Webbase"
-Gofer new
-	url: 'http://monticello.mindclue.dyndns.org:8753/mindclue' username: 'metacelloReadonly' password: 'kjsdjdhtewj*kdfHHieK-sdf24J';
-	package: 'BaselineOfWebbase';
-	load.
+"This should not have to be done. Why is metacello not getting the latest config by itself?!"
+(Iceberg mcRepositoryFor: 'github://talk-small-be-open/webbase') repository pull.
 
 "Laden"
 Metacello new
 	baseline: 'Mediaclue';
-	repository: '{{mediaclue.metacelloUrl}}';
+	repository: '{{mediaclue.metacelloRepositoryUrl}}';
 	onConflictUseLoaded;
 	onLock: [ :ex :loaded :incoming | ex honor ];
 	ignoreImage;

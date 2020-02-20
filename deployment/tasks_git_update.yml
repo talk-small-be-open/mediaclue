@@ -1,7 +1,7 @@
 - name: git repo Mediaclue base code
   become_user: "{{remoteUser}}"
   git:
-    repo: git@github.com:talk-small-be-open/mediaclue.git
+    repo: "{{mediaclue.gitRepositoryUrl}}"
     dest: "{{mediaclue.installationPath}}"
     update: yes
     force: yes
