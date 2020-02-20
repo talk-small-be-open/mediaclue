@@ -25,6 +25,11 @@ GNU AGPLv3, see [LICENSE](LICENSE.md)
 
 https://demo.mediaclue.ch
 
+To prevent this demo server from being hit by stupid crawlers and other stupid stupids, you need to use a password:
+
+User: betatester
+PW: beta
+
 # Features
 
 * HTML5
