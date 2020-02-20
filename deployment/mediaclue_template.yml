@@ -8,7 +8,7 @@ mediaclue:
 
   # Location of the source code (default github main repository)
   # Once in the format of git-SSH, once in the format of Metacello (Pharo internal)
-  gitRepositoryUrl: "git@github.com:talk-small-be-open/mediaclue.git"
+  gitRepositoryUrl: "https://github.com/talk-small-be-open/mediaclue.git"
   metacelloRepositoryUrl: "github://talk-small-be-open/mediaclue"
   
   # Installation folder of mediaclue application
