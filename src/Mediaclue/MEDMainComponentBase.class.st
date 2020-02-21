@@ -19,6 +19,17 @@ MEDMainComponentBase >> gotoGalleries [
 	coreComponent := (MEDGalleriesComponent mediaSets: galleries)
 ]
 
+{ #category : #'as yet unclassified' }
+MEDMainComponentBase >> gotoHome [
+	"subclasses"
+]
+
+{ #category : #initialization }
+MEDMainComponentBase >> initialize [
+	super initialize.
+	self gotoHome
+]
+
 { #category : #rendering }
 MEDMainComponentBase >> renderBottomOn: html [
 ]

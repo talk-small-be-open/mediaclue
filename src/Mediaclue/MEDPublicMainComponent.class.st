@@ -17,19 +17,18 @@ MEDPublicMainComponent >> gotoDirectLogin [
 
 { #category : #'as yet unclassified' }
 MEDPublicMainComponent >> gotoHome [
-	self gotoLogin
+	coreComponent := MEDPublicHomeComponent new.
+	coreComponent onAnswer: [ self close ]
 ]
 
 { #category : #initialization }
 MEDPublicMainComponent >> gotoLogin [
-	coreComponent := WEBLoginComponent new.
-	coreComponent onLogin: [ self close ]
+	self gotoHome
 ]
 
 { #category : #initialization }
 MEDPublicMainComponent >> initialize [
-	super initialize.
-	self gotoLogin
+	super initialize
 ]
 
 { #category : #'private protocol' }
@@ -51,14 +50,6 @@ MEDPublicMainComponent >> login: aUser [
 	self session login: aUser.
 
 	self close
-]
-
-{ #category : #rendering }
-MEDPublicMainComponent >> renderBottomOn: html [
-	self ifDemoOrDevelopment: [
-		html div class: 'demoMessage'; with: [
-			html withLineBreaksAndUrls: (self db globalConfiguration demoMessage)]
-	]
 ]
 
 { #category : #rendering }
