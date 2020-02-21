@@ -117,11 +117,11 @@
       owner: '{{remoteUser}}'
       group: '{{remoteUser}}'
 
-   - name: Copy dummy organization logo
-     copy:
-       src: files/img/company-logo.png
-       dest: "{{mediaclue.installationPath}}/main/web_root/img/company-logo.png"
-       force: no
+  - name: Copy dummy organization logo
+    copy:
+      src: files/img/company-logo.png
+      dest: "{{mediaclue.installationPath}}/main/web_root/img/company-logo.png"
+      force: no
      
 
   #    
@@ -285,9 +285,10 @@
   #
   # MEDIACLUE
   #
+  # Remarks: Use binary "pharo-ui" instead of "pharo" if you want to connect via xpra and watch/debug the installation
   - name: Install Mediaclue code in pharo image
     become_user: "{{remoteUser}}"
-    shell: "{{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/installMediaclue.st > mediaclue_install.log 2>&1  && touch mediaclueIsInstalled"
+    shell: "DISPLAY=:100 {{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/installMediaclue.st > mediaclue_install.log 2>&1  && touch mediaclueIsInstalled"
     args:
       chdir: "{{mediaclue.installationPath}}/pharo"
       creates: "{{mediaclue.installationPath}}/pharo/mediaclueIsInstalled"

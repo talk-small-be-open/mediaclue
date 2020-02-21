@@ -25,6 +25,11 @@ GNU AGPLv3, see [LICENSE](LICENSE.md)
 
 https://demo.mediaclue.ch
 
+To prevent this demo server from being hit by stupid crawlers and other stupid stupids, you need to use a password:
+
+User: betatester
+PW: beta
+
 # Features
 
 * HTML5
@@ -48,29 +53,28 @@ https://demo.mediaclue.ch
 
 # Installation
 
-TBD
+1. Choose a __short code__ for your mediaclue instance project, without spaces. For example your organization name ("tesla"), or application purpose ("media") or similar short name.
 
-* Choose a short code for your mediaclue instance project, without spaces. For example your organization name ("tesla"), or application purpose ("media") or similar short name.
-
-* Get a fresh Linux server, e.g. Ubuntu Server, where mediaclue should be installed.
-* Clone this repository and its submodules to your development machine: `git clone --recurse-submodules https://github.com/talk-small-be-open/mediaclue.git` .
-* Install the Ansible deployment tool on your development machine: www.ansible.com
-* Got into the folder deployment
-* Create a deployment inventory for ansible: Create the inventory_yourname.yml file from the template file inventory_template.yml
-* Create a configuration for mediaclue: Create mediaclue_yourname.yml file from the template file mediaclue_template.yml
-* (Optional) If you wish to configure SSH keys
-  * Create a random Ansible vault password in a file called kjewrfkjhasdfkjhw.txt (as set in ansible.cfg)
-  * Use the script create_ssh_key.sh to generate a unique new SSH-keypair for the server user.
-  * Put your own public key(s) which should be SSH authorized in the server into the directory files/ssh/authorized_keys/. You will be able to SSH into the machine without password.
-* Use the script `install.sh yourname` to install all together
+1. Get a fresh __Linux server__, e.g. Ubuntu Server, where mediaclue should be installed.
+1. __Clone__ this repository and its submodules to your development machine: `git clone --recurse-submodules https://github.com/talk-small-be-open/mediaclue.git` .
+1. Install the __Ansible__ deployment tool on your development machine: www.ansible.com
+1. Got into the folder `deployment`
+1. Create a deployment __inventory__ for ansible: Create the `inventory_yourname.yml` file from the template file `inventory_template.yml`. Basically all you have to do is to enter your servers hostname.
+1. Create a __configuration__ for mediaclue: Create `mediaclue_yourname.yml` file from the template file `mediaclue_template.yml`
+1. (Optional) If you wish to configure SSH keys
+  * Create a random Ansible vault password in a file called `kjewrfkjhasdfkjhw.txt` (As used in ansible.cfg). That file could be named anyhow, but I choose to obfuscate the meaning ;-)
+  * Use the script create_ssh_key.sh to generate a unique new SSH-keypair for the server user. The private key will not be stored as a file, but will be displayed to you for copy/pasting into the mediaclue_yourname.yml file.
+1. (Optional) Put your own SSH public key(s) into the directory files/ssh/authorized_keys/. You will be able to SSH into the mediaclue server without password.
+1. Use the script `install.sh yourname` to __install all together__. This will configure the Linux server, loads packages, loads Pharo, loads code into pharo und will run a frontend webserver.
+1. You'r done! You can access your mediaclue instance with http<span></span>://your.do.<span></span>main/
 
 # Usage
 
 TBD
 
-* After installation there will be an Administrator with your sys admin email address and initial password 'me123and' followed by your short code (see above. Example "me123andtesla")
-* Go to https://your.do.main/ and login as administrator
-* TBD Change password of Administrator
+* After installation there will be an Administrator with your sysadmin email address and initial password 'me123and' followed by your short code (see above. Example "me123andtesla")
+* Go to http<span></span>://your.do.<span></span>main/ and login as administrator
+* TBD Change password of you as administrator
 * Go to menu "Admin" and create some users and user groups
 * (Optional) LDAP integration (OpenLDAP, Active Directory, ...)
   * Update your LDAP settings in the configuration

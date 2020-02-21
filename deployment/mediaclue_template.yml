@@ -1,20 +1,51 @@
 ---
 
+#
+# Main configuration file for your mediaclue installation via Ansible
+#
+
 mediaclue:
+
+  # Location of the source code (default github main repository)
+  # Once in the format of git-SSH, once in the format of Metacello (Pharo internal)
+  gitRepositoryUrl: "https://github.com/talk-small-be-open/mediaclue.git"
+  metacelloRepositoryUrl: "github://talk-small-be-open/mediaclue"
+  
+  # Installation folder of mediaclue application
   installationPath: "/opt/mediaclue"
+
+  # Folder where the actual user media files will be stored
   mediaStoragePath: "/var/mediaclue-files"
-  # metacelloUrl: "github://dassi/mediaclue2"
-  # metacelloUsername: ""
-  # metacelloPassword: ""
-  # version: "stable"
+
+  # Your domain of the web application (Must be reachable in your network!)
   appDomain: "your.host.domain"
+
+  # Alternative domain name
   appDomain2: "alternative.host.domain"
+
+  # Domain where your organization emails are from
   emailDomain: "email.host.domain"
+
+  # Internal port where the Pharo application will be started (Default 8087)
   pharoPort: 8087
+
+  # Email address of the mediaclue Administrator
   adminEmail: "you@email.host.domain"
+
+  # Mediaclue does not send emails directly. It will forward it to an SMTP server
+  # You probably should have an SMTP inhouse, anyway. If you need SMTP-authentication,
+  # set the configuration options in the admin backend of mediaclue.
   smtpRelayhost: "your.smtp.host.domain"
+
+  # Should your mediaclue instance be reachable by HTTPS? Certificates are being generated automatically with certbot (let's encrypt)
   useSsl: false
+
+  # Is your mediaclue not ready for production? If you would like to hide your application behind an extra HTTP basic authentication, use this feature.
+  # HTTP Basic Auth Username is "betatester", choose password here:
   isBeta: false
+  betaPassword: "beta"
+
+  # Your organization names
   organizationName: 'Your Cool Organization'
   organizationShortName: 'YCO'
 

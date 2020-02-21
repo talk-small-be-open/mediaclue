@@ -7,6 +7,7 @@
 ssh-keygen -b 2048 -t rsa -N "" -f ./files/ssh/mediaclue_id
 
 # Encrypt private key and display it for copy/paste into mediaclue YAML file
+echo "Copy/paste the following into your mediaclue_*.yml file:"
 ansible-vault encrypt_string --encrypt-vault-id default --vault-password-file kjewrfkjhasdfkjhw.txt --stdin-name 'sshPrivateKey' < ./files/ssh/mediaclue_id
 
 # Delete private key, leave only public key

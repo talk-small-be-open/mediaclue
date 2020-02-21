@@ -4,14 +4,10 @@
 den neuen Code vom git-Repository zu holen, strange."
 
 "Per Iceberg die Config und Code updaten"
-(Iceberg mcRepositoryFor: '{{mediaclue.metacelloUrl}}') repository pull.
+(Iceberg mcRepositoryFor: '{{mediaclue.metacelloRepositoryUrl}}') repository pull.
 
-"Config von Webbase updaten"
-Gofer new
-	url: 'http://monticello.mindclue.dyndns.org:8753/mindclue';
-	package: 'BaselineOfWebbase';
-	load.
-
+"This should not have to be done. Why is metacello not getting the latest config by itself"
+(Iceberg mcRepositoryFor: 'github://talk-small-be-open/webbase') repository pull.
 
 "App laden per Metacello"
 Metacello new
