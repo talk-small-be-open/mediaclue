@@ -16,7 +16,9 @@ MEDPublicHomeComponent >> initialize [
 
 { #category : #rendering }
 MEDPublicHomeComponent >> renderContentOn: html [
-	html imageLogo.
+	html grid: [
+		html gridUnitSmall: 0 medium: 1/2 large: 1/3 with: [
+			html imageLogo ] ].
 
 	html render: loginComponent.
 	

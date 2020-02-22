@@ -69,7 +69,12 @@ MEDMainComponentBase >> renderFooterOn: html [
 			with: 'mindclue gmbh'.
 
 		html break; break.
-		html text: 'Version 2.0' ]
+		html anchor
+			targetBlank;
+			url: 'https://github.com/talk-small-be-open/mediaclue';
+			with: 'Version 2.0 (open source)'.
+
+		]
 ]
 
 { #category : #rendering }
