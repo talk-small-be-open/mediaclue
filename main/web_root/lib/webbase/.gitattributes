@@ -1,0 +1,2 @@
+# For github to detect the correct code language, tell it where vendored code is:
+lib/* linguist-vendored
