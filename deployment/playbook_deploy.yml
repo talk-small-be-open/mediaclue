@@ -51,7 +51,7 @@
   # Remarks: Use binary "pharo-ui" instead of "pharo" if you want to connect via xpra and watch/debug the update process
   - name: Update Mediaclue code in pharo image (saves and stops at the end)
     become_user: "{{remoteUser}}"
-    shell: "DISPLAY=:100 {{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/updateMediaclue.st > mediaclue_update.log 2>&1"
+    shell: "DISPLAY=:100 {{mediaclue.installationPath}}/pharo/pharo-ui mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/updateMediaclue.st > mediaclue_update.log 2>&1"
     args:
       chdir: "{{mediaclue.installationPath}}/pharo"
   
