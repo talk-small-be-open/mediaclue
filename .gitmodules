@@ -1,3 +1,0 @@
-[submodule "main/web_root/lib/webbase"]
-	path = main/web_root/lib/webbase
-	url = https://github.com/talk-small-be-open/webbase.git
