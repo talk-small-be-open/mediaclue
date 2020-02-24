@@ -21,7 +21,7 @@ MEDProjectInfo >> defaultGlobalConfigurationClass [
 
 { #category : #'as yet unclassified' }
 MEDProjectInfo >> defaultIdentityProviderClass [
-	^MEDLdapIdentityProvider
+	^WEBLocalIdentityProvider "MEDLdapIdentityProvider"
 ]
 
 { #category : #'as yet unclassified' }
