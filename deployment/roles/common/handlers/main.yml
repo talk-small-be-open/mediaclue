@@ -17,3 +17,4 @@
     name: monit
     enabled: yes
     state: restarted
+    use: sysvinit

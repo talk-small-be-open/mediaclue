@@ -221,9 +221,6 @@
     apt:
       name: ['mongodb']
       state: present
-  - name: pymongo package, in bestimmer version fuer mongodb_user ansible modul
-    pip:
-      name: pymongo==2.4.2
 
   #
   # Postfix Mail
@@ -234,6 +231,11 @@
     
   - include_tasks: tasks_common.yml
 
+  # - name: pymongo package, in bestimmer version fuer mongodb_user ansible modul
+  #   pip:
+  #     name: pymongo==2.4.2
+
+  
   # Create working folders and symlinks
   - name: Directory for Pharo
     file:
@@ -292,6 +294,16 @@
     args:
       chdir: "{{mediaclue.installationPath}}/pharo"
       creates: "{{mediaclue.installationPath}}/pharo/mediaclueIsInstalled"
+  - name: ensure monit enabled on boot
+    service:
+      name: monit
+      enabled: yes
+      use: sysvinit
+  - name: ensure monit started now
+    service:
+      name: monit
+      state: started
+      use: sysvinit
   - name: Running Mediaclue
     shell: monit reload && sleep 2 && monit start mediaclue_pharo
     
