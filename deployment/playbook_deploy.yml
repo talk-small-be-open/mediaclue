@@ -61,3 +61,5 @@
 
 # TODO
 #  - name: Remove maintenance screen
+
+  - include_tasks: tasks_common_end.yml
