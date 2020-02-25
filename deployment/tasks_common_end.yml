@@ -1,17 +1,15 @@
-# - name: PHP start
-#   service:
-#     name: php7.2-fpm
-#     enabled: yes
-#     state: restarted
+- name: Ensure PHP is running
+  service:
+    name: php7.2-fpm
+    state: started
 
-# - name: nginx start
-#   service:
-#     name: nginx
-#     enabled: yes
-#     state: restarted
+- name: Ensure nginx is running
+  service:
+    name: nginx
+    state: started
 
-# - name: monit start
-#   service:
-#     name: monit
-#     state: started
-#     use: sysvinit
+- name: Ensure monit is running
+  service:
+    name: monit
+    state: started
+    use: sysvinit

@@ -20,3 +20,5 @@
   - include_tasks: tasks_git_update.yml    
 
   - include_tasks: tasks_common.yml
+
+  - include_tasks: tasks_common_end.yml

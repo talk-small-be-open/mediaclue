@@ -121,6 +121,8 @@
     copy:
       src: files/img/company-logo.png
       dest: "{{mediaclue.installationPath}}/main/web_root/img/company-logo.png"
+      owner: '{{remoteUser}}'
+      group: '{{remoteUser}}'
       force: no
      
 
@@ -189,12 +191,13 @@
   #
   # MONIT
   #
-  - name: monit init.d file
-    copy:
-      src: files/initd_monit
-      dest: /etc/init.d/monit
-      owner: 'root'
-      group: 'root'
+  # - name: monit init.d file
+  #   copy:
+  #     src: files/initd_monit
+  #     dest: /etc/init.d/monit
+  #     owner: 'root'
+  #     group: 'root'
+  #     mode: 
 
 
   #
@@ -290,8 +293,9 @@
   # Remarks: Use binary "pharo-ui" instead of "pharo" if you want to connect via xpra and watch/debug the installation
   - name: Install Mediaclue code in pharo image
     become_user: "{{remoteUser}}"
-    shell: "DISPLAY=:100 {{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/installMediaclue.st > mediaclue_install.log 2>&1  && touch mediaclueIsInstalled"
-    args:
+    shell:
+      executable: '/bin/bash'
+      cmd: "DISPLAY=:100 {{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/installMediaclue.st > mediaclue_install.log 2>&1  && touch mediaclueIsInstalled"
       chdir: "{{mediaclue.installationPath}}/pharo"
       creates: "{{mediaclue.installationPath}}/pharo/mediaclueIsInstalled"
   - name: ensure monit enabled on boot

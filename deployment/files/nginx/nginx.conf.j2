@@ -104,6 +104,9 @@ http {
             root /;
         }
 
+				# Custom error page, if Pharo is not running (looks nicer)
+				error_page 502 /errors/502.html;
+
     }
 
 		{% if mediaclue.useSsl %}
