@@ -10,6 +10,8 @@ Gymnasium Hohe Promenade, Zürich (www.kshp.ch).
 
 Official website: www.mediaclue.ch
 
+_Happily developed with Pharo Smalltalk (www.pharo.org) and the Seaside web framework (www.seaside.st)!_
+
 (This version has been rewritten from scratch from the previous Rails based application.
 Ruby and Rails is cool, but hey, Smalltalk and Seaside is just, hm, you know, just feels alot better! ;-) )
 
@@ -66,7 +68,7 @@ PW: beta
   * Create a random Ansible vault password in a file called `kjewrfkjhasdfkjhw.txt` (As used in ansible.cfg). That file could be named anyhow, but I choose to obfuscate the meaning ;-)
   * Use the script `create_ssh_key.sh` to generate a unique new SSH-keypair for the server user. The private key will not be stored as a file, but will be displayed to you for copy/pasting into the `mediaclue_yoursitename.yml` file.
 1. (Optional) Put your own SSH public key(s) into the directory files/ssh/authorized_keys/. You will be able to SSH into the mediaclue server without password.
-1. Use the script `install.sh yoursitename` to __install all together__. This will configure the Linux server, loads packages, loads Pharo, loads code into pharo und will run a frontend webserver.
+1. Use the script `install.sh yoursitename` to __install all together__. You will be asked by Ansible for the "BECOME password" (aka sudo), then enter the SSH users password. This will configure the Linux server, loads packages, loads Pharo, loads code into pharo und will run a frontend webserver.
 1. This will take a while (around 10 minutes), then:
 1. You're __done!__ You can access your mediaclue instance with http(s)<span></span>://your.do.<span></span>main/
 
@@ -80,8 +82,8 @@ PW: beta
 
 * After installation there will be an Administrator with your sysadmin email address and initial password 'me123and' followed by your short code (see above. Example "me123andtesla")
 * Go to http<span></span>://your.do.<span></span>main/ and login as administrator
-* TBD Change password of you as administrator
 * Go to menu "Admin" and create some users and user groups
+* Note: Uploading files is only permitted to users, who are in a group which has the flag "Allow uploads" set. Other users can just search for media and create their personal collections.
 * (Optional) LDAP integration (OpenLDAP, Active Directory, ...)
   * Update your LDAP settings in the configuration
   * Start the LDAP synchronisation manually
