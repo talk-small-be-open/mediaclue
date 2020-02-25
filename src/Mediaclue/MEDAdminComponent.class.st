@@ -31,8 +31,9 @@ MEDAdminComponent >> children [
 MEDAdminComponent >> createUser [
 	| new |
 	new := MEDUser new.
-	self edit: new afterSave: [
-		self flashMessage: 'Neu erstellt'
+	self show: (MEDUserEditor model: new) onAnswer: [:answer |
+		answer ifNotNil: [
+			self flashMessage: 'Neu erstellt']
 	]
 ]
 
@@ -40,8 +41,9 @@ MEDAdminComponent >> createUser [
 MEDAdminComponent >> createUserGroup [
 	| new |
 	new := MEDUserGroup new.
-	self edit: new afterSave: [
-		self flashMessage: 'Neu erstellt'
+	self show: (MEDUserGroupEditor model: new) onAnswer: [:answer |
+		answer ifNotNil: [
+			self flashMessage: 'Neu erstellt']
 	]
 ]
 
@@ -57,16 +59,6 @@ MEDAdminComponent >> deleteUserGroup: aGroup [
 	self delete: aGroup then: [
 		self flashMessage: 'Gelöscht'.
 		self refresh]
-]
-
-{ #category : #actions }
-MEDAdminComponent >> editUser: aUser [
-	self editAndSave: aUser 
-]
-
-{ #category : #actions }
-MEDAdminComponent >> editUserGroup: aUserGroup [
-	self editAndSave: aUserGroup
 ]
 
 { #category : #initialization }
@@ -203,7 +195,7 @@ MEDAdminComponent >> renderPageUsersOn: html [
 			html tableRow: [
 				html tableData: [
 					html anchor
-						callback: [ self editUser: each ];
+						callback: [ self viewUser: each ];
 						with: each displayName].
 				html tableData: [ 
 					html anchor
@@ -217,7 +209,7 @@ MEDAdminComponent >> renderPageUsersOn: html [
 MEDAdminComponent >> startLdapWizard [
 	ldapWizard := WEBLdapUserMatchWizard new
 		onSaveUser: [ :each | each save ];
-		onEditUser: [ :each | self editUser: each ];
+		onEditUser: [ :each | self viewUser: each ];
 		yourself
 ]
 
@@ -229,6 +221,11 @@ MEDAdminComponent >> userGroups [
 { #category : #accessing }
 MEDAdminComponent >> users [
 	^ users ifNil: [ users := self db users sortedBySortKey ]
+]
+
+{ #category : #actions }
+MEDAdminComponent >> viewUser: aUser [
+	self showWithBack: (MEDUserViewer model: aUser)
 ]
 
 { #category : #actions }

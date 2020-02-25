@@ -76,6 +76,9 @@ MEDGalleriesComponentBase >> renderContentOn: html [
 
 { #category : #rendering }
 MEDGalleriesComponentBase >> renderGalleriesOn: html [
+	
+	mediaSets ifEmpty: [ html paragraph: 'Noch keine Bildergallerien vorhanden'. ^ self ].
+
 	html table class: 'galleries'; with: [
 		html tableHead: [
 			html tableRow: [ 

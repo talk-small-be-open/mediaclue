@@ -4,7 +4,8 @@ Class {
 	#traits : 'TWEBComponentHelpers',
 	#classTraits : 'TWEBComponentHelpers classTrait',
 	#instVars : [
-		'superComponent'
+		'superComponent',
+		'formDecoration'
 	],
 	#category : #'Mediaclue-Magritte'
 }
@@ -19,6 +20,16 @@ MEDMaContainerComponent >> buildChildren [
 			result at: each put: (each componentClass
 				memento: self memento description: each parent: self).
 			result ]
+]
+
+{ #category : #'as yet unclassified' }
+MEDMaContainerComponent >> formDecoration [
+	^formDecoration
+]
+
+{ #category : #'as yet unclassified' }
+MEDMaContainerComponent >> formDecoration: anObject [
+	formDecoration := anObject
 ]
 
 { #category : #rendering }

@@ -6,7 +6,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 MEDUserGroupViewer >> editMyself [
-	self show: (MEDUserGroupEditor model: model)
+	self show: (MEDUserGroupEditor model: model) onAnswer: [ self refresh ]
 ]
 
 { #category : #rendering }

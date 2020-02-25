@@ -46,15 +46,6 @@ MEDUser >> delete [
 
 ]
 
-{ #category : #'as yet unclassified' }
-MEDUser >> descriptionContainer [
-	<magritteContainer>
-	"0815 Magritte-Verhalten"
-	^ MAPriorityContainer new
-		label: self class label;
-		yourself
-]
-
 { #category : #magritte }
 MEDUser >> descriptionDisabled [
 	<magritteDescription>

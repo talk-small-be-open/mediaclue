@@ -65,7 +65,7 @@ MEDPublicMainComponent >> renderMenuOn: html [
 			"Class: pure-menu-selected"
 			html menuList: [
 				html menuEntry: [ self gotoLogin ] with: [html iconHome; text: 'Anmelden'].
-"Im Moment auf dem Demo nicht. SPäter NUR Dev:"		self isDemo ifFalse: [
+				self isDevelopment ifTrue: [
 					html menuEntry: [ self gotoDirectLogin ] with: [html iconHome; text: 'Direkt anmelden'].
 				].
 				html menuEntry: [ self gotoGalleries ] with: [html iconGallery; text: 'Galerien'].
