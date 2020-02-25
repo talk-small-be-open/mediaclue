@@ -65,8 +65,8 @@ PW: beta
 1. Create a deployment __inventory__ for ansible: Create the `inventory_yoursitename.yml` file as copy from the template file `inventory_template.yml`. Basically all you have to do is to overwrite with your servers hostname.
 1. Create a __configuration__ for mediaclue: Create `mediaclue_yoursitename.yml` file as copy from the template file `mediaclue_template.yml`. Follow the comments in that file and enter your own basic settings.
 1. (Optional) If you wish to configure SSH keys of the server
-  1. Create a random Ansible vault password in a file called `kjewrfkjhasdfkjhw.txt` (As used in ansible.cfg). That file could be named anyhow, but I choose to obfuscate the meaning ;-)
-  1. Use the script `create_ssh_key.sh` to generate a unique new SSH-keypair for the server user. The private key will not be stored as a file, but will be displayed to you for copy/pasting into the `mediaclue_yoursitename.yml` file.
+   1. Create a random Ansible vault password in a file called `kjewrfkjhasdfkjhw.txt` (As used in ansible.cfg). That file could be named anyhow, but I choose to obfuscate the meaning ;-)
+   1. Use the script `create_ssh_key.sh` to generate a unique new SSH-keypair for the server user. The private key will not be stored as a file, but will be displayed to you for copy/pasting into the `mediaclue_yoursitename.yml` file.
 1. (Optional) Put your own SSH public key(s) into the directory files/ssh/authorized_keys/. You will be able to SSH into the mediaclue server without password.
 1. Use the script `install.sh yoursitename` to __install all together__. You will be asked by Ansible for the "BECOME password" (aka sudo), then enter the SSH users password. This will configure the Linux server, loads packages, loads Pharo, loads code into pharo und will run a frontend webserver.
 1. This will take a while (around 10 minutes), then:
