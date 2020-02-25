@@ -55,7 +55,7 @@ PW: beta
 
 # Installation
 
-1. Choose a __short code__ for your mediaclue instance project, without spaces. For example your organization name ("tesla"), or application purpose ("media") or similar short name.
+1. Choose a __short code__ for your mediaclue instance project, without spaces. For example an acronym or the application purpose ("mdb", "mediadatabase", "schoolimages", ...) or similar short name.
 1. __Clone__ this repository to your working machine: `git clone https://github.com/talk-small-be-open/mediaclue.git`.
 1. Get a fresh __Linux server__, e.g. Ubuntu Server, where mediaclue should be installed to (Bare metal, cloud, VM, whereever. If you have no clue, use this: [multipass](https://multipass.run) ). Keep the basic installation pure minimal, we just need a normal user to login via SSH shell.
 1. Make sure this server is network reachable by its own __hostname__. (Poor man solution: Register the IP into your hosts file. [See Howto ...](https://support.rackspace.com/how-to/modify-your-hosts-file/) )
@@ -65,8 +65,8 @@ PW: beta
 1. Create a deployment __inventory__ for ansible: Create the `inventory_yoursitename.yml` file as copy from the template file `inventory_template.yml`. Basically all you have to do is to overwrite with your servers hostname.
 1. Create a __configuration__ for mediaclue: Create `mediaclue_yoursitename.yml` file as copy from the template file `mediaclue_template.yml`. Follow the comments in that file and enter your own basic settings.
 1. (Optional) If you wish to configure SSH keys of the server
-  * Create a random Ansible vault password in a file called `kjewrfkjhasdfkjhw.txt` (As used in ansible.cfg). That file could be named anyhow, but I choose to obfuscate the meaning ;-)
-  * Use the script `create_ssh_key.sh` to generate a unique new SSH-keypair for the server user. The private key will not be stored as a file, but will be displayed to you for copy/pasting into the `mediaclue_yoursitename.yml` file.
+  1. Create a random Ansible vault password in a file called `kjewrfkjhasdfkjhw.txt` (As used in ansible.cfg). That file could be named anyhow, but I choose to obfuscate the meaning ;-)
+  1. Use the script `create_ssh_key.sh` to generate a unique new SSH-keypair for the server user. The private key will not be stored as a file, but will be displayed to you for copy/pasting into the `mediaclue_yoursitename.yml` file.
 1. (Optional) Put your own SSH public key(s) into the directory files/ssh/authorized_keys/. You will be able to SSH into the mediaclue server without password.
 1. Use the script `install.sh yoursitename` to __install all together__. You will be asked by Ansible for the "BECOME password" (aka sudo), then enter the SSH users password. This will configure the Linux server, loads packages, loads Pharo, loads code into pharo und will run a frontend webserver.
 1. This will take a while (around 10 minutes), then:
@@ -78,16 +78,7 @@ PW: beta
 
 # Usage
 
-(TBD)
-
-* After installation there will be an Administrator with your sysadmin email address and initial password 'me123and' followed by your short code (see above. Example "me123andtesla")
-* Go to http<span></span>://your.do.<span></span>main/ and login as administrator
-* Go to menu "Admin" and create some users and user groups
-* Note: Uploading files is only permitted to users, who are in a group which has the flag "Allow uploads" set. Other users can just search for media and create their personal collections.
-* (Optional) LDAP integration (OpenLDAP, Active Directory, ...)
-  * Update your LDAP settings in the configuration
-  * Start the LDAP synchronisation manually
-  * A cron job will synchronize users nightly
+See [MANUAL](/docs/manual.md)
 
 # Deployment updates
 
