@@ -189,12 +189,13 @@
   #
   # MONIT
   #
-  - name: monit init.d file
-    copy:
-      src: files/initd_monit
-      dest: /etc/init.d/monit
-      owner: 'root'
-      group: 'root'
+  # - name: monit init.d file
+  #   copy:
+  #     src: files/initd_monit
+  #     dest: /etc/init.d/monit
+  #     owner: 'root'
+  #     group: 'root'
+  #     mode: 
 
 
   #
