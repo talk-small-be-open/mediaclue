@@ -135,6 +135,11 @@ MEDAdminComponent >> renderPageDemoOn: html [
 
 { #category : #rendering }
 MEDAdminComponent >> renderPageLdapOn: html [
+	| hasLdap |
+	hasLdap := (self db identityProvider isKindOf: MEDLdapIdentityProvider).
+	
+	hasLdap ifFalse: [ html paragraph: 'LDAP nicht aktiviert'. ^ self ].
+	
 	ldapWizard ifNil: [ 
 		html anchorButton
 			callback: [ self startLdapWizard ];

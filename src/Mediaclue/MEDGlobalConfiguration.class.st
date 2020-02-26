@@ -11,6 +11,17 @@ MEDGlobalConfiguration class >> isVoyageRoot [
 	^true
 ]
 
+{ #category : #actions }
+MEDGlobalConfiguration >> apply [
+	"persist in Mongo"
+	self save.
+	
+	"OPTIMIZE: Maybe do that with announcements? At the moment overkill"
+	self db ensureIdentityProvider.
+	
+	"TODO: Others: Pharo port, ..."
+]
+
 { #category : #'as yet unclassified' }
 MEDGlobalConfiguration >> assetsBasePath [
 	^self at: #assetsBasePath

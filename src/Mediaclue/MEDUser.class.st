@@ -199,6 +199,11 @@ MEDUser >> isAdmin: aValue [
 ]
 
 { #category : #accessing }
+MEDUser >> isAuthenticateAtLdap [
+	^ ldapUid notBlank
+]
+
+{ #category : #accessing }
 MEDUser >> lastName [
 	^ lastName
 ]
