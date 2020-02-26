@@ -33,7 +33,8 @@ mediaclue:
   isBeta: false
   betaPassword: "beta"
 
-
+  # Which authentication and user provider do you use? (Choose from: local, ldap). Use ldap if you run an LDAP service.
+  identityProvider: local
   
   # ===== ADVANCED SETTINGS (Leave them untouched, if unsure) ==============
 
