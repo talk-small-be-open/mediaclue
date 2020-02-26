@@ -267,7 +267,7 @@
       state: stopped
   - name: certbot get Certificates
     when: mediaclue.useSsl
-    shell: certbot --standalone -n --agree-tos --email {{mediaclue.adminEmail}} --cert-name "{{mediaclue.appDomain}}"  --domains "{{mediaclue.appDomain}},{{mediaclue.appDomain2}}" certonly
+    shell: certbot --standalone -n --agree-tos --email {{mediaclue.adminEmail}} --cert-name "{{mediaclue.appDomain}}"  --domains "{{mediaclue.appDomain}}{% if mediaclue.appDomain2 %},{{mediaclue.appDomain2}}{% endif %}" certonly
     args:
       creates: "/etc/letsencrypt/live/{{mediaclue.appDomain}}/fullchain.pem"
 
