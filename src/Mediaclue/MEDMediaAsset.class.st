@@ -343,6 +343,14 @@ MEDMediaAsset >> isDocument [
 ]
 
 { #category : #testing }
+MEDMediaAsset >> isFileOnDiskOk [
+	self fileReference ifNil: [ ^ false ].
+
+	^ self fileReference isFileExisting
+
+]
+
+{ #category : #testing }
 MEDMediaAsset >> isImage [
 	^false
 ]
