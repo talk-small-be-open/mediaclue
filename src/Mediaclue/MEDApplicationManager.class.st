@@ -72,7 +72,15 @@ MEDApplicationManager class >> createAllMissingPreviews [
 
 	self db butler cleanupAggressive.
 
+	"Take maximum of 50 at a time"
 	medias := MEDMediaAsset selectMany: mongoQuery limit: 50.
+
+	"Ignore those, who have no file, since they will loop endless"
+	medias := medias select: [ :each | each isFileOnDiskOk ].
+	
+	"TODO: Prevent endless reiteration, if some media fails to generate previews.
+	Maybe force stop this iteration on some condition? An admin can stop it through
+	the web interface, though"
 
 	medias ifNotBlank: [
 		medias do: [ :each |
