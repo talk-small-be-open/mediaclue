@@ -127,6 +127,23 @@ WEBDatabase >> butler [
 WEBDatabase >> ensureAdminExists [
 ]
 
+{ #category : #'as yet unclassified' }
+WEBDatabase >> ensureIdentityProvider [
+	| type provider |
+	type := self globalConfiguration identityProviderType.
+
+	"Poor man solution, but KISS"
+	type = 'ldap' ifTrue: [ provider := self pi concreteInstanceOf: WEBLdapIdentityProvider ].
+	type = 'local' ifTrue: [ provider := self pi concreteInstanceOf: WEBLocalIdentityProvider ].
+
+	"default"
+	provider ifNil: [
+		provider := self pi defaultIdentityProviderClass new
+	].
+	
+	self db identityProvider: provider
+]
+
 { #category : #finders }
 WEBDatabase >> findApplicationCommandByCode: aString [
 	self subclassResponsibility
@@ -150,6 +167,11 @@ WEBDatabase >> globalConfiguration [
 { #category : #accessing }
 WEBDatabase >> identityProvider [
 	^ identityProvider
+]
+
+{ #category : #accessing }
+WEBDatabase >> identityProvider: anObject [
+	identityProvider := anObject
 ]
 
 { #category : #initialization }

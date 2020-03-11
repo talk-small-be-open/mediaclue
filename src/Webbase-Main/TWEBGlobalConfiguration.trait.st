@@ -13,6 +13,11 @@ TWEBGlobalConfiguration >> appDomain: aValue [
 	self at: #appDomain put: aValue
 ]
 
+{ #category : #actions }
+TWEBGlobalConfiguration >> apply [
+	"Make the settings real. Applications can do stuff here, if any"
+]
+
 { #category : #configs }
 TWEBGlobalConfiguration >> emailDomain [
 	^self at: #emailDomain ifBlank: [self webDomain]
@@ -21,6 +26,16 @@ TWEBGlobalConfiguration >> emailDomain [
 { #category : #configs }
 TWEBGlobalConfiguration >> emailDomain: aValue [
 	self at: #emailDomain put: aValue
+]
+
+{ #category : #configs }
+TWEBGlobalConfiguration >> identityProviderType [
+	^self at: #identityProviderType ifBlank: ['local']
+]
+
+{ #category : #configs }
+TWEBGlobalConfiguration >> identityProviderType: aValue [
+	self at: #identityProviderType put: aValue
 ]
 
 { #category : #accessing }
