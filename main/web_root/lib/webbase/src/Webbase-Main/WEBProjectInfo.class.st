@@ -3,7 +3,7 @@ Normally I am subclassed for the project.
 
 I represent static information about the concrete project which is made with the Webbase framework. I define classes and other stuff to get the code bootstrapped.
 
-I do NOT hold dynamic information about the installation of the application, which is done in the WEBConfiguration class structure
+I do NOT hold dynamic information about the installation of the application (aka customer settings), which is done in the WEBConfiguration class structure.
 "
 Class {
 	#name : #WEBProjectInfo,
@@ -33,7 +33,7 @@ WEBProjectInfo class >> clear [
 
 { #category : #'as yet unclassified' }
 WEBProjectInfo class >> concreteClassOf: aClass [
-	aClass subclasses ifNotEmpty: [ :ss | ^ss first ].
+	aClass allSubclasses ifNotEmpty: [ :ss | ^ss last ].
 	^aClass
 	
 ]
@@ -92,6 +92,11 @@ WEBProjectInfo >> bootstrapMyNewProject: aNameString code: aCodeString [
 { #category : #'as yet unclassified' }
 WEBProjectInfo >> concreteClassOf: aClass [
 	^self class concreteClassOf: aClass
+]
+
+{ #category : #'as yet unclassified' }
+WEBProjectInfo >> concreteInstanceOf: aClass [
+	^ (self concreteClassOf: aClass) new
 ]
 
 { #category : #'as yet unclassified' }

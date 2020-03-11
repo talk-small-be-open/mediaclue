@@ -84,6 +84,11 @@ TWEBComponentHelpers >> addForm: aButtonsCollection [
 		yourself
 ]
 
+{ #category : #enumerating }
+TWEBComponentHelpers >> afterCaptchaDo: aBlock [
+	^self requestCaptcha ifTrue: aBlock
+]
+
 { #category : #decorations }
 TWEBComponentHelpers >> beKeepaliveSession [
 	self addDecoration: WEBKeepaliveSessionDecoration new
@@ -218,6 +223,12 @@ TWEBComponentHelpers >> confirmYesNo: aText ifYes: aBlock ifNo: aNoBlock [
 { #category : #helpers }
 TWEBComponentHelpers >> currentUser [
 	^self session user
+]
+
+{ #category : #'as yet unclassified' }
+TWEBComponentHelpers >> ensureUserOrCaptchaThen: aBlock [
+	self isLoggedIn ifTrue: aBlock ifFalse: [ 
+		self afterCaptchaDo: aBlock ]
 ]
 
 { #category : #'helpers-ui' }
@@ -409,6 +420,14 @@ TWEBComponentHelpers >> request: aQuestionText title: aTitleString default: aDef
 { #category : #'helpers-dialog' }
 TWEBComponentHelpers >> request: aQuestionText validation: aBlock [
 	^self request: aQuestionText default: nil validation: aBlock
+]
+
+{ #category : #'as yet unclassified' }
+TWEBComponentHelpers >> requestCaptcha [
+	| answer |
+	answer := self window: 'Captcha Code (Anti-Robot Sicherheitsabfrage)' with: WEBFigletCaptchaComponent new.
+
+	^answer = true
 ]
 
 { #category : #'helpers-dialog' }

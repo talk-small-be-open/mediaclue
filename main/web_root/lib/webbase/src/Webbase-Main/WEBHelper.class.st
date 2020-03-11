@@ -175,6 +175,13 @@ WEBHelper class >> installationBaseFolder [
 	^FileSystem workingDirectory parent
 ]
 
+{ #category : #'as yet unclassified' }
+WEBHelper class >> normalizeUmlaute: aString [
+	^((aString copyReplaceAll: 'ä' with: 'ae')
+		copyReplaceAll: 'ö' with: 'oe')
+		copyReplaceAll: 'ü' with: 'ue'
+]
+
 { #category : #parsing }
 WEBHelper class >> parseGermanDate: aDateString [
 	| matcher |
@@ -274,6 +281,32 @@ WEBHelper class >> regexpEmail [
 ]
 
 { #category : #'as yet unclassified' }
+WEBHelper class >> sanitizeToAlphanumericAscii: aString [
+	| sanitized |
+	sanitized := (self sanitizeToAscii: aString) select: [:c | c isAlphaNumeric].
+	^sanitized
+
+]
+
+{ #category : #'as yet unclassified' }
+WEBHelper class >> sanitizeToAscii: aString [
+	| sanitized |
+	sanitized := aString reject: [:c | c asciiValue > 127].
+	^sanitized
+
+]
+
+{ #category : #'as yet unclassified' }
+WEBHelper class >> sanitizeToLatin1: aString [
+	| sanitized |
+	aString ifNil: [^''].
+
+	sanitized := aString reject: [:c | c asciiValue > 255].
+	^sanitized
+
+]
+
+{ #category : #'as yet unclassified' }
 WEBHelper class >> toUtf8: aString [
 	^(GRCodec forEncoding: 'utf8') encode: aString
 ]
@@ -287,6 +320,25 @@ WEBHelper class >> translateString: aString map: aDictionary [
 			translated at: index put: normalizedInteger asCharacter]].
 	
 	^translated
+]
+
+{ #category : #file }
+WEBHelper class >> urlnameFor: aString [
+	| map sanitized |
+	"Converts a string into something which can be used in a URL and still be readable"
+	
+	map := {
+		$* asInteger -> $- asInteger.
+		$/ asInteger -> $- asInteger.
+		32 -> $- asInteger.
+	} asDictionary.
+	
+	"Remove unwanted chars"
+	sanitized := aString asLowercase.
+	sanitized := self normalizeUmlaute: sanitized.
+	sanitized := self sanitizeToAscii: sanitized.
+	
+	^(self translateString: sanitized map: map) urlEncoded
 ]
 
 { #category : #writing }

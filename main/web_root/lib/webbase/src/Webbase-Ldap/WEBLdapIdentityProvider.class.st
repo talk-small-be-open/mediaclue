@@ -42,6 +42,9 @@ WEBLdapIdentityProvider >> authenticateUser: aUser password: aPassword [
 	
 	valid := false.
 
+	"Fallback, if no LDAP auth. We authenticate with local password"
+	aUser isAuthenticateAtLdap ifFalse: [ ^ (aUser isValidPassword: aPassword) ].
+
 	aUser ldapUid ifBlank: [
 		self logWarning: ('Trying to login, but having no LDAP-UID for user ', aUser displayName, ' with username ', aUser username asString).
 		^ false
