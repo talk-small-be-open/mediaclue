@@ -181,6 +181,10 @@ MEDPreviewGenerator >> convertVideoToThumbnail: previewName max: maxDimension [
 
 { #category : #translating }
 MEDPreviewGenerator >> generate [
+
+	"Cancel if corrupt/missing file on disk"
+	media isFileOnDiskOk ifFalse: [ ^ self ].
+
 	media clearPreviews.
 	media acceptVisitor: self
 ]

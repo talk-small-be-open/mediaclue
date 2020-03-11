@@ -7,9 +7,9 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-MEDRestfulGalleriesFilter >> getGalleryHtml: aGalleryCode [
+MEDRestfulGalleriesFilter >> getGalleryHtml: aGalleryCode title: aTitle [
 	<get>
-	<path: '/{aGalleryCode}.html'>
+	<path: '/{aGalleryCode}/{aTitle}.html'>
 	<produces: 'text/html'>
 	
 "	| gallery component |

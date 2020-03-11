@@ -199,12 +199,12 @@ MEDMediaSet >> postCopy [
 MEDMediaSet >> publicUrl [
 	self isPublic ifFalse: [ ^nil ].
 
-	^ 'https://', self globalConfiguration webDomain, '/galleries/', self publicUrlName
+	^ 'https://', self globalConfiguration webDomain, '/galleries/', self uuidString, '/', self publicUrlName
 ]
 
 { #category : #'as yet unclassified' }
 MEDMediaSet >> publicUrlName [
-	^ self uuidString, '.html'
+	^ (MEDHelper urlnameFor: self title), '.html'
 ]
 
 { #category : #accessing }

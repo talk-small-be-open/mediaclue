@@ -106,7 +106,9 @@ MEDReportMisuseComponent >> renderValidationResultsOn: html [
 { #category : #'as yet unclassified' }
 MEDReportMisuseComponent >> reportIt [
 	self validate.
-	validationResult isValid ifTrue: [ self sendEmail. ]
+	validationResult isValid ifTrue: [
+		self ensureUserOrCaptchaThen: [
+			self sendEmail ] ]
 ]
 
 { #category : #accessing }

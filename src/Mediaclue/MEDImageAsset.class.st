@@ -14,6 +14,7 @@ MEDImageAsset class >> contentTypesAndExtensions [
 'image/png'. #(png).
 'image/gif'. #(gif).
 'image/tiff'. #(tif tiff).
+'image/vnd.adobe.photoshop'. #(psd).
 }
 ]
 
