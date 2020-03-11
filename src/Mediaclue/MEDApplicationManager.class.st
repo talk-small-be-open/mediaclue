@@ -188,3 +188,37 @@ MEDApplicationManager class >> loadDefaultTags [
 		tag save.
 	]
 ]
+
+{ #category : #'as yet unclassified' }
+MEDApplicationManager class >> recreateAllPreviews [
+	| todo |
+	todo := MEDMediaAsset selectAll.
+
+	self recreatePreviews: todo
+]
+
+{ #category : #'as yet unclassified' }
+MEDApplicationManager class >> recreatePreviews: aTodoMediaCollection [
+	| medias |
+
+	self db butler cleanupAggressive.
+
+	"Break the loop"
+	aTodoMediaCollection ifBlank: [ ^ self ].
+
+	"Take maximum of 50 at a time. Remove them in the todo-collection"
+	aTodoMediaCollection size > 50
+		ifTrue: [ medias := aTodoMediaCollection removeFirst: 50 ]
+		ifFalse: [
+			medias := aTodoMediaCollection copy.
+			aTodoMediaCollection removeAll ].
+	
+	medias do: [ :each |
+		each createPreviewsOffloaded.
+		each readMetaDataOffloaded.
+	].
+
+	"Achtung iterativ rekursiv"
+	self db butler doJob: 'Nächste 50 Vorschau-Medien holen' block: [
+		self recreatePreviews: aTodoMediaCollection ]
+]
