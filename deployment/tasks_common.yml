@@ -56,7 +56,7 @@
         
   - name: Install basic apt packages
     apt:
-      name: ['unattended-upgrades', 'monit', 'git', 'imagemagick', 'xauth', 'xpra', 'htop', 'unzip', 'zip', 'aptitude', 'mosh', 'python3-pip', 'qrencode', 'siege', 'libreoffice', 'libimage-exiftool-perl', 'mediainfo', 'ffmpeg']
+      name: ['unattended-upgrades', 'monit', 'git', 'imagemagick', 'xauth', 'xpra', 'htop', 'unzip', 'zip', 'aptitude', 'mosh', 'python3-pip', 'qrencode', 'siege', 'libreoffice', 'libimage-exiftool-perl', 'mediainfo', 'ffmpeg', 'figlet']
       state: present
 
   - name: Check if wkhtmltopdf is present

@@ -9,7 +9,7 @@ http {
     include       mime.types;
     default_type  application/octet-stream;
 
-    # Komisch, warum, aber gegoogelt
+    # Strange. But found it on google
     server_names_hash_bucket_size 64;
     
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
@@ -39,35 +39,35 @@ http {
 					 listen 80;
 				{% endif %}
 
-
-
         server_name {{mediaclue.appDomain}} {{mediaclue.appDomain2}};
 
         root {{mediaclue.installationPath}}/main/web_root;
 
-        # # Abblocken, wenn per IP direkt
-        # if ($host != "server.daz-app.ch") {
-        #     return 444;
-        # }
-
 
         # Pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
         #
-        # Für Uploader PlUpload
+        # For uploader PlUpload
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
             fastcgi_pass unix:/run/php/php7.2-fpm.sock;
         }
 
-        # Platzhalter alle Vorschau Bilder, die noch nicht existieren
-        location ~ /p/.*\.jpg$ {
+        # Preview images, with placeholder if not existent
+        location /p/ {
             root {{mediaclue.installationPath}}/main/web_root;
-            expires -1;
-            add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate";
             try_files $uri /img/nopreview-thumbnail.png;
         }
 
-        location ~ /\.ht {
+				# Never cache the placeholder thumbnail
+				location = /img/nopreview-thumbnail.png {
+            root {{mediaclue.installationPath}}/main/web_root;
+            expires -1;
+            add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate";
+				}								
+
+				# Deny access to .ht* files.
+				# TODO: Why is this needed?
+				location ~ /\.ht {
             deny all;
         }
         
@@ -84,6 +84,7 @@ http {
             try_files $uri @pharo;
         }
 
+				# Reverse proxy to Pharo
         location @pharo {
             expires -1;
             add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate";
@@ -92,13 +93,13 @@ http {
             proxy_set_header X-Forwarded-For $remote_addr;
         }
 
-        # X-Sendfile
+        # X-Sendfile for generated files (ZIP, PDF, ...)
         location {{mediaclue.installationPath}}/main/tmp {
             internal;
             root /;
         }
 
-        # X-Sendfile
+        # X-Sendfile for downloading the original media file
         location {{mediaclue.installationPath}}/main/media_storage {
             internal;
             root /;
@@ -119,7 +120,7 @@ http {
 		{% endif %}
 
 
-    # Direkter Zugriff mit IP verhindern
+    # Reject access with just the IP. We do not want bots or other dark forces to annoy us
     server {
 				listen 80 default_server;
 
@@ -136,7 +137,7 @@ http {
 
         server_name _;
 
-        return 444; #Code von nginx, bricht ohne Antwort ab
+        return 444; # Special code from nginx, just fails and does not return anything to caller
     }
 
 
