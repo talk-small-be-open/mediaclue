@@ -79,7 +79,9 @@ WEBGlobalConfigurationEditor >> renderSettingsOn: html [
 				].
 
 			]].
-		html submitButton: 'Save']
+		html submitButton
+			callback: [ self save ];
+			with: 'Save']
 ]
 
 { #category : #rendering }
@@ -115,6 +117,11 @@ WEBGlobalConfigurationEditor >> renderToolsOn: html [
 			with: 'Send test mail'.
 
 	]
+]
+
+{ #category : #actions }
+WEBGlobalConfigurationEditor >> save [
+	self globalConfiguration apply
 ]
 
 { #category : #'as yet unclassified' }

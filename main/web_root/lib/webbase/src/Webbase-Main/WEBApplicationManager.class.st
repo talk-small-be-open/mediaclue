@@ -1,3 +1,6 @@
+"
+I am the application control center from the ""outside"". I do stuff around the installation and operation of the application. Subclass myself to add your own control methods.
+"
 Class {
 	#name : #WEBApplicationManager,
 	#superclass : #WEBObject,

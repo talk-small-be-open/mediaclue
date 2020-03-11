@@ -53,7 +53,7 @@
     become_user: "{{remoteUser}}"
     shell:
 #      executable: '/bin/bash -l'
-      cmd: "DISPLAY=:100 /bin/bash --login -c '{{mediaclue.installationPath}}/pharo/pharo mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/updateMediaclue.st > mediaclue_update.log 2>&1' "
+      cmd: "/bin/bash --login -c 'DISPLAY=:100 {{mediaclue.installationPath}}/pharo/pharo-ui mediaclue.image --no-default-preferences st {{mediaclue.installationPath}}/install/updateMediaclue.st > mediaclue_update.log 2>&1' "
       chdir: "{{mediaclue.installationPath}}/pharo"
   
   - name: Running Mediaclue
