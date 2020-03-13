@@ -96,7 +96,7 @@ MEDGalleriesComponentBase >> renderGalleriesOn: html [
 						html tableData: [
 							html anchor
 								callback: [ self selectMediaSet: each ];
-								extraPath: (each uuidString, '.html');
+"too dirty:								extraPath: (each uuidString, '.html');"
 								with: each displayName ].
 						html tableData class: 'noWrap'; with: [
 							html text: each imagesCount asString.
