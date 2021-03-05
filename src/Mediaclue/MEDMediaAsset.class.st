@@ -521,6 +521,9 @@ MEDMediaAsset >> removeMeInAllMediaSets [
 { #category : #'as yet unclassified' }
 MEDMediaAsset >> rereadMetaData [
 	| tool dict |
+	
+	self isFileOnDiskOk ifFalse: [ ^self ].
+	
 	tool := MEDExiftool new.
 	
 	dict := tool read: self.
