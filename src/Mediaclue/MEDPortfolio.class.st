@@ -99,5 +99,7 @@ MEDPortfolio >> setUser: aUser [
 
 { #category : #accessing }
 MEDPortfolio >> uploading [
+	uploading ifNil: [ self newUploading ].
+	
 	^ uploading
 ]
