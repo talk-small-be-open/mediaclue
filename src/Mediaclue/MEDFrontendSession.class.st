@@ -45,6 +45,8 @@ MEDFrontendSession >> myTopTags [
 
 { #category : #'as yet unclassified' }
 MEDFrontendSession >> refreshCaches [
+	self user portfolio cleanup.
+	
 	schoolSubjectTags := self db schoolSubjectTags sortedBySortKey.
 	topTags := self db topTags: 10 excluding: schoolSubjectTags.
 	myTopTags := self db topTags: 10 excluding: schoolSubjectTags by: self user.
