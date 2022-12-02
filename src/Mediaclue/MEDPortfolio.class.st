@@ -36,6 +36,15 @@ MEDPortfolio >> allMyMedias [
 ]
 
 { #category : #accessing }
+MEDPortfolio >> cleanup [
+
+	allMyMedias refresh.
+	
+	"Touch the uploading set, to maybe lazy generate"
+	self uploading.
+]
+
+{ #category : #accessing }
 MEDPortfolio >> clipboard [
 	^ clipboard
 ]
@@ -99,5 +108,8 @@ MEDPortfolio >> setUser: aUser [
 
 { #category : #accessing }
 MEDPortfolio >> uploading [
+	"Careful! ifNil: would not be useful with VOMissingContent objects. More robust to use isNil."
+	uploading isNil ifTrue: [ self newUploading ].
+	
 	^ uploading
 ]
