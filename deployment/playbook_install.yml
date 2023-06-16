@@ -141,7 +141,7 @@
       name: pharo backup
       user: "{{remoteUser}}"
       minute: "10"
-      hour: "*/6"
+      hour: "*/12"
       job: "cd {{mediaclue.installationPath}}/server && ./backup-image-snapshot.sh"
   - name: certbot renew weekly
     when: mediaclue.useSsl

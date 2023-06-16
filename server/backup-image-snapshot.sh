@@ -11,6 +11,6 @@ mkdir -p $BACKUP_DIR
 tar -czf $BACKUP_DIR/mediaclue_image_$NOW.tgz pharo/mediaclue.image pharo/mediaclue.changes
 
 # Delete old
-find $BACKUP_DIR -iname "*.tgz" -not -newermt "100 days ago" -delete
+find $BACKUP_DIR -iname "*.tgz" -not -newermt "60 days ago" -delete
 
 popd > /dev/null
