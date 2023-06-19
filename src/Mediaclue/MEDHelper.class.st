@@ -30,7 +30,7 @@ MEDHelper class >> runPdftkInputs: aCollection commands: aString [
 
 { #category : #'as yet unclassified' }
 MEDHelper class >> runUnoconv: aParameterString [
-	| process python |
+	| success python |
 	
 	"brauche Standard System python"
 	python := ''.
@@ -42,9 +42,9 @@ MEDHelper class >> runUnoconv: aParameterString [
 	und das hat vermutlich mit stdin zu tun, und meine Beobachtung war,
 	dass es nie passierte, wenn mit -v gewisser Output da war.
 	unset LD_... ist nötig für Libreoffice, es checkts sonst nicht"
-	process := WEBSystemCommand run: 'unset LD_LIBRARY_PATH && ', (python, MEDHelper cliToolsFolder pathString, '/unoconv -v ', aParameterString).
+	success := WEBSystemCommand run: 'unset LD_LIBRARY_PATH && ', (python, MEDHelper cliToolsFolder pathString, '/unoconv -v ', aParameterString).
 	
-	^process succeeded
+	^ success
 ]
 
 { #category : #'as yet unclassified' }
