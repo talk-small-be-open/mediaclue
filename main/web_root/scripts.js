@@ -11,16 +11,15 @@ if (!Element.prototype.requestFullscreen) {
 	Element.prototype.requestFullscreen = Element.prototype.mozRequestFullscreen || Element.prototype.webkitRequestFullscreen || Element.prototype.msRequestFullscreen;
 	document.fullscreenElement = function () { return document.mozFullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement };
 	document.exitFullscreen = document.mozExitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
-
-	Element.prototype.toggleFullscreen = function () {
-		if (document.fullscreenElement()) { 
-			document.exitFullscreen();
-		} else {
-			this.requestFullscreen();
-		}
-	};
-
 }
+Element.prototype.toggleFullscreen = function () {
+	if (document.fullscreenElement) { 
+		document.exitFullscreen();
+	} else {
+		this.requestFullscreen();
+	}
+};
+
 
 function appendToTagList(inputId, text) {
   var currentValue;
