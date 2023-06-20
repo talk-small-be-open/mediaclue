@@ -52,11 +52,17 @@ MEDSearchComponent >> calculateMinorSelectedTags [
 { #category : #initializing }
 MEDSearchComponent >> calculateSuggestedTags [
 	| bag |
-"	searchQuery tags inspect."
+
+"(searchResult medias collect: [ :each | { each tags. each tags copyWithoutAll: self selectedTags } ]) inspect."
 	
 	bag := searchResult medias flatCollect: [ :each | each tags copyWithoutAll: self selectedTags ] as: Bag.
 	
-	suggestedTags := (bag sortedCounts collect: [ :each | each value ]) firstAtMost: 3
+
+	suggestedTags := (bag sortedCounts collect: [ :each | each value ]) firstAtMost: 3.
+	
+	"Strange, sometimes it contains them to. Double check. Maybe because of non-orderedcollections in the above logic?
+	problem was: Voyage proxies!"
+"	suggestedTags := suggestedTags copyWithoutAll: self selectedTags"
 ]
 
 { #category : #initializing }
@@ -87,7 +93,7 @@ MEDSearchComponent >> clipboardSaveAsNew [
 
 { #category : #rendering }
 MEDSearchComponent >> copySelectedToClipboard [
-	self currentPortfolio clipboard addAll: self selectedMediaForViewer
+	self currentPortfolio clipboard addAll: self selectedMedia
 ]
 
 { #category : #rendering }

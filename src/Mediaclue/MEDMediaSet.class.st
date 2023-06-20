@@ -22,6 +22,17 @@ MEDMediaSet class >> isVoyageRoot [
 	^true
 ]
 
+{ #category : #magritte }
+MEDMediaSet class >> mongoTagList [
+	"Override mit klassenspezifischen Namen der Instanzvariable"
+	<mongoDescription>
+	
+	^VOToManyDescription new
+		attributeName: 'tagList';
+		beEager;
+		yourself
+]
+
 { #category : #accessing }
 MEDMediaSet >> createdAt [
 	^ createdAt

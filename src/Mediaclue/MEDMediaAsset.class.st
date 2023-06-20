@@ -57,6 +57,17 @@ MEDMediaAsset class >> isVoyageRoot [
 	^true
 ]
 
+{ #category : #magritte }
+MEDMediaAsset class >> mongoTagList [
+	"Override mit klassenspezifischen Namen der Instanzvariable"
+	<mongoDescription>
+	
+	^VOToManyDescription new
+		attributeName: 'tagList';
+		beEager;
+		yourself
+]
+
 { #category : #'as yet unclassified' }
 MEDMediaAsset class >> takeFromFileReference: aFileReference [
 	^self basicNew
