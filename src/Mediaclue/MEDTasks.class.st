@@ -26,7 +26,12 @@ MEDTasks class >> runHourlyTasks [
 	self cleanupButler.
 
 	self isProductionOrAlike ifTrue: [
-		self saveSmalltalkImage ].
+		"asnyc, so that the calling process from cron is not cut off without reply"
+		[
+			(Delay forSeconds: 2) wait.
+			self saveSmalltalkImage.
+		] fork.
+	].
 ]
 
 { #category : #schedule }

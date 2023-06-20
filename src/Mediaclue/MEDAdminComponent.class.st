@@ -48,6 +48,16 @@ MEDAdminComponent >> createUserGroup [
 ]
 
 { #category : #actions }
+MEDAdminComponent >> deleteTag: aTag [
+	(self db isTagInUse: aTag)
+		ifTrue: [ self inform: 'Kann nicht gelöscht werden, ist in Verwendung' ]
+		ifFalse: [
+			self delete: aTag then: [
+				self flashMessage: 'Gelöscht'.
+				self refresh]]
+]
+
+{ #category : #actions }
 MEDAdminComponent >> deleteUser: aUser [
 	self delete: aUser then: [
 		self flashMessage: 'Gelöscht'.
@@ -61,6 +71,11 @@ MEDAdminComponent >> deleteUserGroup: aGroup [
 		self refresh]
 ]
 
+{ #category : #accessing }
+MEDAdminComponent >> editTag: aTag [
+	self showWithBack: (MEDTagEditor model: aTag)
+]
+
 { #category : #initialization }
 MEDAdminComponent >> initialize [
 	super initialize.
@@ -70,7 +85,7 @@ MEDAdminComponent >> initialize [
 
 { #category : #accessing }
 MEDAdminComponent >> pages [
-	^ #(config butler stats userGroups users demo ldap)
+	^ #(config butler stats userGroups users tags demo ldap)
 ]
 
 { #category : #accessing }
@@ -166,6 +181,30 @@ MEDAdminComponent >> renderPageStatsOn: html [
 ]
 
 { #category : #rendering }
+MEDAdminComponent >> renderPageTagsOn: html [
+"	html buttonToolbar: [
+		html anchorButton
+			callback: [ self createUser ];
+			with: 'Erstellen' ]."
+	
+	html table: [
+		self tags do: [ :each |
+			html tableRow: [
+"				html tableData: [ html span: each title ]."
+				html tableData: [
+					html anchor
+						callback: [ self editTag: each ];
+						with: each displayName].
+				html tableData: [ 
+					html anchor
+						callback: [ self deleteTag: each ];
+						with: 'Löschen' ]
+
+			]
+		]]
+]
+
+{ #category : #rendering }
 MEDAdminComponent >> renderPageUserGroupsOn: html [
 	html buttonToolbar: [
 		html anchorButton
@@ -216,6 +255,11 @@ MEDAdminComponent >> startLdapWizard [
 		onSaveUser: [ :each | each save ];
 		onEditUser: [ :each | self viewUser: each ];
 		yourself
+]
+
+{ #category : #accessing }
+MEDAdminComponent >> tags [
+	^ self db tags sortedBySortKey
 ]
 
 { #category : #accessing }

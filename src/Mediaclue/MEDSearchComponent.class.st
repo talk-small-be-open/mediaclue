@@ -11,7 +11,9 @@ Class {
 		'myMediaSetsOnly',
 		'myMediaSets',
 		'suggestedTags',
-		'clipboardViewer'
+		'clipboardViewer',
+		'allTags',
+		'minorSelectedTags'
 	],
 	#category : #'Mediaclue-View'
 }
@@ -32,11 +34,35 @@ MEDSearchComponent class >> searchQuery: aQuery [
 ]
 
 { #category : #initializing }
+MEDSearchComponent >> addTag: aTag [
+	searchQuery addTag: aTag.
+
+]
+
+{ #category : #initializing }
+MEDSearchComponent >> addTags: aCollection [
+	aCollection do: [ :each | self addTag: each ]
+]
+
+{ #category : #'as yet unclassified' }
+MEDSearchComponent >> calculateMinorSelectedTags [
+	minorSelectedTags := self selectedTags copyWithoutAll: self majorTags
+]
+
+{ #category : #initializing }
 MEDSearchComponent >> calculateSuggestedTags [
 	| bag |
-	bag := searchResult medias flatCollect: [ :each | each tags copyWithoutAll: searchQuery tags ] as: Bag.
+
+"(searchResult medias collect: [ :each | { each tags. each tags copyWithoutAll: self selectedTags } ]) inspect."
 	
-	suggestedTags := (bag sortedCounts collect: [ :each | each value ]) firstAtMost: 3
+	bag := searchResult medias flatCollect: [ :each | each tags copyWithoutAll: self selectedTags ] as: Bag.
+	
+
+	suggestedTags := (bag sortedCounts collect: [ :each | each value ]) firstAtMost: 3.
+	
+	"Strange, sometimes it contains them to. Double check. Maybe because of non-orderedcollections in the above logic?
+	problem was: Voyage proxies!"
+"	suggestedTags := suggestedTags copyWithoutAll: self selectedTags"
 ]
 
 { #category : #initializing }
@@ -67,7 +93,7 @@ MEDSearchComponent >> clipboardSaveAsNew [
 
 { #category : #rendering }
 MEDSearchComponent >> copySelectedToClipboard [
-	self currentPortfolio clipboard addAll: self selectedMediaForViewer
+	self currentPortfolio clipboard addAll: self selectedMedia
 ]
 
 { #category : #rendering }
@@ -111,6 +137,8 @@ MEDSearchComponent >> initialize [
 	myTopTags := self session myTopTags.
 
 	subjectTags := self session schoolSubjectTags.
+
+	allTags := self db tags sortedBySortKey.
 	
 	myMediaSets := self currentPortfolio mediaSets.
 	
@@ -128,6 +156,7 @@ MEDSearchComponent >> initializeSearch [
 
 	searchResult := nil.
 	suggestedTags := OrderedCollection new.
+	minorSelectedTags := OrderedCollection new.
 	myMediaSetsOnly := false.
 	mediaRenderer clearSelection.
 ]
@@ -139,7 +168,13 @@ MEDSearchComponent >> isEmptySearchResult [
 
 { #category : #testing }
 MEDSearchComponent >> isSelectedTag: aTag [
-	^ searchQuery tags includes: aTag
+	^ self selectedTags includes: aTag
+]
+
+{ #category : #initialization }
+MEDSearchComponent >> majorTags [
+	^ topTags, myTopTags, subjectTags
+
 ]
 
 { #category : #accessing }
@@ -150,6 +185,46 @@ MEDSearchComponent >> myMediaSetsOnly [
 { #category : #accessing }
 MEDSearchComponent >> myMediaSetsOnly: anObject [
 	myMediaSetsOnly := anObject
+]
+
+{ #category : #initializing }
+MEDSearchComponent >> removeTag: aTag [
+	searchQuery removeTag: aTag
+]
+
+{ #category : #rendering }
+MEDSearchComponent >> renderAllTagsOn: html [
+	| options |
+	
+	html div class: 'tagsArea'; with: [
+		html span class: 'title'; with: 'Weitere Schlagworte: '.
+		html space.
+		html span: [
+			minorSelectedTags do: [ :each |
+				html anchor
+					class: 'tag';
+					class: 'selected';
+					callback: [ self clickTag: each ];
+					with: each title
+			] separatedBy: [ html span: ', ' ]
+		].
+
+		options := {
+#plugins -> #('remove_button').
+#delimiter->','.
+#closeAfterSelect->true.
+} asD.
+
+		html multiSelect
+			submitOnChange;
+			script: (html jQuery this call: 'selectize' with: options);
+			list: allTags;
+			labels: [ :each | each title ];
+			callback: [ :tags | self addTags: tags ]
+	
+	]	
+	
+
 ]
 
 { #category : #rendering }
@@ -163,13 +238,15 @@ MEDSearchComponent >> renderContentOn: html [
 
 			html div class: 'searchTags'; with: [
 				html div class: 'smartSuggestedTags'; with: [
-					self renderTags: suggestedTags title: 'Intelligenter Schlagworte-Vorschlag:' on: html ].
+					self renderTags: suggestedTags title: 'Häufigste Sub-Schlagworte:' on: html ].
 
 				self renderTags: subjectTags title: 'Fach-Schlagworte:' on: html.
 			
 				self renderTags: topTags title: 'Top-Schlagworte:' on: html.
 
 				self renderTags: myTopTags title: 'Meine Top-Schlagworte:' on: html.
+				
+				self renderAllTagsOn: html
 			].
 		
 			self renderOptionsOn: html.
@@ -348,11 +425,12 @@ MEDSearchComponent >> search [
 			sets: [ :each | myMediaSets includes: each ]
 	].
 
-	self calculateSuggestedTags
+	self calculateSuggestedTags.
+	self calculateMinorSelectedTags.
 ]
 
 { #category : #initializing }
-MEDSearchComponent >> searchTag: aTag [
+MEDSearchComponent >> searchAndAddTag: aTag [
 	searchQuery addTag: aTag.
 	self search
 ]
@@ -365,6 +443,11 @@ MEDSearchComponent >> selectedMedia [
 { #category : #rendering }
 MEDSearchComponent >> selectedOrAll [
 	^ self selectedMedia ifEmpty: [ searchResult medias ]
+]
+
+{ #category : #testing }
+MEDSearchComponent >> selectedTags [
+	^ searchQuery tags
 ]
 
 { #category : #initialization }

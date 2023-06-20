@@ -152,8 +152,18 @@ MEDHtmlCanvas >> iconArrowLeft [
 ]
 
 { #category : #icons }
+MEDHtmlCanvas >> iconArrowLeftRight [
+	self fas: 'arrows-alt-h'
+]
+
+{ #category : #icons }
 MEDHtmlCanvas >> iconArrowRight [
 	self fas: 'arrow-right'
+]
+
+{ #category : #icons }
+MEDHtmlCanvas >> iconArrowUpDown [
+	self fas: 'arrows-alt-v'
 ]
 
 { #category : #icons }

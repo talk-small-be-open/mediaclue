@@ -64,6 +64,31 @@ MEDMediaSetViewer >> delete [
 ]
 
 { #category : #'submorphs-add/remove' }
+MEDMediaSetViewer >> deleteSelected [
+
+	self ensureSelectionThen: [
+		| mediasToDelete |
+
+		mediasToDelete := self selectedMedia select: [ :each | each canEdit: self currentUser ].
+		
+		(self confirm: ('Die selektierten ', mediasToDelete size asString, ' Medien dauerhaft (!) löschen?') title: 'Löschen?' buttonText: 'Ja, jetzt löschen!' cancelText: 'Abbrechen') ifTrue: [
+
+			mediasToDelete do: [ :each | each delete ].
+
+"			model removeAll: mediasToDelete.
+			model save."
+
+			self clearSelection.
+
+			self session announceDataChange.
+			
+			self flashMessage: 'Medien gelöscht'
+		 ]
+	]
+
+]
+
+{ #category : #'submorphs-add/remove' }
 MEDMediaSetViewer >> deleteWithMedias [
 	(self confirm: 'Diese Kollektion UND ALLE enthaltenen Medien (!) löschen?' title: 'Löschen?' buttonText: 'Ja, jetzt löschen' cancelText: 'Abbrechen') ifTrue: [
 		(model mediasForUserAsEditor: self currentUser) do: [ :each | each delete ].
@@ -202,7 +227,8 @@ MEDMediaSetViewer >> renderMenuOn: html [
 "				html menuEntry: [ self edit ] with: 'Diashow'."
 				html menuTitle: 'Selektierte Medien ...'.
 				self ifCanEdit: [
-					html menuEntry: [ self removeSelected ] with: [ html iconRemove; text: '... entfernen'] ].
+					html menuEntry: [ self removeSelected ] with: [ html iconRemove; text: '... entfernen'].
+				].
 				html menuEntry: [ self copySelectedToClipboard ] with: [ html iconCopy; text: '... in Zw''ablage kopieren'].
 				self ifCanEdit: [
 					html menuEntry: [ self moveSelectedToClipboard ] with: [ html iconCopy; text: '... in Zw''ablage verschieben']].
@@ -216,9 +242,15 @@ MEDMediaSetViewer >> renderMenuOn: html [
 
 				self ifCanEdit: [
 					html menuTitle: 'Etc.'.
-					html menuEntry: [ self createPreviews ] with: 'Alle Vorschauen neu erzeugen'].
+					html menuEntry: [ self createPreviews ] with: 'Alle Vorschauen neu erzeugen'.
+					"REMARK: Here all media will be tested individually, too"
+					html menuEntry: [ self deleteSelected ] with: [ html "iconDelete;" text: 'Selektierte Medien löschen(!)'].
+				].
 
-	]]
+
+				].
+
+	]
 ]
 
 { #category : #rendering }

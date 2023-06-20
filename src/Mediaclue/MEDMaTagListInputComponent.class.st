@@ -7,8 +7,7 @@ Class {
 		'suggesterTagId',
 		'topTags',
 		'myTopTags',
-		'subjectTags',
-		'restTags'
+		'subjectTags'
 	],
 	#category : #'Mediaclue-Magritte'
 }
@@ -31,7 +30,8 @@ MEDMaTagListInputComponent >> initialize [
 	subjectTags := self session schoolSubjectTags.
 	topTags := self session topTags.
 	myTopTags := self session myTopTags.
-	restTags := self model tags copyWithoutAll: (subjectTags, topTags, myTopTags).
+
+"	restTags := self model tags copyWithoutAll: (subjectTags, topTags, myTopTags)."
 
 	self addContainerDiv
 ]
@@ -74,7 +74,7 @@ MEDMaTagListInputComponent >> renderSelectizeJsOn: html [
 		options add: { 'optgroup'->'mytop'. 'value'->(each title). 'text'->(each displayName) } asD
 	].
 
-	restTags do: [ :each |
+	self restTags do: [ :each |
 		options add: { 'optgroup'->'rest'. 'value'->(each title). 'text'->(each displayName) } asD
 	].
 
@@ -122,4 +122,10 @@ MEDMaTagListInputComponent >> renderTags: aCollection on: html [
 				onClick: 'appendToTagList("', self id, '", "', each title,'"); $("#', suggesterTagId, '").clearQueue(); return false';
 				with: each displayName]
 		separatedBy: [html text: ', ']
+]
+
+{ #category : #initialization }
+MEDMaTagListInputComponent >> restTags [
+	^ self model tags copyWithoutAll: (subjectTags, topTags, myTopTags).
+
 ]
