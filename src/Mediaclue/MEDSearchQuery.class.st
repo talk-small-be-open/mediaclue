@@ -24,7 +24,7 @@ MEDSearchQuery class >> isVoyageRoot [
 
 { #category : #adding }
 MEDSearchQuery >> addTag: aTag [
-	tags add: aTag
+	tags addIfNotPresent: aTag
 ]
 
 { #category : #'as yet unclassified' }

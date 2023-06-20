@@ -31,9 +31,16 @@ MEDMaTagListInputComponent >> initialize [
 	subjectTags := self session schoolSubjectTags.
 	topTags := self session topTags.
 	myTopTags := self session myTopTags.
-	restTags := self model tags copyWithoutAll: (subjectTags, topTags, myTopTags).
+	self refresh.
+"	restTags := self model tags copyWithoutAll: (subjectTags, topTags, myTopTags)."
 
 	self addContainerDiv
+]
+
+{ #category : #initialization }
+MEDMaTagListInputComponent >> refresh [
+	restTags := self model tags copyWithoutAll: (subjectTags, topTags, myTopTags).
+
 ]
 
 { #category : #rendering }

@@ -73,7 +73,25 @@ MEDTag >> descriptionCategory [
 		accessor: #category;
 		options: {'00_Thema'. '10_Fach'. '20_Etc'};
 		label: 'Kategorie';
-		priority: 20;
+		beRequired;
+		yourself
+]
+
+{ #category : #magritte }
+MEDTag >> descriptionIsSchoolSubject [
+	<magritteDescription>
+	^ MABooleanDescription new
+		accessor: #isSchoolSubject;
+		label: 'Ist Schulfach';
+		yourself
+]
+
+{ #category : #magritte }
+MEDTag >> descriptionTitle [
+	<magritteDescription>
+	^ MAStringDescription new
+		accessor: #title;
+		label: 'Titel';
 		beRequired;
 		yourself
 ]

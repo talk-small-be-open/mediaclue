@@ -201,6 +201,16 @@ MEDDatabase >> findUserGroupsByUser: aUser [
 
 ]
 
+{ #category : #testing }
+MEDDatabase >> isTagInUse: aTag [
+	| query result |
+	query := MEDSearchQuery new.
+	query addTag: aTag.
+	
+	result := self findMediaByQuery: query.
+	^ result isEmpty not
+]
+
 { #category : #accessing }
 MEDDatabase >> mediaSets [
 	^MEDMediaSet selectAll
