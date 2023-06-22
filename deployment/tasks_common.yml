@@ -53,11 +53,56 @@
       group: root
       mode: '0644'
     
-        
+
+  - name: Install latest package ca-certificates
+    apt:
+      state: latest
+      name: ca-certificates
+
+
+#
+# TODO !!!
+# Es ging manuell mit rumpröbeln und hinzufügen von allen KEys
+# wget -qO - https://xpra.org/xpra-2018.gpg | sudo apt-key add -
+# wget -qO - https://xpra.org/xpra-2022.gpg | sudo apt-key add -
+# wget -qO - https://xpra.org/xpra-2023.gpg | sudo apt-key add -
+#
+    
+  - name: Add XPRA repo key
+    apt_key:
+      url: https://xpra.org/xpra-2018.gpg
+      #url: https://xpra.org/xpra.asc
+      state: present
+  - name: Add XPRA apt repo
+    apt_repository:
+      repo: "deb https://xpra.org/ bionic main"
+      state: present
+      update_cache: yes
+      
+    
   - name: Install basic apt packages
     apt:
-      name: ['unattended-upgrades', 'monit', 'git', 'imagemagick', 'xauth', 'xpra', 'htop', 'unzip', 'zip', 'aptitude', 'mosh', 'python3-pip', 'qrencode', 'siege', 'libreoffice', 'libimage-exiftool-perl', 'mediainfo', 'ffmpeg', 'figlet']
       state: present
+      name:
+        - 'monit'
+        - 'git'
+        - 'imagemagick'
+        - 'xauth'
+        - 'xpra'
+        - 'htop'
+        - 'unzip'
+        - 'zip'
+        - 'aptitude'
+        - 'mosh'
+        - 'python3-pip'
+        # - 'python3-uinput' # for xpra better support?
+        - 'qrencode'
+        - 'siege'
+        - 'libreoffice'
+        - 'libimage-exiftool-perl'
+        - 'mediainfo'
+        - 'ffmpeg'
+        - 'figlet'
 
   - name: Check if wkhtmltopdf is present
     stat:

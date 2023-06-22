@@ -143,6 +143,13 @@
       minute: "10"
       hour: "*/12"
       job: "cd {{mediaclue.installationPath}}/server && ./backup-image-snapshot.sh"
+  - name: cronjob cleanup
+    cron:
+      name: mediaclue cleanup files
+      user: "{{remoteUser}}"
+      minute: "11"
+      hour: "3"
+      job: "cd {{mediaclue.installationPath}}/server && ./cleanup.sh"
   - name: certbot renew weekly
     when: mediaclue.useSsl
     cron:
@@ -309,6 +316,6 @@
       state: started
       use: sysvinit
   - name: Running Mediaclue
-    shell: monit reload && sleep 2 && monit start mediaclue_pharo
+    shell: monit reload && sleep 10 && monit start mediaclue_pharo
     
   - include_tasks: tasks_common_end.yml
