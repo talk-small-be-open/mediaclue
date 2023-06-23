@@ -33,15 +33,21 @@ MEDSearchQuery >> beforeExecution [
 ]
 
 { #category : #initialization }
-MEDSearchQuery >> clearSearch [
+MEDSearchQuery >> clearFilter [
 	text := nil.
 	tags := OrderedCollection new.
 	myMediaOnly := false.
-	limit := 20.
 	includeAudio := true.
 	includeVideo := true.
 	includeImage := true.
 	includeDocument := true.
+]
+
+{ #category : #initialization }
+MEDSearchQuery >> clearSearch [
+	self clearFilter.
+	limit := nil.
+
 ]
 
 { #category : #accessing }
@@ -124,6 +130,16 @@ MEDSearchQuery >> isRegexpSearch [
 	^ true
 ]
 
+{ #category : #testing }
+MEDSearchQuery >> isSearchTextFiltered [
+	^ text notBlank
+]
+
+{ #category : #testing }
+MEDSearchQuery >> isTagsFiltered [
+	^ tags notBlank
+]
+
 { #category : #accessing }
 MEDSearchQuery >> lastNotificationDatetime [
 	^ lastNotificationDatetime
@@ -141,7 +157,7 @@ MEDSearchQuery >> limit [
 
 { #category : #accessing }
 MEDSearchQuery >> limit: anObject [
-	limit := anObject
+	limit := anObject ifNotNil: #asInteger
 ]
 
 { #category : #'as yet unclassified' }

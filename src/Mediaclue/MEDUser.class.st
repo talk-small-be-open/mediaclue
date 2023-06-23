@@ -16,6 +16,11 @@ Class {
 	#category : #'Mediaclue-Models'
 }
 
+{ #category : #accessing }
+MEDUser class >> displayName [
+	^ 'Benutzer'
+]
+
 { #category : #testing }
 MEDUser class >> isVoyageRoot [
 	^true

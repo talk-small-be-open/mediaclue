@@ -36,6 +36,8 @@
   - name: Stopping Mediaclue
     shell: monit stop mediaclue_pharo
 
+# todo: wait until pharo stopped
+  
   - name: Do backup pharo image
     become_user: "{{remoteUser}}"
     shell: "./backup-image-snapshot.sh"

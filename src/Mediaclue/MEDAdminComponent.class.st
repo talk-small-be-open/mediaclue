@@ -85,7 +85,7 @@ MEDAdminComponent >> initialize [
 
 { #category : #accessing }
 MEDAdminComponent >> pages [
-	^ #(config butler stats userGroups users tags demo ldap)
+	^ #(config butler stats userGroups users tags ldap demo trash)
 ]
 
 { #category : #accessing }
@@ -205,6 +205,27 @@ MEDAdminComponent >> renderPageTagsOn: html [
 ]
 
 { #category : #rendering }
+MEDAdminComponent >> renderPageTrashOn: html [
+"	html buttonToolbar: [
+		html anchorButton
+			callback: [ self createUser ];
+			with: 'Erstellen' ]."
+	
+	html paragraph: 'These objects have been automatically deleted. This list is just for logging purpose. The objects remain in memory, but have been deleted from the database.'.
+	
+	html table: [
+		self db trashedObjects do: [ :each |
+			html tableRow: [
+				html tableData: each classDisplayName.
+				html tableData: each displayName.
+				html tableData: [ 
+"					html anchor
+						callback: [ self deleteUser: each ];
+						with: 'Löschen'" ]
+	]]]
+]
+
+{ #category : #rendering }
 MEDAdminComponent >> renderPageUserGroupsOn: html [
 	html buttonToolbar: [
 		html anchorButton
@@ -241,6 +262,9 @@ MEDAdminComponent >> renderPageUsersOn: html [
 					html anchor
 						callback: [ self viewUser: each ];
 						with: each displayName].
+"				html tableData: [ 
+					html span: (each portfolio allMyMedias mediasCount asString)
+				]."
 				html tableData: [ 
 					html anchor
 						callback: [ self deleteUser: each ];

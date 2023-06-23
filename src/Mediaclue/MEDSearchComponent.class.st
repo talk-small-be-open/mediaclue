@@ -301,9 +301,14 @@ MEDSearchComponent >> renderOptionsOn: html [
 		html label with: [
 			html checkbox on: #myMediaSetsOnly of: self.
 			html text: ' Nur in eigenen Kollektionen suchen'].
-
-" Suchanfrage speichern als:"
-		].
+	
+		html span: 'Limite: '.
+		html select
+			list: #(10 25 50 100 500);
+			optionalLabel: 'Alle';
+			beOptional;
+			on: #limit of: searchQuery
+	]
 ]
 
 { #category : #rendering }
@@ -347,7 +352,7 @@ MEDSearchComponent >> renderSearchResultsOn: html [
 				ifTrue: [ html paragraph: 'Keine Treffer' ]
 				ifFalse: [
 					html div class: 'mediaSets'; with: [
-						searchResult mediaSetsDo: [ :each |
+						searchResult mediaSetsLimited do: [ :each |
 							html div: [
 								html iconMediaSet; space.
 								html anchor
@@ -355,7 +360,7 @@ MEDSearchComponent >> renderSearchResultsOn: html [
 									with: each displayName]]
 					].
 					html grid class: 'medias'; with: [
-						searchResult mediasDo: [ :each |
+						searchResult mediasLimited do: [ :each |
 							html gridUnit: [
 								mediaRenderer renderBigCard: each on: html]
 						]
@@ -384,8 +389,7 @@ MEDSearchComponent >> renderTags: aCollection title: aString on: html [
 { #category : #initialization }
 MEDSearchComponent >> reset [
 	self initializeSearch.
-	searchQuery clearSearch.
-
+	searchQuery clearFilter.
 ]
 
 { #category : #actions }

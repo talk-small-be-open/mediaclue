@@ -6,7 +6,8 @@ Class {
 
 { #category : #'as yet unclassified' }
 MEDTasks class >> cleanupEmptyFolders [
-	"TODO: Mit find alle leeren Ordner in Original und Preview Folders löschen"
+	"TODO: Mit find alle leeren Ordner in Original und Preview Folders löschen
+	TODO: Put in garbageCollector Class"
 ]
 
 { #category : #initialization }
@@ -18,7 +19,7 @@ MEDTasks class >> resetVoyageDb [
 MEDTasks class >> run5MinutelyTasks [
 	self wakeupButler.
 	
-	self garbageCollect
+	self smalltalkGarbageCollect
 ]
 
 { #category : #schedule }
@@ -48,6 +49,8 @@ MEDTasks class >> runNightlyTasks [
 		MEDLdapUserGroupSyncer new sync ].
 	
 	self cleanupEmptyFolders.
+
+	self projectGarbageCollect.
 
 	self resetVoyageDb
 ]
