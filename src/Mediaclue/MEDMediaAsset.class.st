@@ -42,6 +42,16 @@ MEDMediaAsset class >> contentTypesAndExtensions [
 	self subclassResponsibility
 ]
 
+{ #category : #magritte }
+MEDMediaAsset class >> descriptionOwner [
+	<mongoDescription>
+	
+	^VOToOneDescription new
+		attributeName: 'owner';
+		beEager;
+		yourself
+]
+
 { #category : #'as yet unclassified' }
 MEDMediaAsset class >> displayName [
 	^'Media'

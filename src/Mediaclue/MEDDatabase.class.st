@@ -97,10 +97,6 @@ MEDDatabase >> findMediaByQuery: aSearchQuery [
 		} asD.
 	].
 
-	self ifDevelopment: [
-		self logInfo: mongoQuery asJavascript.
-	].
-
 	mongoQueryMedias := mongoQuery copy.
 	
 	"Medientyp für Medien-Query"
@@ -111,6 +107,12 @@ MEDDatabase >> findMediaByQuery: aSearchQuery [
 	].
 	
 	mongoQueryMediaSets := mongoQuery copy.
+
+
+	self ifDevelopment: [
+		self logInfo: mongoQueryMediaSets asJavascript.
+		self logInfo: mongoQueryMedias asJavascript.
+	].
 
 	result medias: (MEDMediaAsset selectMany: mongoQueryMedias).
 	result mediaSets: (MEDMediaSet selectMany: mongoQueryMediaSets).

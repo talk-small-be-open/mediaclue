@@ -21,9 +21,7 @@ MEDSearchResult >> isEmpty [
 
 { #category : #accessing }
 MEDSearchResult >> mediaSets [
-	^ query hasLimit
-		ifFalse: [ mediaSets ]
-		ifTrue: [ mediaSets firstAtMost: query limit ]
+	^ mediaSets
 ]
 
 { #category : #accessing }
@@ -43,10 +41,15 @@ MEDSearchResult >> mediaSetsDo: aBlock [
 ]
 
 { #category : #accessing }
-MEDSearchResult >> medias [
+MEDSearchResult >> mediaSetsLimited [
 	^ query hasLimit
-		ifFalse: [ medias ]
-		ifTrue: [ medias firstAtMost: query limit ]
+		ifFalse: [ mediaSets ]
+		ifTrue: [ mediaSets firstAtMost: query limit ]
+]
+
+{ #category : #accessing }
+MEDSearchResult >> medias [
+	^ medias
 ]
 
 { #category : #accessing }
@@ -63,6 +66,13 @@ MEDSearchResult >> mediasCount [
 { #category : #enumerating }
 MEDSearchResult >> mediasDo: aBlock [
 	self medias do: aBlock
+]
+
+{ #category : #accessing }
+MEDSearchResult >> mediasLimited [
+	^ query hasLimit
+		ifFalse: [ medias ]
+		ifTrue: [ medias firstAtMost: query limit ]
 ]
 
 { #category : #accessing }
@@ -95,9 +105,9 @@ MEDSearchResult >> selectMedias: aBlockOne sets: aBlockTwo [
 	| copy |
 	copy := self copy.
 	aBlockOne ifNotNil: [
-		copy medias: (self medias select: aBlockOne)].
+		copy medias: (medias select: aBlockOne)].
 	aBlockTwo ifNotNil: [
-		copy mediaSets: (self mediaSets select: aBlockTwo)].
+		copy mediaSets: (mediaSets select: aBlockTwo)].
 
 	^ copy
 ]

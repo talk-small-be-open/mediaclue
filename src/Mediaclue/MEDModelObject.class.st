@@ -6,6 +6,13 @@ Class {
 	#category : #'Mediaclue-Models'
 }
 
+{ #category : #'as yet unclassified' }
+MEDModelObject class >> mongoContainer [ 
+	<mongoContainer>
+	
+	^ WEBVoContainer new
+]
+
 { #category : #validation }
 MEDModelObject >> defaultValidator [
 	^ MEDAlwaysValidValidator object: self

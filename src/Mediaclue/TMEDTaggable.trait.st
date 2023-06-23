@@ -16,6 +16,7 @@ TMEDTaggable classSide >> descriptionTagTitleList [
 { #category : #magritte }
 TMEDTaggable classSide >> mongoTagList [
 	"TODO: Override mit klassenspezifischen Namen der Instanzvariable"
+	self subclassResponsibility
 "	<mongoDescription>
 	
 	^VOToManyDescription new
