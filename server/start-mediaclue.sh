@@ -16,8 +16,10 @@ PID_FILE="$VMDIR/mediaclue.pid"
 
 NOW=$(date +"%Y%m%d%H%M")
 
+cd $VMDIR
+
 # Start Pharo
-$VMDIR/pharo-ui $VMDIR/mediaclue.image --no-default-preferences > $MAINDIR/log/pharo_$NOW.log 2>&1  &
+./pharo-ui mediaclue.image --no-default-preferences > $MAINDIR/log/pharo_$NOW.log 2>&1  &
 
 # Get PID
 sleep 2
