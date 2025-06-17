@@ -6,4 +6,4 @@ mediaclue_*.yml
 
 kjewrfkjhasdfkjhw.txt
 *.retry
-xpra_to_mediaclue_server.sh
+xpra*.sh
