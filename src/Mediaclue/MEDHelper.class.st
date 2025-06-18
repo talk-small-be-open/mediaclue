@@ -35,8 +35,8 @@ MEDHelper class >> runUnoconv: aParameterString [
 	"brauche Standard System python"
 	python := ''.
 	
-	self isDevelopment
-		ifTrue: [python := '/Applications/office/LibreOffice_Albus.app/Contents/MacOS/python '].
+"	self isDevelopment
+		ifTrue: [python := '/Applications/office/LibreOffice_Albus.app/Contents/MacOS/python ']."
 
 	"Hinweis: -v ist nicht nötig, aber es gab komische Nebeneffekte mit deadlocks,
 	und das hat vermutlich mit stdin zu tun, und meine Beobachtung war,

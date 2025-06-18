@@ -18,9 +18,9 @@ MEDApplicationManager class >> beDevelopment [
 		smtpUsername: '';
 		smtpPassword: '';
 		sysAdminEmailAddress: 'guru@you.com';
-		assetsBasePath: '/pathto/mediaclue/main/media_storage';
+		assetsBasePath: (WEBHelper appMainFolder / 'media_storage') pathString;
 		assetsUrlBasePath: '/m';
-		previewsBasePath: '/pathto/mediaclue/main/tmp/preview_storage';
+		previewsBasePath: (WEBHelper appMainFolder / 'preview_storage') pathString;
 		previewsUrlBasePath: '/p';
 		unwantedExifTags: self defaultUnwantedExifTags;
 		organizationShortName: 'XY';
