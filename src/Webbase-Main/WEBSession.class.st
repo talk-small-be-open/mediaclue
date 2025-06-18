@@ -144,3 +144,8 @@ WEBSession >> user [
 WEBSession >> user: aUser [
 	user := aUser
 ]
+
+{ #category : #'as yet unclassified' }
+WEBSession >> userLabel [
+	^ self isLoggedIn ifTrue: [ user displayName ] ifFalse: [ 'Anonymous' ]
+]

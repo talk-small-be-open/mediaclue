@@ -10,7 +10,7 @@ Class {
 WEBEmailErrorHandler >> bodyFor: anError [
 	^ WAStringEmailBody string: (String streamContents: [ :stream | 
 		stream nextPutAll: 'Benutzer: '.
-		stream nextPutAll: self session user displayName.
+		stream nextPutAll: self session userLabel.
 		stream crlf; crlf.
 		stream nextPutAll: anError description.
 		stream crlf; crlf.
@@ -29,7 +29,7 @@ WEBEmailErrorHandler >> from [
 WEBEmailErrorHandler >> handleDefault: anException [
 	
 	[
-		self logError: ('Exception on Frontend. User ', self session user displayName, ' has seen error information: ', anException description).
+		self logError: ('Exception on Frontend. User ', self session userLabel, ' has seen error information: ', anException description).
 		self sendFailFor: anException.
 	] ifError: [:description |
 		Transcript

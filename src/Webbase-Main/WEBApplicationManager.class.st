@@ -121,7 +121,9 @@ WEBApplicationManager class >> enableAutomation [
 { #category : #'as yet unclassified' }
 WEBApplicationManager class >> ensureExternalProcessWarmup [
 	"Manchmal gab es Zombie-Prozesse und dies half dagegen"
-	OSProcessAccessor initialize
+	"OSProcessAccessor initialize"
+	
+	"Since we use OSSubprocess, nothing to do here"
 ]
 
 { #category : #'as yet unclassified' }

@@ -42,11 +42,17 @@ WEBVoyageMongoDatabase >> setUpVoyageConnection [
 	].
 
 	self isProductionOrAlike ifTrue: [
-		repository := WEBVoMongoRepository 
-			host: 'localhost' 
-			database: self pi projectCode
-			username: self pi projectCode
-			password: self pi mongoDbPassword.
+		repository := self pi mongoDbPassword ifBlank: [ 
+			WEBVoMongoRepository 
+				host: 'localhost' 
+				database: self pi projectCode.
+		] ifNotBlank: [ :pw |
+			WEBVoMongoRepository 
+				host: 'localhost' 
+				database: self pi projectCode
+				username: self pi projectCode
+				password: pw.
+		]
 	].
 	
 	repository

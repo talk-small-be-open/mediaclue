@@ -10,6 +10,11 @@ Class {
 }
 
 { #category : #accessing }
+WEBObject class >> displayName [
+	^ self name asString
+]
+
+{ #category : #accessing }
 WEBObject >> classDisplayName [
 	^self class displayName
 ]

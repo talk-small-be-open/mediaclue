@@ -10,8 +10,8 @@ WEBTasks class >> cleanupButler [
 ]
 
 { #category : #tasks }
-WEBTasks class >> garbageCollect [
-	Smalltalk garbageCollect
+WEBTasks class >> projectGarbageCollect [
+	self pi defaultGarbageCollectorClass new gcAll
 ]
 
 { #category : #schedule }
@@ -46,6 +46,11 @@ WEBTasks class >> saveSmalltalkImage [
 	Smalltalk saveSession.
 
 	"TODO: Make history copy of the image&sources file through file operations?"
+]
+
+{ #category : #tasks }
+WEBTasks class >> smalltalkGarbageCollect [
+	Smalltalk garbageCollect
 ]
 
 { #category : #tasks }

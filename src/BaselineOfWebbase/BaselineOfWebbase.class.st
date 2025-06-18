@@ -12,11 +12,17 @@ BaselineOfWebbase >> baseline: spec [
 		spec preLoadDoIt: #'preload:package:'.
 "		spec blessing: #'baseline'."
 		spec 
-			project: 'CommandShell' with: [
+"			project: 'CommandShell' with: [
 				spec
 					className: #ConfigurationOfCommandShell;
 					versionString: #'stable';
-					repository: 'http://www.squeaksource.com/MetacelloRepository' ];
+					repository: 'http://www.squeaksource.com/MetacelloRepository' ];"
+			baseline: 'OSSubprocess' with: [
+				spec
+					repository: 'github://pharo-contributions/OSSubprocess:v1.3.0/repository'.
+"					load."
+			];
+
 			baseline: 'Seaside3' with: [
 				spec
 "					versionString: #'stable';"
@@ -74,7 +80,7 @@ BaselineOfWebbase >> baseline: spec [
 	spec for: #pharo do: [
 		spec package: #'Webbase-Main' with: [
 			spec
-				requires: #('OrderPreservingDictionary' 'Seaside3' 'CommandShell' );
+				requires: #('OrderPreservingDictionary' 'Seaside3' 'OSSubprocess' );
 				repository: 'github://talk-small-be-open/webbase'].
 		spec package: #'Webbase-VoyageMongo' with: [
 			spec
