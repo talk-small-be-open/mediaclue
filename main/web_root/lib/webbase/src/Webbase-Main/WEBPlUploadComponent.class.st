@@ -177,7 +177,8 @@ WEBPlUploadComponent >> renderDynamicJsOn: html [
 	jsUploadedEventHandler := (html jQuery ajax
 		callback: [ :name | self ajaxUploadedFile: name ]
 		value: (JSStream on: 'ajaxParameter');
-		onError: (html javascript alert: 'Fehler mit der Kommunikation (XHR)!')).
+		onError: ( ( html javascript alert: (JSStream on: '"Fehler mit der XHR-Kommunikation! " + errorType + " " + exceptionObject')) asFunction: #(request errorType exceptionObject) )
+	).
 
 	js := (JSStream on: ('
 

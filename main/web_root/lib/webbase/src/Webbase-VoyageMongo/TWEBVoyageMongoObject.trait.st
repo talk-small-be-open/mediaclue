@@ -35,6 +35,9 @@ TWEBVoyageMongoObject classSide >> isVoyageRoot [
 { #category : #'as yet unclassified' }
 TWEBVoyageMongoObject classSide >> mongoContainer [ 
 	<mongoContainer>
+	
+	"TODO in user class: Overwrite this method in the traits user, since the pragma will not be found by Voyage"
+	self subclassResponsibility.
 
 	^WEBVoContainer new 
 ]

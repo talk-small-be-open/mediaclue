@@ -115,7 +115,7 @@ WEBDatabase >> addApplicationCommand: aSystemCommand [
 
 { #category : #initialization }
 WEBDatabase >> addToTrash: aCollection [
-	trash add: aCollection
+	trash addIfNotPresent: aCollection
 ]
 
 { #category : #accessing }
@@ -272,6 +272,11 @@ WEBDatabase >> simpleLogText: aTextString [
 	text := DateAndTime now printString, ' ', aTextString.
 
 	Transcript show: text; cr.
+]
+
+{ #category : #'as yet unclassified' }
+WEBDatabase >> trashedObjects [
+	^ trash copy
 ]
 
 { #category : #accessing }

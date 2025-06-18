@@ -4,10 +4,21 @@ Class {
 	#traits : 'TWEBGlobalHelpers',
 	#classTraits : 'TWEBGlobalHelpers classTrait',
 	#instVars : [
-		'binPath'
+		'binCommand'
 	],
 	#category : #'Webbase-VoyageMongo'
 }
+
+{ #category : #initialization }
+WEBVoMongoRepository >> binCommand [
+	self ifDevelopment: [
+		^ 'podman exec mediaclueDB-mongo363 mongo' ].
+
+	^ '/usr/bin/mongo'.
+	
+	
+
+]
 
 { #category : #'as yet unclassified' }
 WEBVoMongoRepository >> createIndex: aDictionary on: aCollectionName [
@@ -18,7 +29,7 @@ WEBVoMongoRepository >> createIndex: aDictionary on: aCollectionName [
 { #category : #'as yet unclassified' }
 WEBVoMongoRepository >> createIndex: aDictionary on: aCollectionName options: anOptionsDictionary [
 	| cmd |
-	cmd := binPath, '/mongo --eval ''',
+	cmd := (self binCommand), ' --eval ''',
 	'db.getSiblingDB("', databaseName, '").', aCollectionName, '.','createIndex(', aDictionary asD asJson, ', ', anOptionsDictionary asD asJson, ' )'''.
 	
 	"dict: {''receipts.description'':1}"
@@ -29,7 +40,7 @@ WEBVoMongoRepository >> createIndex: aDictionary on: aCollectionName options: an
 { #category : #'as yet unclassified' }
 WEBVoMongoRepository >> dropIndexesOn: aCollectionName [
 	| cmd |
-	cmd := binPath, '/mongo <<EOF ','
+	cmd := (self binCommand), ' <<EOF ','
 db.getSiblingDB("', databaseName, '").', aCollectionName, '.','dropIndexes()
 EOF'.
 
@@ -39,13 +50,7 @@ EOF'.
 { #category : #initialization }
 WEBVoMongoRepository >> initialize [
 	super initialize.
-	
-	"TODO"
-	binPath := '/usr/bin'.
-	
-	self ifDevelopment: [
-		binPath := '/usr/local/mongodb/bin'].
-	
+		
 "Superklasse:	self wireProtocolEnabled: true.
 	self ensuringCurrentOnSave: false.
 	self ensuringCurrentReferencesOnQueries: false.

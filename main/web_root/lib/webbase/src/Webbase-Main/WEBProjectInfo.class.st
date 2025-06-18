@@ -145,6 +145,11 @@ WEBProjectInfo >> defaultFrontendSessionClass [
 ]
 
 { #category : #'as yet unclassified' }
+WEBProjectInfo >> defaultGarbageCollectorClass [
+	^ self concreteClassOf: WEBGarbageCollector
+]
+
+{ #category : #'as yet unclassified' }
 WEBProjectInfo >> defaultGlobalConfigurationClass [
 	self subclassResponsibility
 ]
