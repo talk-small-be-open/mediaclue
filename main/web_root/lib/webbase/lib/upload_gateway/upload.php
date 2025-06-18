@@ -5,7 +5,7 @@
 // Andreas Brodbeck
 //
 
-if (gethostname() == 'mindclue-dassi-main.local') {
+if (gethostname() == 'dassi-thinkpad') {
 	 $DEVELOPMENT = true;
 } else {
 	 $DEVELOPMENT = false;
@@ -26,7 +26,8 @@ http_response_code(500);
 
 // Settings
 $albusUploadSessionId = $_GET['id'];
-$targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload" . DIRECTORY_SEPARATOR . $albusUploadSessionId;
+$targetBaseDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
+$targetDir = $targetBaseDir . DIRECTORY_SEPARATOR . $albusUploadSessionId;
 
 // Create target dir
 if (!file_exists($targetDir)) {
@@ -42,8 +43,9 @@ $chunk = isset($_REQUEST["chunk"]) ? intval($_REQUEST["chunk"]) : 0;
 $chunks = isset($_REQUEST["chunks"]) ? intval($_REQUEST["chunks"]) : 0;
 
 // Open the temp file
-if (!$out = @fopen("{$filePath}.part", $chunks ? "ab" : "wb")) {
-	die('Failed to open output stream.');
+$tmpFile = "{$filePath}.part";
+if (!$out = @fopen($tmpFile, $chunks ? "ab" : "wb")) {
+	die("Failed to open output stream. " . $tmpFile);
 }
 
 if (!empty($_FILES)) {
@@ -76,7 +78,7 @@ if (!$chunks || $chunk == $chunks - 1) {
 }
 
 if ($DEVELOPMENT) {
-	$nginx_usergroup = '_www';
+	$nginx_usergroup = 'http';
 } else {
 	$nginx_usergroup = 'www-data';
 }
