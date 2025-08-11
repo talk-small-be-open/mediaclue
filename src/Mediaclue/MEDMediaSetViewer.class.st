@@ -278,6 +278,7 @@ MEDMediaSetViewer >> renderPropertiesOn: html [
 		html maRow: #permissionType.
 		html maRowIfNotBlank: #readPermittedAuthorities.
 		html maRowIfNotBlank: #writePermittedAuthorities.
+		html maRow: #isGallery.
 		self ifDevelopment: [ 
 			html maRow: #uuidString ].
 		html maRow: #owner.

@@ -26,8 +26,10 @@ MEDGalleriesComponentBase >> children [
 { #category : #initialization }
 MEDGalleriesComponentBase >> initialize [
 	super initialize.
-	title := 'Öffentliche Bildergalerien'.
-	mediaSets ifNil: [ mediaSets := self db findPublicMediaSets ]
+
+"	mediaSets ifNil: [ mediaSets := self db findPublicGalleries sortedReversedBy: [ :each |
+		each createdAt ifNil: [ Date today ] ]
+	]"
 ]
 
 { #category : #testing }

@@ -48,6 +48,12 @@ MEDDatabase >> ensureAdminExists [
 ]
 
 { #category : #'as yet unclassified' }
+MEDDatabase >> findGalleries [
+	^ MEDMediaSet selectMany: [ :each | each isGallery = true ]
+
+]
+
+{ #category : #'as yet unclassified' }
 MEDDatabase >> findMediaByQuery: aSearchQuery [
 	| result mongoQuery mongoQueryMedias mongoQueryMediaSets |
 
@@ -160,6 +166,14 @@ MEDDatabase >> findOrCreateTagByTitle: aString [
 			tag title: aString capitalized trimBoth.
 			self addTag: tag.
 			tag]]
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> findPublicGalleries [
+	^ MEDMediaSet selectMany: [ :each |
+		each isGallery = true &
+		(each permissionType = 'public') ]
+
 ]
 
 { #category : #'as yet unclassified' }

@@ -271,6 +271,7 @@ MEDMediaSetEditor >> renderModelOn: html [
 		html maGrid: #readPermittedAuthorities.
 		html maGrid: #writePermittedAuthorities.
 		html maGrid: #sortPath.
+		html maGrid: #isGallery.
 
 		isWithBulkOperations ifTrue: [
 			self renderBulkOperationsOn: html].

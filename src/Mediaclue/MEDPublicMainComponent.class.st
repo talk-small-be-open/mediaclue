@@ -68,7 +68,7 @@ MEDPublicMainComponent >> renderMenuOn: html [
 				self isDevelopment ifTrue: [
 					html menuEntry: [ self gotoDirectLogin ] with: [html iconHome; text: 'Direkt anmelden'].
 				].
-				html menuEntry: [ self gotoGalleries ] with: [html iconGallery; text: 'Galerien'].
+				html menuEntry: [ self gotoPublicGalleries ] with: [html iconGallery; text: 'Galerien'].
 			].
 		].
 		self renderFooterOn: html.

@@ -8,5 +8,5 @@ Class {
 
 { #category : #'as yet unclassified' }
 MEDMaMultipleOptionDescription class >> defaultCssClasses [
-	^ #(selectized)
+	^ OrderedCollection with: #selectized
 ]
