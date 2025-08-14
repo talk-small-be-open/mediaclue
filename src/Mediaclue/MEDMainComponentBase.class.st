@@ -15,13 +15,23 @@ MEDMainComponentBase >> children [
 { #category : #'as yet unclassified' }
 MEDMainComponentBase >> gotoGalleries [
 	| galleries |
-	galleries := self db findPublicMediaSets sortedReversedBy: [ :each | each createdAt ifNil: [ Date today ] ].
+	galleries := self db findGalleries sortedReversedBy: [ :each | each createdAt ifNil: [ Date today ] ].
 	coreComponent := (MEDGalleriesComponent mediaSets: galleries)
 ]
 
 { #category : #'as yet unclassified' }
 MEDMainComponentBase >> gotoHome [
 	"subclasses"
+]
+
+{ #category : #'as yet unclassified' }
+MEDMainComponentBase >> gotoPublicGalleries [
+	| galleries |
+	galleries := self db findPublicGalleries sortedReversedBy: [ :each | each createdAt ifNil: [ Date today ] ].
+	coreComponent := (MEDGalleriesComponent mediaSets: galleries)
+		title: 'Öffentliche Bildergalerien';
+		yourself.
+
 ]
 
 { #category : #initialization }

@@ -12,7 +12,8 @@ Class {
 		'tagList',
 		'createdAt',
 		'readPermittedAuthorities',
-		'writePermittedAuthorities'
+		'writePermittedAuthorities',
+		'isGallery'
 	],
 	#category : #'Mediaclue-Models'
 }
@@ -80,6 +81,19 @@ MEDMediaSet >> descriptionDescription [
 		accessor: #description;
 		label: 'Beschreibung';
 		lineCount: 1;
+		yourself
+]
+
+{ #category : #magritte }
+MEDMediaSet >> descriptionIsGallery [
+	<magritteDescription>
+	^ MABooleanDescription new
+		accessor: #isGallery;
+		label: 'Fotogalerie';
+		trueString: 'Ja';
+		falseString: 'Nein';
+		checkboxLabel: 'Ja, als Fotogalerie auflisten';
+		default: false;
 		yourself
 ]
 
@@ -167,6 +181,7 @@ MEDMediaSet >> initialize [
 	writePermittedAuthorities := OrderedCollection new.
 "	tagList := OrderedCollection new."
 	createdAt := DateAndTime now.
+	isGallery := false.
 ]
 
 { #category : #initialization }
@@ -175,6 +190,16 @@ MEDMediaSet >> initializeDefaultValues [
 	
 	tagList ifNil: [ tagList := Set new ].	
 
+]
+
+{ #category : #accessing }
+MEDMediaSet >> isGallery [
+	^ isGallery = true
+]
+
+{ #category : #accessing }
+MEDMediaSet >> isGallery: anObject [
+	isGallery := anObject
 ]
 
 { #category : #accessing }

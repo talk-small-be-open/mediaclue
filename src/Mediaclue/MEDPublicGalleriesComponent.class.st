@@ -41,6 +41,12 @@ MEDPublicGalleriesComponent >> initialRequest: aRequest [
 MEDPublicGalleriesComponent >> initialize [
 	super initialize.
 
+	title := 'Öffentliche Bildergalerien'.
+
+	mediaSets ifNil: [ mediaSets := self db findPublicGalleries sortedReversedBy: [ :each |
+		each createdAt ifNil: [ Date today ] ]
+	].
+
 	self addDecoration: self pi defaultMainDecorationClass new
 ]
 

@@ -70,6 +70,7 @@ TMEDProtected >> descriptionReadPermittedAuthorities [
 	^ MEDMaMultipleOptionDescription new
 		accessor: #readPermittedAuthorities;
 		optionsBlock: [self db authorities];
+		cssClass: 'permissionTypeDetails';
 		label: 'Sichtbar auch für';
 		yourself
 ]
