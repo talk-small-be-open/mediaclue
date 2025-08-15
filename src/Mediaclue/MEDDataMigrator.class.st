@@ -23,7 +23,10 @@ MEDDataMigrator >> m002RenewIdentityProvider [
 
 { #category : #migrations }
 MEDDataMigrator >> m003NewPropertyIsGallery [
-	"do nothing, but reset the connection after migrate, which picks up the new isGallery attribute in MediaSet"
+
+	"Neues Schema"
+	VORepository current reset.
+
 	self db findPublicMediaSets do: [ :each |
 		each isGallery: true; save. ]
 ]
