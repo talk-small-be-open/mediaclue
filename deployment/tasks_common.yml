@@ -67,19 +67,19 @@
 # wget -qO - https://xpra.org/xpra-2022.gpg | sudo apt-key add -
 # wget -qO - https://xpra.org/xpra-2023.gpg | sudo apt-key add -
 #
-    
+
   - name: Add XPRA repo key
     apt_key:
-      url: https://xpra.org/xpra-2018.gpg
-      #url: https://xpra.org/xpra.asc
+      #url: https://xpra.org/xpra-2018.gpg
+      url: https://xpra.org/xpra.asc
       state: present
   - name: Add XPRA apt repo
     apt_repository:
-      repo: "deb https://xpra.org/ bionic main"
+      repo: "deb https://xpra.org/lts bionic main"
       state: present
       update_cache: yes
-      
-    
+
+
   - name: Install basic apt packages
     apt:
       state: present
@@ -88,6 +88,7 @@
         - 'git'
         - 'imagemagick'
         - 'xauth'
+        # TODO: xpra kann nicht installiert werden, weil es eine neuere Version will, welche aber nicht auf 18.04. vollständig hinterlegt ist...
         - 'xpra'
         - 'htop'
         - 'unzip'
@@ -111,7 +112,7 @@
     
   - name: Install special version of wkhtmltopdf
     apt:
-      deb: https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+      deb: https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
     when: result.stat.exists == false
 
   - name: Check if pdftk is present
@@ -121,7 +122,7 @@
       
   - name: Install special version of pdftk (snap Version hat zu wenig Filerechte)
     apt:
-      deb: http://de.archive.ubuntu.com/ubuntu/pool/universe/p/pdftk-java/pdftk-java_3.0.2-2_all.deb
+      deb: https://archive.ubuntu.com/ubuntu/pool/universe/p/pdftk-java/pdftk-java_3.0.9-1_all.deb
     when: result.stat.exists == false
 
   - name: ImageMagick policy File (to allow processing of PDF, ...)
