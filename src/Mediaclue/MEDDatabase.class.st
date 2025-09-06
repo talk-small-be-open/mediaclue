@@ -120,17 +120,33 @@ MEDDatabase >> findMediaByQuery: aSearchQuery [
 		self logInfo: mongoQueryMedias asJavascript.
 	].
 
-	result medias: (MEDMediaAsset selectMany: mongoQueryMedias).
-	result mediaSets: (MEDMediaSet selectMany: mongoQueryMediaSets).
+
+
+	result medias: (MEDMediaAsset selectMany: mongoQueryMedias limit: aSearchQuery limit).
+	result mediaSets: (MEDMediaSet selectMany: mongoQueryMediaSets limit: aSearchQuery limit).
+
+	"Wenn wir eine Limite haben, dann müssen wir die tatsächliche Anzahl explizit berechnen lassen"
+	aSearchQuery hasLimit ifTrue: [ 
+		result mediasCount: (MEDMediaAsset count: mongoQueryMedias).
+		result mediaSetsCount: (MEDMediaSet count: mongoQueryMediaSets)
+	] ifFalse: [ 
+		result mediasCount: result medias size.
+		result mediaSetsCount: result mediaSets size.
+	].
 	
 	^ result
 ]
 
 { #category : #'as yet unclassified' }
 MEDDatabase >> findMediaForUser: aUser query: aSearchQuery [
-	| searchResult |
-	searchResult := (self findMediaByQuery: aSearchQuery) select: [ :eachMediaOrSet |
-		eachMediaOrSet canView: aUser ].
+	| searchResult query |
+	query := aSearchQuery copy.
+	
+	query allowedUser: aUser.
+	
+	searchResult := (self findMediaByQuery: query).
+"	select: [ :eachMediaOrSet |
+		eachMediaOrSet canView: aUser ]."
 	
 "	aSearchQuery hasLimit ifTrue: [
 		searchResult := medias firstAtMost: aSearchQuery limit ]."

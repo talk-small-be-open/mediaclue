@@ -19,7 +19,8 @@ MEDExiftool >> runOn: aMedia options: aString [
 	"Liefert ein JSON Array, pro Bild ein Dict."
 	output := WEBSystemCommand fetch: cmd.
 	
-	^ (WAJsonParser parse: (WEBHelper fromUtf8: output)) first
+"	^ (WAJsonParser parse: (WEBHelper fromUtf8: output)) first"
+	^ (WAJsonParser parse: output) first
 ]
 
 { #category : #visiting }

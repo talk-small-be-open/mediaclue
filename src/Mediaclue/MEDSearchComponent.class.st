@@ -149,6 +149,7 @@ MEDSearchComponent >> initialize [
 MEDSearchComponent >> initializeSearch [
 	searchQuery ifNil: [
 		searchQuery := self currentPortfolio lastSearchQuery.
+		searchQuery limit: 100.
 	].
 
 "	searchQuery ifNil: [
@@ -352,19 +353,21 @@ MEDSearchComponent >> renderSearchResultsOn: html [
 				ifTrue: [ html paragraph: 'Keine Treffer' ]
 				ifFalse: [
 					html div class: 'mediaSets'; with: [
-						searchResult mediaSetsLimited do: [ :each |
+						searchResult mediaSets do: [ :each |
 							html div: [
 								html iconMediaSet; space.
 								html anchor
 									callback: [ self showMediaSet: each ];
-									with: each displayName]]
+									with: each displayName ] ].
+						searchResult hasMoreMediaSets ifTrue: [ html div: '... und weitere Kollektionen' ].
 					].
 					html grid class: 'medias'; with: [
-						searchResult mediasLimited do: [ :each |
+						searchResult medias do: [ :each |
 							html gridUnit: [
 								mediaRenderer renderBigCard: each on: html]
-						]
-					]
+						].
+					].
+					searchResult hasMoreMedias ifTrue: [ html div: '... und weitere Medien' ].
 		]]]
 ]
 

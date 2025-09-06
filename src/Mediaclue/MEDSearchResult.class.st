@@ -4,10 +4,22 @@ Class {
 	#instVars : [
 		'query',
 		'medias',
-		'mediaSets'
+		'mediaSets',
+		'mediaSetsCount',
+		'mediasCount'
 	],
 	#category : #'Mediaclue-Misc'
 }
+
+{ #category : #testing }
+MEDSearchResult >> hasMoreMediaSets [
+	^ self mediaSetsCount > mediaSets size
+]
+
+{ #category : #testing }
+MEDSearchResult >> hasMoreMedias [
+	^ self mediasCount > medias size
+]
 
 { #category : #'as yet unclassified' }
 MEDSearchResult >> hitsCount [
@@ -31,20 +43,17 @@ MEDSearchResult >> mediaSets: anObject [
 
 { #category : #'as yet unclassified' }
 MEDSearchResult >> mediaSetsCount [
-	mediaSets ifBlank: [ ^0 ].
-	^ mediaSets size
+	^ mediaSetsCount ifNil: [ 0 ]
+]
+
+{ #category : #accessing }
+MEDSearchResult >> mediaSetsCount: anObject [
+	mediaSetsCount := anObject
 ]
 
 { #category : #enumerating }
 MEDSearchResult >> mediaSetsDo: aBlock [
 	self mediaSets do: aBlock
-]
-
-{ #category : #accessing }
-MEDSearchResult >> mediaSetsLimited [
-	^ query hasLimit
-		ifFalse: [ mediaSets ]
-		ifTrue: [ mediaSets firstAtMost: query limit ]
 ]
 
 { #category : #accessing }
@@ -59,20 +68,17 @@ MEDSearchResult >> medias: anObject [
 
 { #category : #'as yet unclassified' }
 MEDSearchResult >> mediasCount [
-	medias ifBlank: [ ^0 ].
-	^ medias size
+	^ mediasCount ifNil: [ 0 ]
+]
+
+{ #category : #accessing }
+MEDSearchResult >> mediasCount: anObject [
+	mediasCount := anObject
 ]
 
 { #category : #enumerating }
 MEDSearchResult >> mediasDo: aBlock [
 	self medias do: aBlock
-]
-
-{ #category : #accessing }
-MEDSearchResult >> mediasLimited [
-	^ query hasLimit
-		ifFalse: [ medias ]
-		ifTrue: [ medias firstAtMost: query limit ]
 ]
 
 { #category : #accessing }
@@ -87,17 +93,9 @@ MEDSearchResult >> query: anObject [
 
 { #category : #enumerating }
 MEDSearchResult >> select: aBlock [
+	self shouldNotImplement.
+	
 	^ self selectMedias: aBlock sets: aBlock
-]
-
-{ #category : #enumerating }
-MEDSearchResult >> selectMediaSets: aBlock [
-	^ self selectMedias: nil sets: aBlock
-]
-
-{ #category : #enumerating }
-MEDSearchResult >> selectMedias: aBlock [
-	^ self selectMedias: aBlock sets: nil
 ]
 
 { #category : #enumerating }

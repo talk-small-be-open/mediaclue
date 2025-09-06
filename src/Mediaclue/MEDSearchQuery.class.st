@@ -12,7 +12,8 @@ Class {
 		'includeImage',
 		'includeAudio',
 		'includeVideo',
-		'includeDocument'
+		'includeDocument',
+		'allowedUser'
 	],
 	#category : #'Mediaclue-Models'
 }
@@ -25,6 +26,16 @@ MEDSearchQuery class >> isVoyageRoot [
 { #category : #adding }
 MEDSearchQuery >> addTag: aTag [
 	tags addIfNotPresent: aTag
+]
+
+{ #category : #accessing }
+MEDSearchQuery >> allowedUser [
+	^ allowedUser
+]
+
+{ #category : #accessing }
+MEDSearchQuery >> allowedUser: anObject [
+	allowedUser := anObject
 ]
 
 { #category : #'as yet unclassified' }

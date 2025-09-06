@@ -62,7 +62,10 @@ MEDPortfolio >> initialize [
 
 { #category : #accessing }
 MEDPortfolio >> lastSearchQuery [
-	lastSearchQuery ifNil: [ lastSearchQuery := MEDSearchQuery new ].
+	lastSearchQuery ifNil: [
+		lastSearchQuery := MEDSearchQuery new.
+		lastSearchQuery limit: 100.
+	].
 	^ lastSearchQuery
 ]
 
