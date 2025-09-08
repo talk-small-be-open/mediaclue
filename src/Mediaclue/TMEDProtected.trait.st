@@ -31,12 +31,12 @@ TMEDProtected >> canView: aUser [
 	"Owner kann immer"
 	self owner = aUser ifTrue: [ ^ true ].
 
-	pt = #all ifTrue: [ ^ aUser isKindOf: MEDUser ].
+	pt = #all ifTrue: [ ^ aUser isKindOf: MEDUser "TODO simply true?" ].
 	
 	"Logisch nicht explizit nötig	pt = 'owner' ifTrue: [ ^ self owner = aUser ]."
 
 	pt = #groups ifTrue: [
-		^ self readPermittedAuthorities anySatisfy: [ :each | each containsUser: aUser ]
+		(self readPermittedAuthorities anySatisfy: [ :each | each containsUser: aUser ]) ifTrue: [ ^ true ].
 	].
 
 	"Mit Schreibrechten kann immer"
