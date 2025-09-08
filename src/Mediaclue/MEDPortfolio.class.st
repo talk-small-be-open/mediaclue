@@ -27,7 +27,9 @@ MEDPortfolio class >> user: aUser [
 
 { #category : #adding }
 MEDPortfolio >> addSearchQuery: aSearchQuery [
-	searchQueries add: aSearchQuery copy
+	searchQueries add: (aSearchQuery copy
+		allowedUser: user;
+		yourself)
 ]
 
 { #category : #accessing }
@@ -64,7 +66,9 @@ MEDPortfolio >> initialize [
 MEDPortfolio >> lastSearchQuery [
 	lastSearchQuery ifNil: [
 		lastSearchQuery := MEDSearchQuery new.
-		lastSearchQuery limit: 100.
+		lastSearchQuery
+			limit: 100;
+			allowedUser: user.
 	].
 	^ lastSearchQuery
 ]

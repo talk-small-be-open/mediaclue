@@ -146,7 +146,7 @@ MEDSearchQuery >> clearFilter [
 	includeVideo := true.
 	includeImage := true.
 	includeDocument := true.
-	allowedUser := nil.
+"DONT	allowedUser := nil."
 ]
 
 { #category : #initialization }
@@ -278,7 +278,7 @@ MEDSearchQuery >> mediaTypes [
 
 { #category : #accessing }
 MEDSearchQuery >> myMediaOnly [
-	^ myMediaOnly
+	^ myMediaOnly = true
 ]
 
 { #category : #accessing }
@@ -316,7 +316,9 @@ MEDSearchQuery >> removeTag: aTag [
 { #category : #'as yet unclassified' }
 MEDSearchQuery >> sanitizeQuery [
 	({includeAudio. includeVideo. includeDocument. includeImage} allSatisfy: [ :each | each = false ])
-		ifTrue: [ self includeAllMedia ]
+		ifTrue: [ self includeAllMedia ].
+		
+	allowedUser ifNil: [ myMediaOnly := false ]
 ]
 
 { #category : #accessing }

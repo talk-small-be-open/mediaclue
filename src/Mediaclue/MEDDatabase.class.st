@@ -153,8 +153,8 @@ MEDDatabase >> findMediaByQuery: aSearchQuery [
 	mongoQueryMedias := mongoQuery copy.
 	mongoQueryMediaSets := mongoQuery copy.
 	
-	"Medientyp für Medien-Query"
-	mongoQueryMedias removeKey: '#instanceOf' ifAbsent: [].
+	"Media type filtering makes no sense for sets (so far)"
+	mongoQueryMediaSets removeKey: '#instanceOf' ifAbsent: [].
 
 	self ifDevelopment: [
 		self logInfo: mongoQueryMediaSets asJavascript.

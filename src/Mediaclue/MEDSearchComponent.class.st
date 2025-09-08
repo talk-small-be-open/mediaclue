@@ -140,7 +140,7 @@ MEDSearchComponent >> initialize [
 
 	allTags := self db tags sortedBySortKey.
 	
-	myMediaSets := self currentPortfolio mediaSets.
+"	myMediaSets := self currentPortfolio mediaSets."
 	
 	self initializeSearch
 ]
@@ -150,6 +150,9 @@ MEDSearchComponent >> initializeSearch [
 	searchQuery ifNil: [
 		searchQuery := self currentPortfolio lastSearchQuery.
 		searchQuery limit: 100.
+		
+		"Just to ensure, double proof"
+		searchQuery allowedUser: self currentUser.
 	].
 
 "	searchQuery ifNil: [
@@ -158,8 +161,10 @@ MEDSearchComponent >> initializeSearch [
 	searchResult := nil.
 	suggestedTags := OrderedCollection new.
 	minorSelectedTags := OrderedCollection new.
-	myMediaSetsOnly := false.
 	mediaRenderer clearSelection.
+	
+"	self myMediaSetsOnly: false."
+
 ]
 
 { #category : #testing }
@@ -180,7 +185,7 @@ MEDSearchComponent >> majorTags [
 
 { #category : #accessing }
 MEDSearchComponent >> myMediaSetsOnly [
-	^ myMediaSetsOnly
+	^ searchQuery myMediaOnly
 ]
 
 { #category : #accessing }
@@ -188,7 +193,7 @@ MEDSearchComponent >> myMediaSetsOnly: anObject [
 
 	searchQuery myMediaOnly: anObject.
 
-	myMediaSetsOnly := anObject
+"	myMediaSetsOnly := anObject"
 ]
 
 { #category : #initializing }
@@ -427,7 +432,7 @@ MEDSearchComponent >> saveAsSearchQuery [
 
 { #category : #initializing }
 MEDSearchComponent >> search [
-	searchResult := self db findMediaForUser: self currentUser query: searchQuery.
+	searchResult := self db findMediaByQuery: searchQuery.
 	
 "Not anymore. PERFORMANCE optimized in the mongo query.
 	myMediaSetsOnly ifTrue: [ 
