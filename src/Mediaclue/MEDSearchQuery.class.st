@@ -38,6 +38,100 @@ MEDSearchQuery >> allowedUser: anObject [
 	allowedUser := anObject
 ]
 
+{ #category : #converting }
+MEDSearchQuery >> asMongoQuery [
+	| mongoQuery andConditions |
+
+	mongoQuery := Dictionary new.
+
+	andConditions := OrderedCollection new.
+	
+"	self hasLimit ifTrue: [ mongoQuery at: '$limit' put: self limit ]."
+
+	"Volltext"
+	self text ifNotBlank: [
+		self isRegexpSearch
+			ifTrue: [
+				| regexps |
+				regexps := self regexpsFromSearchString.
+				regexps do: [ :eachRegexp |
+					| orConditions |
+					orConditions := OrderedCollection new.
+					#('title' 'description' 'tagTitleList') do: [ :eachField |
+						orConditions add: { eachField->{
+							'$regex'->eachRegexp.
+							'$options'->'i'.
+						} asD } asD ].
+					andConditions add: {'$or'->orConditions} asD.
+				].
+			]
+			ifFalse: [
+				"Wir nehmen den sprachbasierten Volltext-Index von Mongo.
+				Sucht aber nur ganze Wörter"
+				"Zur Zeit inaktiv weil keine wildcards möglich, deshalb sinnlos"
+"				mongoQuery at: '$text' put:
+					{'$search'->t} asD."
+			].
+	].
+
+	"Tags"
+	self tags ifNotBlank: [ :collection |
+		| titles |
+		titles := collection collect: #title.
+		mongoQuery at: 'tagTitleList' put: {
+			'$all'->titles.
+		} asD.
+	].
+
+
+	"Permissions and user-specific checks"
+	self allowedUser ifNotNil: [ :user |
+		| permissionConditions userGroupIds userGroupAndMeIds |
+
+		"my own stuff only"
+		self myMediaOnly ifTrue: [ 
+			andConditions add: { 'owner.__id' -> user voyageId } asD
+		].
+		
+		"Permissions"
+		"Dont check if Admin"
+		user isAdmin ifFalse: [
+			userGroupIds := user userGroups collect: [ :each | each voyageId ].
+			userGroupAndMeIds := userGroupIds copyWith: user voyageId.
+			
+			permissionConditions := { '$or' -> { 
+					{ 'permissionType' -> 'dontcheck' } asD.
+					{ 'permissionType' -> 'public' } asD.
+					{ 'owner.__id' -> user voyageId } asD.
+					{ '$and' -> {
+						{ 'permissionType' -> 'all' } asD.
+						{ 'owner.#instanceOf' -> 'MEDUser' } asD } } asD.
+					{ '$and' -> {
+						{ 'permissionType' -> 'groups' } asD.
+						{ '$or' -> {
+							{ 'readPermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD.
+"							{ 'writePermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD."
+							} } asD } } asD.						
+					{ 'writePermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD.
+				} } asD.
+			andConditions add: permissionConditions.
+		]
+	].	
+
+	"Medientyp für Medien-Query"
+	self isMediaTypeFiltered ifTrue: [
+		mongoQuery at: '#instanceOf' put: {
+			'$in'->(self mediaTypes collect: [:each | each name ]).
+		} asD.
+	].
+	
+	andConditions ifNotEmpty: [ 
+		mongoQuery at: '$and' put: andConditions ].
+
+	
+	^ mongoQuery
+]
+
 { #category : #'as yet unclassified' }
 MEDSearchQuery >> beforeExecution [
 	self sanitizeQuery
@@ -52,6 +146,7 @@ MEDSearchQuery >> clearFilter [
 	includeVideo := true.
 	includeImage := true.
 	includeDocument := true.
+	allowedUser := nil.
 ]
 
 { #category : #initialization }

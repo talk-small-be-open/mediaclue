@@ -185,6 +185,9 @@ MEDSearchComponent >> myMediaSetsOnly [
 
 { #category : #accessing }
 MEDSearchComponent >> myMediaSetsOnly: anObject [
+
+	searchQuery myMediaOnly: anObject.
+
 	myMediaSetsOnly := anObject
 ]
 
@@ -426,11 +429,12 @@ MEDSearchComponent >> saveAsSearchQuery [
 MEDSearchComponent >> search [
 	searchResult := self db findMediaForUser: self currentUser query: searchQuery.
 	
+"Not anymore. PERFORMANCE optimized in the mongo query.
 	myMediaSetsOnly ifTrue: [ 
 		searchResult := searchResult
 			selectMedias: [ :each | myMediaSets anySatisfy: [ :ms | ms includes: each ] ]
 			sets: [ :each | myMediaSets includes: each ]
-	].
+	]."
 
 	self calculateSuggestedTags.
 	self calculateMinorSelectedTags.

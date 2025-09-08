@@ -91,14 +91,14 @@ MEDSearchResult >> query: anObject [
 	query := anObject
 ]
 
-{ #category : #enumerating }
+{ #category : #deprecated }
 MEDSearchResult >> select: aBlock [
 	self shouldNotImplement.
 	
-	^ self selectMedias: aBlock sets: aBlock
+"	^ self selectMedias: aBlock sets: aBlock"
 ]
 
-{ #category : #enumerating }
+{ #category : #deprecated }
 MEDSearchResult >> selectMedias: aBlockOne sets: aBlockTwo [
 	| copy |
 	copy := self copy.

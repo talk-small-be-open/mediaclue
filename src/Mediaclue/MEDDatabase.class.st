@@ -4,57 +4,8 @@ Class {
 	#category : #'Mediaclue-Database'
 }
 
-{ #category : #adding }
-MEDDatabase >> addTag: aTag [
-	aTag save
-]
-
-{ #category : #adding }
-MEDDatabase >> addUser: aUser [
-	aUser save
-]
-
-{ #category : #accessing }
-MEDDatabase >> authorities [
-	^ self userGroups sortedBySortKey, self users sortedBySortKey
-]
-
 { #category : #'as yet unclassified' }
-MEDDatabase >> createMongoIndexes [
-	super createMongoIndexes.
-
-	MEDUser createMongoIndexField: 'email'.
-	MEDMediaAsset createMongoIndexField: 'owner.__id'.
-	MEDMediaAsset createMongoIndexField: 'tagList.__id'.
-	MEDMediaSet createMongoIndexField: 'owner.__id'.
-	MEDMediaSet createMongoIndexField: 'tagList.__id'.
-
-"Mongo-Text-Index macht irgendwie kein Sinn beim Suchen, weil keine Wildcards möglich
-	MEDMediaAsset createMongoTextIndexFields: #(title description metaData).
-	MEDMediaSet createMongoTextIndexFields: #(title description metaData)."
-]
-
-{ #category : #'as yet unclassified' }
-MEDDatabase >> ensureAdminExists [
-	(self db findUserByEmail: self globalConfiguration sysAdminEmailAddress) ifNil: [
-		MEDUser new
-			email: self globalConfiguration sysAdminEmailAddress;
-			firstName: 'A.';
-			lastName: 'Administrator';
-			beAdmin;
-			password: 'me123and', self globalConfiguration organizationShortName;
-			save.
-	]
-]
-
-{ #category : #'as yet unclassified' }
-MEDDatabase >> findGalleries [
-	^ MEDMediaSet selectMany: [ :each | each isGallery = true ]
-
-]
-
-{ #category : #'as yet unclassified' }
-MEDDatabase >> findMediaByQuery: aSearchQuery [
+MEDDatabase >> OLD_findMediaByQuery: aSearchQuery [
 	| result mongoQuery mongoQueryMedias mongoQueryMediaSets |
 
 	aSearchQuery beforeExecution.
@@ -121,6 +72,94 @@ MEDDatabase >> findMediaByQuery: aSearchQuery [
 	].
 
 
+
+	result medias: (MEDMediaAsset selectMany: mongoQueryMedias limit: aSearchQuery limit).
+	result mediaSets: (MEDMediaSet selectMany: mongoQueryMediaSets limit: aSearchQuery limit).
+
+	"Wenn wir eine Limite haben, dann müssen wir die tatsächliche Anzahl explizit berechnen lassen"
+	aSearchQuery hasLimit ifTrue: [ 
+		result mediasCount: (MEDMediaAsset count: mongoQueryMedias).
+		result mediaSetsCount: (MEDMediaSet count: mongoQueryMediaSets)
+	] ifFalse: [ 
+		result mediasCount: result medias size.
+		result mediaSetsCount: result mediaSets size.
+	].
+	
+	^ result
+]
+
+{ #category : #adding }
+MEDDatabase >> addTag: aTag [
+	aTag save
+]
+
+{ #category : #adding }
+MEDDatabase >> addUser: aUser [
+	aUser save
+]
+
+{ #category : #accessing }
+MEDDatabase >> authorities [
+	^ self userGroups sortedBySortKey, self users sortedBySortKey
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> createMongoIndexes [
+	super createMongoIndexes.
+
+	MEDUser createMongoIndexField: 'email'.
+	MEDMediaAsset createMongoIndexField: 'owner.__id'.
+	MEDMediaAsset createMongoIndexField: 'tagList.__id'.
+	MEDMediaSet createMongoIndexField: 'owner.__id'.
+	MEDMediaSet createMongoIndexField: 'tagList.__id'.
+
+"Mongo-Text-Index macht irgendwie kein Sinn beim Suchen, weil keine Wildcards möglich
+	MEDMediaAsset createMongoTextIndexFields: #(title description metaData).
+	MEDMediaSet createMongoTextIndexFields: #(title description metaData)."
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> ensureAdminExists [
+	(self db findUserByEmail: self globalConfiguration sysAdminEmailAddress) ifNil: [
+		MEDUser new
+			email: self globalConfiguration sysAdminEmailAddress;
+			firstName: 'A.';
+			lastName: 'Administrator';
+			beAdmin;
+			password: 'me123and', self globalConfiguration organizationShortName;
+			save.
+	]
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> findGalleries [
+	^ MEDMediaSet selectMany: [ :each | each isGallery = true ]
+
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> findMediaByQuery: aSearchQuery [
+	| result mongoQuery mongoQueryMedias mongoQueryMediaSets |
+
+	aSearchQuery beforeExecution.
+
+	result := MEDSearchResult new.
+	result query: aSearchQuery copy.
+	
+	mongoQuery := aSearchQuery asMongoQuery.
+"	mongoQuery inspect.
+	self halt."
+
+	mongoQueryMedias := mongoQuery copy.
+	mongoQueryMediaSets := mongoQuery copy.
+	
+	"Medientyp für Medien-Query"
+	mongoQueryMedias removeKey: '#instanceOf' ifAbsent: [].
+
+	self ifDevelopment: [
+		self logInfo: mongoQueryMediaSets asJavascript.
+		self logInfo: mongoQueryMedias asJavascript.
+	].
 
 	result medias: (MEDMediaAsset selectMany: mongoQueryMedias limit: aSearchQuery limit).
 	result mediaSets: (MEDMediaSet selectMany: mongoQueryMediaSets limit: aSearchQuery limit).
