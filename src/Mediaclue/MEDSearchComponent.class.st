@@ -149,7 +149,11 @@ MEDSearchComponent >> initialize [
 MEDSearchComponent >> initializeSearch [
 	searchQuery ifNil: [
 		searchQuery := self currentPortfolio lastSearchQuery.
-		searchQuery limit: 100.
+
+		"searching is fast but the deserializing with BSON ist very slow, so we
+		HAVE to limit hard, so that a normal user will get fast results.
+		TODO: Make a pagination"
+		searchQuery limit: 50. 
 		
 		"Just to ensure, double proof"
 		searchQuery allowedUser: self currentUser.
