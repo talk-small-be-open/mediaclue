@@ -85,7 +85,7 @@ MEDGalleriesComponentBase >> renderGalleriesOn: html [
 		html tableHead: [
 			html tableRow: [ 
 				html tableHeading: 'Name'.
-				html tableHeading: 'Grösse'.
+"				html tableHeading: 'Grösse'."
 				html tableHeading: 'Info'.
 				html tableHeading: 'Datum'.
 			]
@@ -100,10 +100,10 @@ MEDGalleriesComponentBase >> renderGalleriesOn: html [
 								callback: [ self selectMediaSet: each ];
 "too dirty:								extraPath: (each uuidString, '.html');"
 								with: each displayName ].
-						html tableData class: 'noWrap'; with: [
+"slow						html tableData class: 'noWrap'; with: [
 							html text: each imagesCount asString.
 							html text: ' Bilder'.
-						].
+						]."
 						html tableData: each description.
 						html tableData class: 'noWrap'; with: each createdAt asDate germanString.
 					]]]]
