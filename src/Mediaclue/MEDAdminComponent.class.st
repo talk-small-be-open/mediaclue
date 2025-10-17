@@ -155,12 +155,15 @@ MEDAdminComponent >> renderPageLdapOn: html [
 	
 	hasLdap ifFalse: [ html paragraph: 'LDAP nicht aktiviert'. ^ self ].
 	
-	ldapWizard ifNil: [ 
-		html anchorButton
-			callback: [ self startLdapWizard ];
-			with: 'Start'.
-		^self
-	].
+	ldapWizard ifNil: [
+		html buttonToolbar: [
+			html buttonGroup: [
+				html anchorButton
+					callback: [ self startLdapWizard ];
+					with: 'Personen abgleichen ...'.
+				html anchorButton
+					callback: [ self syncLdapGroupMembers ];
+					with: 'Gruppenmitglieder jetzt aktualisieren ...'. ] ] ].
 
 	html render: ldapWizard	
 ]
@@ -279,6 +282,19 @@ MEDAdminComponent >> startLdapWizard [
 		onSaveUser: [ :each | each save ];
 		onEditUser: [ :each | self viewUser: each ];
 		yourself
+]
+
+{ #category : #'as yet unclassified' }
+MEDAdminComponent >> syncLdapGroupMembers [
+	| component |
+	component := WEBBackgroundJobComponent
+		jobTitle: 'LDAP Gruppenmitglieder einlesen'
+		named: 'LDAP Gruppenmitglieder einlesen'
+		block: [ MEDLdapUserGroupSyncer new sync ].
+
+	component beAutoClose.
+	
+	self show: component
 ]
 
 { #category : #accessing }

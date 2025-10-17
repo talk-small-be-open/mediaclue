@@ -64,9 +64,17 @@ MEDLdapUserGroupSyncer >> sync [
 			
 			result ifNotNil: [
 				| users |
-				users := (result attrsAt: 'member') collect: [ :eachMemberDn |
-					self searchUserByDn: eachMemberDn.
+				users := OrderedCollection new.
+				"Microsoft active directory macht hier eine komische 1500er Limite und trennt die Attribute bei grossen Gruppen. Shitty MS."
+				#('member' 'member;range=0-1499' 'member;range=1500-2999') do: [ :eachAttr |
+"				#('member') do: [ :eachAttr |"
+					(result attrsAt: eachAttr) ifNotBlank: [ :collection | collection do: [ :eachMemberDn |
+						| user |
+						user := self searchUserByDn: eachMemberDn.
+						users addIfNotNil: user
+					]].
 				].
+				
 				users := users copyWithoutNils.
 				eachGroup users: users.
 				eachGroup save.

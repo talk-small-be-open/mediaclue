@@ -126,6 +126,7 @@ MEDUserGroup >> users [
 ]
 
 { #category : #accessing }
-MEDUserGroup >> users: anObject [
-	users := anObject
+MEDUserGroup >> users: aCollection [
+	users removeAll.
+	users addAll: aCollection
 ]
