@@ -45,7 +45,7 @@ MEDMyOverviewComponent >> downloadImagesPdf: aMediaSet [
 
 { #category : #actions }
 MEDMyOverviewComponent >> executeSearchQuery: aQuery [
-	self showWithBack: (MEDSearchComponent executeQuery: aQuery copy)
+	self showWithBack: (MEDStandardSearchComponent executeQuery: aQuery copy)
 ]
 
 { #category : #initialization }

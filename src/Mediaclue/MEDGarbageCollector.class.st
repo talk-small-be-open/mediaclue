@@ -6,7 +6,23 @@ Class {
 
 { #category : #'as yet unclassified' }
 MEDGarbageCollector >> gcAll [
-	self gcUsers
+	self gcUsers.
+	self gcMediaSetsWithNoOwner.
+]
+
+{ #category : #'as yet unclassified' }
+MEDGarbageCollector >> gcMediaSetsWithNoOwner [
+	| mediaSets |
+
+	mediaSets := MEDMediaSet selectMany: [ :each | each owner isNil ].
+"better alike?	mediaSets := MEDMediaSet selectMany: [ :each | each at: 'owner.__id' isNil ]."
+
+"TODO: activate. Dangerous.	mediaSets do: [ :each |
+		self trash: each.
+		each delete.
+	]."
+
+	^ mediaSets 
 ]
 
 { #category : #'as yet unclassified' }

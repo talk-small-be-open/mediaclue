@@ -21,6 +21,9 @@ TMEDComponent >> delete: aModel [
 
 { #category : #actions }
 TMEDComponent >> delete: aModel then: aBlock [
+
+	aModel canBeDeleted ifFalse: [ self inform: 'Kann nicht gelöscht werden.'. ^ self ].
+
 	self confirmYesNo: 'Wirklich löschen?' ifYes: [
 		aModel delete.
 		aBlock ifNotNil: aBlock ]

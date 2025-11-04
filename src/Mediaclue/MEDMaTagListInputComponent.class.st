@@ -58,7 +58,7 @@ MEDMaTagListInputComponent >> renderSelectizeJsOn: html [
 	| options optgroups |
 	options := OrderedCollection new.
 	optgroups := {
-		{ 'value'->'subject'. 'label'->'Fach-Schlagworte' } asD.
+		{ 'value'->'subject'. 'label'->'Haupt-Schlagworte' } asD.
 		{ 'value'->'top'. 'label'->'Top-Schlagworte' } asD.
 		{ 'value'->'mytop'. 'label'->'Meine Top-Schlagworte' } asD.
 		{ 'value'->'rest'. 'label'->'Weitere' } asD.
@@ -102,7 +102,7 @@ $("#', self id, '").selectize({
 { #category : #rendering }
 MEDMaTagListInputComponent >> renderSuggestedTagsOn: html [
 
-	html strong: 'Fach-Schlagworte: '.
+	html strong: 'Haupt-Schlagworte: '.
 	self renderTags: subjectTags on: html.
 
 	html strong: ' Top-Schlagworte: '.

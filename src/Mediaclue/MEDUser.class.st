@@ -31,6 +31,26 @@ MEDUser >> beAdmin [
 	isAdmin := true
 ]
 
+{ #category : #removing }
+MEDUser >> canBeDeleted [
+
+	(self db countMediasByOwner: self) > 0 ifTrue: [ ^ false ].
+
+	"Sets which are not empty and are made for others too"
+"Geht nicht, zu wirre Mongo-Query Voodoo	(MEDMediaSet count: [ :each |
+		((each at: 'owner.__id' ) = self voyageId) &
+			((each medias size = 0) not)
+	]) > 0 ifTrue: [ ^ false ]."
+
+	(self portfolio mediaSets anySatisfy: [ :each | each isEmpty not ]) ifTrue: [ ^ false ].
+	
+"zu ungenau. Liefer auch die speziellen Kollektionen, welche es immer gibt
+	(self db countMediaSetsByOwner: self) > 0 ifTrue: [ ^ false ]."
+	
+	
+	^ true
+]
+
 { #category : #testing }
 MEDUser >> canUpload [
 	^ (self userGroups anySatisfy: [ :each | each canUpload ])
@@ -44,10 +64,22 @@ MEDUser >> containsUser: aUser [
 
 { #category : #'submorphs-add/remove' }
 MEDUser >> delete [
-"	self removeMeInAllMediaSets."
-	"TODO: remove all users media?"
+	self removeMeInAllUserGroups.
+
 	self remove.
+
 "	self cleanupAfterDeletion."
+
+]
+
+{ #category : #'submorphs-add/remove' }
+MEDUser >> deleteAllMyMedia [
+
+	"Remove all media which belongs to that user"
+	self portfolio allMyMedias do: [ :each | each delete ].
+	
+	"Delete all mediaSets which belong to that user"
+	self portfolio mediaSets do: [ :each | each delete ].
 
 ]
 
@@ -238,6 +270,13 @@ MEDUser >> password [
 { #category : #accessing }
 MEDUser >> portfolio [
 	^portfolio
+]
+
+{ #category : #removing }
+MEDUser >> removeMeInAllUserGroups [
+	self userGroups do: [ :each |
+		each removeUser: self.
+		each save ]
 ]
 
 { #category : #'as yet unclassified' }

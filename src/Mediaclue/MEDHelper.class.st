@@ -10,6 +10,34 @@ MEDHelper class >> noValueLabel [
 ]
 
 { #category : #'as yet unclassified' }
+MEDHelper class >> permissionTypeCodes [
+	"Dies ist für die Einhaltung der Reihenfolge wichtig"
+^ #(
+#owner
+#groups
+#all
+#public
+)
+]
+
+{ #category : #'as yet unclassified' }
+MEDHelper class >> permissionTypeList [
+	| map |
+	map := self permissionTypeMap.
+	^ self permissionTypeCodes collect: [ :each | each->(map at: each) ]
+]
+
+{ #category : #'as yet unclassified' }
+MEDHelper class >> permissionTypeMap [
+	^ {
+	#owner->'Nur Besitzer'.
+	#groups->'Folgende Gruppen und Benutzer'.
+	#all->'Schulangehörige'.
+	#public->'Schulangehörige & Öffentlich'
+	} asD
+]
+
+{ #category : #'as yet unclassified' }
 MEDHelper class >> runPdftkInputs: aCollection commands: aString [
 	| cmd |
 

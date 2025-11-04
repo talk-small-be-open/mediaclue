@@ -4,90 +4,6 @@ Class {
 	#category : #'Mediaclue-Database'
 }
 
-{ #category : #'as yet unclassified' }
-MEDDatabase >> OLD_findMediaByQuery: aSearchQuery [
-	| result mongoQuery mongoQueryMedias mongoQueryMediaSets |
-
-	aSearchQuery beforeExecution.
-
-	result := MEDSearchResult new.
-	result query: aSearchQuery copy.
-	
-	mongoQuery := Dictionary new.
-
-	"Volltext"
-	aSearchQuery text ifNotBlank: [ :t |
-		aSearchQuery isRegexpSearch
-			ifTrue: [
-				| andConditions regexps |
-				regexps := aSearchQuery regexpsFromSearchString.
-				andConditions := OrderedCollection new.
-				regexps do: [ :eachRegexp |
-					| orConditions |
-					orConditions := OrderedCollection new.
-					#('title' 'description' 'tagTitleList') do: [ :eachField |
-						orConditions add: {eachField->{
-							'$regex'->eachRegexp.
-							'$options'->'i'.
-						} asD } asD ].
-					andConditions add: {'$or'->orConditions} asD.
-				].
-
-				mongoQuery at: '$and' put: andConditions.
-
-			]
-			ifFalse: [
-				"Wir nehmen den sprachbasierten Volltext-Index von Mongo.
-				Sucht aber nur ganze Wörter"
-				"Zur Zeit inaktiv weil keine wildcards möglich, deshalb sinnlos"
-"				mongoQuery at: '$text' put:
-					{'$search'->t} asD."
-			].
-	].
-
-	"Tags"
-	aSearchQuery tags ifNotBlank: [ :tags |
-		| titles |
-		titles := tags collect: #title.
-		mongoQuery at: 'tagTitleList' put: {
-			'$all'->titles.
-		} asD.
-	].
-
-	mongoQueryMedias := mongoQuery copy.
-	
-	"Medientyp für Medien-Query"
-	aSearchQuery isMediaTypeFiltered ifTrue: [
-		mongoQueryMedias at: '#instanceOf' put: {
-			'$in'->(aSearchQuery mediaTypes collect: [:each | each name ]).
-		} asD.
-	].
-	
-	mongoQueryMediaSets := mongoQuery copy.
-
-
-	self ifDevelopment: [
-		self logInfo: mongoQueryMediaSets asJavascript.
-		self logInfo: mongoQueryMedias asJavascript.
-	].
-
-
-
-	result medias: (MEDMediaAsset selectMany: mongoQueryMedias limit: aSearchQuery limit).
-	result mediaSets: (MEDMediaSet selectMany: mongoQueryMediaSets limit: aSearchQuery limit).
-
-	"Wenn wir eine Limite haben, dann müssen wir die tatsächliche Anzahl explizit berechnen lassen"
-	aSearchQuery hasLimit ifTrue: [ 
-		result mediasCount: (MEDMediaAsset count: mongoQueryMedias).
-		result mediaSetsCount: (MEDMediaSet count: mongoQueryMediaSets)
-	] ifFalse: [ 
-		result mediasCount: result medias size.
-		result mediaSetsCount: result mediaSets size.
-	].
-	
-	^ result
-]
-
 { #category : #adding }
 MEDDatabase >> addTag: aTag [
 	aTag save
@@ -101,6 +17,24 @@ MEDDatabase >> addUser: aUser [
 { #category : #accessing }
 MEDDatabase >> authorities [
 	^ self userGroups sortedBySortKey, self users sortedBySortKey
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> countMediaSetsByOwner: aUser [
+	^ MEDMediaSet count: [ :each | (each at: 'owner.__id' ) = aUser voyageId ]
+
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> countMediasByOwner: aUser [
+	^ MEDMediaAsset count: [ :each | (each at: 'owner.__id' ) = aUser voyageId ]
+
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> countUserGroupsByUser: aUser [
+	^ MEDUserGroup count: [ :each | (each at: 'users.__id' ) = aUser voyageId ]
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -132,6 +66,13 @@ MEDDatabase >> ensureAdminExists [
 ]
 
 { #category : #'as yet unclassified' }
+MEDDatabase >> findDisabledUsers [
+	^ MEDUser selectMany: [ :each | each disabled = true ]
+"	^ MEDMediaAsset selectMany: [ :each | (each at: 'owner.__id' ) = aUser voyageId ]"
+
+]
+
+{ #category : #'as yet unclassified' }
 MEDDatabase >> findGalleries [
 	^ MEDMediaSet selectMany: [ :each | each isGallery = true ]
 
@@ -139,39 +80,63 @@ MEDDatabase >> findGalleries [
 
 { #category : #'as yet unclassified' }
 MEDDatabase >> findMediaByQuery: aSearchQuery [
-	| result mongoQuery mongoQueryMedias mongoQueryMediaSets |
+	| result queryMedias queryMediaSets mongoQueryMedias mongoQueryMediaSets isSearchingMedias |
 
-	aSearchQuery beforeExecution.
+	isSearchingMedias := (aSearchQuery isGallery = true) not.
 
 	result := MEDSearchResult new.
 	result query: aSearchQuery copy.
-	
-	mongoQuery := aSearchQuery asMongoQuery.
-"	mongoQuery inspect.
-	self halt."
 
-	mongoQueryMedias := mongoQuery copy.
-	mongoQueryMediaSets := mongoQuery copy.
-	
-	"Media type filtering makes no sense for sets (so far)"
-	mongoQueryMediaSets removeKey: '#instanceOf' ifAbsent: [].
+	"MediaSet search"
+	queryMediaSets := aSearchQuery copy.
 
+	queryMediaSets beforeExecution.
+
+	"IMPORTANT: Tweaks to make search sense on the splitted queries"
+	queryMediaSets includeAllMedia.
+	
+	mongoQueryMediaSets := queryMediaSets asMongoQuery.
+	
 	self ifDevelopment: [
 		self logInfo: mongoQueryMediaSets asJavascript.
-		self logInfo: mongoQueryMedias asJavascript.
 	].
 
-	result medias: (MEDMediaAsset selectMany: mongoQueryMedias limit: aSearchQuery limit).
 	result mediaSets: (MEDMediaSet selectMany: mongoQueryMediaSets limit: aSearchQuery limit).
 
 	"Wenn wir eine Limite haben, dann müssen wir die tatsächliche Anzahl explizit berechnen lassen"
 	aSearchQuery hasLimit ifTrue: [ 
-		result mediasCount: (MEDMediaAsset count: mongoQueryMedias).
 		result mediaSetsCount: (MEDMediaSet count: mongoQueryMediaSets)
 	] ifFalse: [ 
-		result mediasCount: result medias size.
 		result mediaSetsCount: result mediaSets size.
 	].
+	
+
+	"Optional search media (most cases yes)"
+	isSearchingMedias ifTrue: [	
+		queryMedias := aSearchQuery copy.
+
+		queryMedias beforeExecution.
+
+		"IMPORTANT: Tweaks to make search sense on the splitted queries"
+		queryMedias isGallery: nil.
+		
+		mongoQueryMedias := queryMedias asMongoQuery.
+		
+		self ifDevelopment: [
+			self logInfo: mongoQueryMedias asJavascript.
+		].
+
+		result medias: (MEDMediaAsset selectMany: mongoQueryMedias limit: aSearchQuery limit).
+
+		"Wenn wir eine Limite haben, dann müssen wir die tatsächliche Anzahl explizit berechnen lassen"
+		aSearchQuery hasLimit ifTrue: [ 
+			result mediasCount: (MEDMediaAsset count: mongoQueryMedias).
+		] ifFalse: [ 
+			result mediasCount: result medias size.
+		].
+		
+	].
+	
 	
 	^ result
 ]

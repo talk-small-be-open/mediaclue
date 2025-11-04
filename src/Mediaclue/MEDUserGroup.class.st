@@ -100,6 +100,11 @@ MEDUserGroup >> isMember: aUser [
 	^ users includes: aUser
 ]
 
+{ #category : #adding }
+MEDUserGroup >> removeUser: aUser [
+	users remove: aUser
+]
+
 { #category : #accessing }
 MEDUserGroup >> title [
 	^ title

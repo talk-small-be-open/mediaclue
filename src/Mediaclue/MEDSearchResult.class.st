@@ -11,6 +11,16 @@ Class {
 	#category : #'Mediaclue-Misc'
 }
 
+{ #category : #'as yet unclassified' }
+MEDSearchResult >> hasMediaSets [
+	^ self mediaSetsCount > 0
+]
+
+{ #category : #'as yet unclassified' }
+MEDSearchResult >> hasMedias [
+	^ self mediasCount > 0
+]
+
 { #category : #testing }
 MEDSearchResult >> hasMoreMediaSets [
 	^ self mediaSetsCount > mediaSets size
@@ -24,6 +34,15 @@ MEDSearchResult >> hasMoreMedias [
 { #category : #'as yet unclassified' }
 MEDSearchResult >> hitsCount [
 	^ self mediaSetsCount + self mediasCount
+]
+
+{ #category : #initialization }
+MEDSearchResult >> initialize [
+	super initialize.
+
+	"Robustness"
+	medias := #().
+	mediaSets := #().
 ]
 
 { #category : #testing }
@@ -96,16 +115,4 @@ MEDSearchResult >> select: aBlock [
 	self shouldNotImplement.
 	
 "	^ self selectMedias: aBlock sets: aBlock"
-]
-
-{ #category : #deprecated }
-MEDSearchResult >> selectMedias: aBlockOne sets: aBlockTwo [
-	| copy |
-	copy := self copy.
-	aBlockOne ifNotNil: [
-		copy medias: (medias select: aBlockOne)].
-	aBlockTwo ifNotNil: [
-		copy mediaSets: (mediaSets select: aBlockTwo)].
-
-	^ copy
 ]

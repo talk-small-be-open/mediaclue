@@ -28,6 +28,16 @@ MEDAdminComponent >> children [
 ]
 
 { #category : #actions }
+MEDAdminComponent >> cleanupUsers [
+	self confirmYesNo: 'Alle deaktivierten Users ohne Medien löschen?' ifYes: [ 
+		self db findDisabledUsers do: [ :each |
+			each canBeDeleted ifTrue: [ each delete ].
+		].
+		self refresh.
+	]
+]
+
+{ #category : #actions }
 MEDAdminComponent >> createUser [
 	| new |
 	new := MEDUser new.
@@ -254,9 +264,21 @@ MEDAdminComponent >> renderPageUserGroupsOn: html [
 { #category : #rendering }
 MEDAdminComponent >> renderPageUsersOn: html [
 	html buttonToolbar: [
-		html anchorButton
-			callback: [ self createUser ];
-			with: 'Erstellen' ].
+		html buttonGroup: [ 
+			html anchorButton
+				callback: [ self createUser ];
+				with: '+ User erstellen'.
+			html anchorButton
+				callback: [ self showAllUsers ];
+				with: 'Zeige alle'.
+			html anchorButton
+				callback: [ self showDisabledUsers ];
+				with: 'Zeige deaktivierte'.
+			html anchorButton
+				callback: [ self cleanupUsers ];
+				with: 'Users bereinigen'.
+		]			
+	].
 	
 	html table: [
 		self users do: [ :each |
@@ -265,15 +287,26 @@ MEDAdminComponent >> renderPageUsersOn: html [
 					html anchor
 						callback: [ self viewUser: each ];
 						with: each displayName].
-"				html tableData: [ 
-					html span: (each portfolio allMyMedias mediasCount asString)
-				]."
+				html tableData: [ 
+					html span: (each isEnabled ifFalse: [ 'DEAKTIVIERT' ]).
+				].
 				html tableData: [ 
 					html anchor
 						callback: [ self deleteUser: each ];
 						with: 'Löschen' ]
 			]
 		]]
+]
+
+{ #category : #'as yet unclassified' }
+MEDAdminComponent >> showAllUsers [
+	"indirect"
+	users := nil
+]
+
+{ #category : #'as yet unclassified' }
+MEDAdminComponent >> showDisabledUsers [
+	users := self db findDisabledUsers sortedBySortKey
 ]
 
 { #category : #actions }

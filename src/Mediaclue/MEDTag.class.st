@@ -56,6 +56,12 @@ MEDTag class >> validateTitle: aString [
 	^true
 ]
 
+{ #category : #'submorphs-add/remove' }
+MEDTag >> canBeDeleted [
+	^ (self db isTagInUse: self) not
+
+]
+
 { #category : #accessing }
 MEDTag >> category [
 	^ category

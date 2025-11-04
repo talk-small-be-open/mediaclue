@@ -51,7 +51,7 @@ TMEDProtected >> descriptionPermissionType [
 	| map |
 	<magritteDescription>
 	
-	map := {#owner->'Nur Besitzer'. #groups->'Folgende Gruppen und Benutzer'. #all->'Schulangehörige'. #public->'Schulangehörige & Öffentlich'}.
+	map := MEDHelper permissionTypeList.
 	
 	^ MEDMaSingleOptionDescription new
 		accessor: #permissionType;

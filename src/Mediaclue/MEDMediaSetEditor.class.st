@@ -244,7 +244,7 @@ MEDMediaSetEditor >> renderBulkOperationsOn: html [
 						html span: ' Keine'].
 					html label class: 'pure-checkbox'; with: [
 						rg radioButton value: #subjects.
-						html span: ' Nur Fach-Schlagworte'].
+						html span: ' Nur Haupt-Schlagworte'].
 					html label class: 'pure-checkbox'; with: [
 						rg radioButton value: #all.
 						html span: ' Alle Schlagworte'].

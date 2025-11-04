@@ -13,7 +13,9 @@ Class {
 		'includeAudio',
 		'includeVideo',
 		'includeDocument',
-		'allowedUser'
+		'allowedUser',
+		'isGallery',
+		'permissionType'
 	],
 	#category : #'Mediaclue-Models'
 }
@@ -95,27 +97,34 @@ MEDSearchQuery >> asMongoQuery [
 		
 		"Permissions"
 		"Dont check if Admin"
-		user isAdmin ifFalse: [
-			userGroupIds := user userGroups collect: [ :each | each voyageId ].
-			userGroupAndMeIds := userGroupIds copyWith: user voyageId.
-			
-			permissionConditions := { '$or' -> { 
-					{ 'permissionType' -> 'dontcheck' } asD.
-					{ 'permissionType' -> 'public' } asD.
-					{ 'owner.__id' -> user voyageId } asD.
-					{ '$and' -> {
-						{ 'permissionType' -> 'all' } asD.
-						{ 'owner.#instanceOf' -> 'MEDUser' } asD } } asD.
-					{ '$and' -> {
-						{ 'permissionType' -> 'groups' } asD.
-						{ '$or' -> {
-							{ 'readPermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD.
-"							{ 'writePermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD."
-							} } asD } } asD.						
-					{ 'writePermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD.
-				} } asD.
-			andConditions add: permissionConditions.
-		]
+		user isAdmin
+			ifTrue: [ 
+				permissionType ifNotNil: [ 
+					permissionConditions := { 'permissionType' -> permissionType } asD.
+					andConditions add: permissionConditions.
+				]
+			]
+			ifFalse: [
+				userGroupIds := user userGroups collect: [ :each | each voyageId ].
+				userGroupAndMeIds := userGroupIds copyWith: user voyageId.
+				
+				permissionConditions := { '$or' -> { 
+						{ 'permissionType' -> 'dontcheck' } asD.
+						{ 'permissionType' -> 'public' } asD.
+						{ 'owner.__id' -> user voyageId } asD.
+						{ '$and' -> {
+							{ 'permissionType' -> 'all' } asD.
+							{ 'owner.#instanceOf' -> 'MEDUser' } asD } } asD.
+						{ '$and' -> {
+							{ 'permissionType' -> 'groups' } asD.
+							{ '$or' -> {
+								{ 'readPermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD.
+	"							{ 'writePermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD."
+								} } asD } } asD.						
+						{ 'writePermittedAuthorities.__id' -> { '$in' -> userGroupAndMeIds } asD } asD.
+					} } asD.
+				andConditions add: permissionConditions.
+			]
 	].	
 
 	"Medientyp für Medien-Query"
@@ -123,6 +132,10 @@ MEDSearchQuery >> asMongoQuery [
 		mongoQuery at: '#instanceOf' put: {
 			'$in'->(self mediaTypes collect: [:each | each name ]).
 		} asD.
+	].
+
+	isGallery ifNotNil: [ 
+		andConditions add: { 'isGallery' -> isGallery } asD
 	].
 	
 	andConditions ifNotEmpty: [ 
@@ -146,6 +159,8 @@ MEDSearchQuery >> clearFilter [
 	includeVideo := true.
 	includeImage := true.
 	includeDocument := true.
+	isGallery := nil.
+	permissionType := nil.
 "DONT	allowedUser := nil."
 ]
 
@@ -223,6 +238,16 @@ MEDSearchQuery >> initialize [
 	self clearSearch
 ]
 
+{ #category : #accessing }
+MEDSearchQuery >> isGallery [
+	^ isGallery
+]
+
+{ #category : #accessing }
+MEDSearchQuery >> isGallery: anObject [
+	isGallery := anObject
+]
+
 { #category : #testing }
 MEDSearchQuery >> isMediaTypeFiltered [
 	"Wenn eine der Flags false ist, dann wird gefiltert. Alle false gibts nicht, siehe sanitize..."
@@ -294,6 +319,16 @@ MEDSearchQuery >> notificationsEnabled [
 { #category : #accessing }
 MEDSearchQuery >> notificationsEnabled: anObject [
 	notificationsEnabled := anObject
+]
+
+{ #category : #accessing }
+MEDSearchQuery >> permissionType [
+	^ permissionType
+]
+
+{ #category : #accessing }
+MEDSearchQuery >> permissionType: anObject [
+	permissionType := anObject
 ]
 
 { #category : #copying }

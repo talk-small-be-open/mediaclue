@@ -26,8 +26,14 @@ MEDMainComponent >> gotoOverview [
 ]
 
 { #category : #actions }
+MEDMainComponent >> gotoPowerSearch [
+	coreComponent := MEDPowerSearchComponent new
+
+]
+
+{ #category : #actions }
 MEDMainComponent >> gotoSearch [
-	coreComponent := MEDSearchComponent new
+	coreComponent := MEDStandardSearchComponent new
 
 ]
 
@@ -67,6 +73,9 @@ MEDMainComponent >> renderMenuOn: html [
 			html menuList: [
 				html menuEntry: [ self gotoOverview ] with: [html iconHome; text: 'Übersicht'].
 				html menuEntry: [ self gotoSearch ] with: [html iconSearch; text: 'Suchen'].
+				self currentUser ifAdmin: [ 
+					html menuEntry: [ self gotoPowerSearch ] with: [html iconSearch; text: 'Expertensuche'].
+				].
 				self session canUpload ifTrue: [
 					html menuEntry: [ self gotoUpload ] with: [html iconUpload; text: 'Hochladen']].
 				html menuEntry: [ self gotoGalleries ] with: [html iconGallery; text: 'Galerien'].

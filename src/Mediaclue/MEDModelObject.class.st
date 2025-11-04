@@ -13,6 +13,12 @@ MEDModelObject class >> mongoContainer [
 	^ WEBVoContainer new
 ]
 
+{ #category : #'submorphs-add/remove' }
+MEDModelObject >> canBeDeleted [
+	^ true
+	"subclasses can do smarter"
+]
+
 { #category : #validation }
 MEDModelObject >> defaultValidator [
 	^ MEDAlwaysValidValidator object: self
@@ -20,6 +26,7 @@ MEDModelObject >> defaultValidator [
 
 { #category : #'submorphs-add/remove' }
 MEDModelObject >> delete [
+	"Does the delete, without checking canBeDeleted. UI must assure this."
 	self subclassResponsibility
 ]
 

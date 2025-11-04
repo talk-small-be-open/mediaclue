@@ -17,13 +17,24 @@ MEDUserViewer >> renderModelOn: html [
 		html text: '"'.
 	].
 	html pageBody: [
-		html anchorButton
-			callback: [ self editMyself ];
-			with: 'Bearbeiten'.
-		model isAuthenticateAtLdap ifFalse: [
+		
+		html table class: 'bottomBuffer'; with: [ 
+			html tableRow: [ 
+				html tableHeading: 'Anzahl Kollektionen'.
+				html tableData: (self db countMediaSetsByOwner: model) asString ].
+			html tableRow: [ 
+				html tableHeading: 'Anzahl Medien'.
+				html tableData: (self db countMediasByOwner: model) asString ].
+		].
+		
+		html buttonGroup: [ 
 			html anchorButton
-				callback: [ self setLocalPassword ];
-				with: 'Passwort setzen'].
+				callback: [ self editMyself ];
+				with: 'Bearbeiten'.
+			model isAuthenticateAtLdap ifFalse: [
+				html anchorButton
+					callback: [ self setLocalPassword ];
+					with: 'Passwort setzen'] ].
 				
 		html maGrid: #firstName.
 		html maGrid: #lastName.
