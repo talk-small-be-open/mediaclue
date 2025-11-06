@@ -96,7 +96,7 @@ WEBPagedComponent >> renderPagesMenuOn: html [
 			html anchor
 				class: 'active' if: pageName = each;
 				callback: [ self gotoPage: each ];
-				with: [ html text: each capitalized ].
+				with: [ html text: (self titleOfPage: each) ].
 			html space.
 		]]
 ]
@@ -109,4 +109,10 @@ WEBPagedComponent >> restoreScrollPositionId [
 { #category : #'as yet unclassified' }
 WEBPagedComponent >> states [
 	^Array with: self
+]
+
+{ #category : #'as yet unclassified' }
+WEBPagedComponent >> titleOfPage: aPageName [
+	"subclasses do better"
+	^ aPageName capitalized
 ]
