@@ -20,10 +20,18 @@ MEDTagsMergeComponent class >> source: aSourceTag target: aTargetTag [
 		yourself
 ]
 
+{ #category : #actions }
+MEDTagsMergeComponent >> check [
+	"nothing so far"
+]
+
 { #category : #initialization }
 MEDTagsMergeComponent >> initialize [
 	super initialize.
 	allTags := self db tags sortedBySortKey.
+	
+	self sourceTag: nil.
+	self targetTag: nil.
 ]
 
 { #category : #testing }
@@ -36,6 +44,8 @@ MEDTagsMergeComponent >> isReadyToMerge [
 	targetTag ifNil: no.
 	
 	targetTag = sourceTag ifTrue: no.
+
+	sourceUsedCount = 0 ifTrue: no.
 	
 	^ true
 ]
@@ -90,13 +100,6 @@ MEDTagsMergeComponent >> offloadedMerge [
 	sourceTag deleteIfPossible
 ]
 
-{ #category : #actions }
-MEDTagsMergeComponent >> preview [
-	"Calculate some numbers"
-	sourceUsedCount := 1.
-	targetUsedCount := 1.
-]
-
 { #category : #rendering }
 MEDTagsMergeComponent >> renderContentOn: html [
 
@@ -113,7 +116,7 @@ MEDTagsMergeComponent >> renderContentOn: html [
 
 				sourceTag ifNotNil: [
 					html div: [
-						html text: sourceTag usageCount asString.
+						html text: sourceUsedCount asString.
 						html text: ' mal verwendet' ]
 				].
 			].
@@ -129,14 +132,14 @@ MEDTagsMergeComponent >> renderContentOn: html [
 
 				targetTag ifNotNil: [
 					html div: [
-						html text: targetTag usageCount asString.
+						html text: targetUsedCount asString.
 						html text: ' mal verwendet' ]
 				].
 			].
 		
 			html submitButton
-				callback: [ self preview ];
-				with: 'Aktualisieren'
+				callback: [ self check ];
+				with: 'Prüfen'
 		].
 
 
@@ -154,7 +157,9 @@ MEDTagsMergeComponent >> sourceTag [
 
 { #category : #accessing }
 MEDTagsMergeComponent >> sourceTag: anObject [
-	sourceTag := anObject
+	sourceTag := anObject.
+	
+	sourceUsedCount := sourceTag ifNil: [ 0 ] ifNotNil: [ sourceTag usageCount ]
 ]
 
 { #category : #accessing }
@@ -164,5 +169,7 @@ MEDTagsMergeComponent >> targetTag [
 
 { #category : #accessing }
 MEDTagsMergeComponent >> targetTag: anObject [
-	targetTag := anObject
+	targetTag := anObject.
+	
+	targetUsedCount := targetTag ifNil: [ 0 ] ifNotNil: [ targetTag usageCount ]
 ]
