@@ -381,7 +381,7 @@ div.MEDMainComponentBase {
   min-height: 100vh;
 
   // Hauptelement
-  > div.MEDComponent, > form > div.MEDComponent {
+  > div.MEDComponent, > form > div.MEDComponent, > div.WEBPagedComponent {
     //    min-height: 100vh;
 
     > div.header {
@@ -1328,7 +1328,12 @@ div.MEDAdminComponent {
 
   div.adminMenu {
     a {
-      margin: 0 5px;
+      font-weight: bold;
+
+      + a {
+        margin-left: 10px;
+      }
+
       &.active {
         color: green;
       }
