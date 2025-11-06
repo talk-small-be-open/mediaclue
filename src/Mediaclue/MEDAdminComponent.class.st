@@ -104,6 +104,8 @@ MEDAdminComponent >> editTag: aTag [
 MEDAdminComponent >> initialize [
 	super initialize.
 	
+	self beRestoringScrollPosition.
+	
 	configEditor := WEBGlobalConfigurationEditor new.
 	
 	pageTitles := { 
