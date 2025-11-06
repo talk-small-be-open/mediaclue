@@ -58,6 +58,7 @@ MEDTag class >> validateTitle: aString [
 
 { #category : #'submorphs-add/remove' }
 MEDTag >> canBeDeleted [
+	"Optimize: Maybe use self usageCount?"
 	^ (self db isTagInUse: self) not
 
 ]
@@ -70,6 +71,14 @@ MEDTag >> category [
 { #category : #accessing }
 MEDTag >> category: anObject [
 	category := anObject
+]
+
+{ #category : #'submorphs-add/remove' }
+MEDTag >> delete [
+	self removeMeInAllTaggables.
+	self remove.
+"	self cleanupAfterDeletion."
+
 ]
 
 { #category : #magritte }
@@ -88,7 +97,9 @@ MEDTag >> descriptionIsSchoolSubject [
 	<magritteDescription>
 	^ MABooleanDescription new
 		accessor: #isSchoolSubject;
-		label: 'Ist Schulfach';
+		label: 'Ist Haupt-Schlagwort';
+		trueString: 'Ja';
+		falseString: 'Nein';
 		yourself
 ]
 
@@ -126,6 +137,18 @@ MEDTag >> isSchoolSubject: aBoolean [
 	isSchoolSubject := aBoolean
 ]
 
+{ #category : #'submorphs-add/remove' }
+MEDTag >> removeMeInAllTaggables [
+
+	| all |
+	all := self db findTaggablesByTag: self.
+
+	all do: [ :each |
+		each removeTag: self.
+		each save.
+	]
+]
+
 { #category : #accessing }
 MEDTag >> sortKey [
 	^String streamContents: [ :s |
@@ -144,4 +167,15 @@ MEDTag >> title [
 { #category : #accessing }
 MEDTag >> title: aString [
 	title := aString trimBoth
+]
+
+{ #category : #'as yet unclassified' }
+MEDTag >> usageCount [
+	| count1 count2 |
+	count1 := MEDMediaAsset count: [ :each |
+		((each at: 'tagList.__id') = self voyageId) ].
+	count2 := MEDMediaSet count: [ :each |
+		((each at: 'tagList.__id') = self voyageId) ].
+
+	^ count1 + count2
 ]

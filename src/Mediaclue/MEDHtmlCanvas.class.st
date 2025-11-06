@@ -435,6 +435,27 @@ MEDHtmlCanvas >> pureImage [
 		yourself
 ]
 
+{ #category : #enumerating }
+MEDHtmlCanvas >> selectizeMultiSelect: options [
+	^ self multiSelect
+		script: (self jQuery this call: 'selectize' with: options asD);
+		yourself
+	
+]
+
+{ #category : #enumerating }
+MEDHtmlCanvas >> selectizeSelect [
+	^ self selectizeSelect: #()
+]
+
+{ #category : #enumerating }
+MEDHtmlCanvas >> selectizeSelect: options [
+	^ self select
+		script: (self jQuery this call: 'selectize' with: options asD);
+		yourself
+	
+]
+
 { #category : #'user interface' }
 MEDHtmlCanvas >> sideMenu: aBlock [
 	self anchor url: '#sideMenu'; id: 'sideMenuLink'; with: [

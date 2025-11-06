@@ -11,6 +11,11 @@ Class {
 	#category : #'Mediaclue-Misc'
 }
 
+{ #category : #query }
+MEDSearchResult >> allObjects [
+	^ mediaSets, medias
+]
+
 { #category : #'as yet unclassified' }
 MEDSearchResult >> hasMediaSets [
 	^ self mediaSetsCount > 0

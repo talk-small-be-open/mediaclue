@@ -171,11 +171,11 @@ MEDSearchComponentBase >> renderAllTagsOn: html [
 #plugins -> #('remove_button').
 #delimiter->','.
 #closeAfterSelect->true.
-} asD.
+}.
 
-		html multiSelect
-			submitOnChange;
-			script: (html jQuery this call: 'selectize' with: options);
+		(html selectizeMultiSelect: options)
+"			submitOnChange;"
+"			script: (html jQuery this call: 'selectize' with: options);"
 			list: allTags;
 			labels: [ :each | each title ];
 			callback: [ :tags | self addTags: tags ]

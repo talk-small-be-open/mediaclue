@@ -30,6 +30,11 @@ MEDModelObject >> delete [
 	self subclassResponsibility
 ]
 
+{ #category : #'submorphs-add/remove' }
+MEDModelObject >> deleteIfPossible [
+	self canBeDeleted ifTrue: [ self delete ]
+]
+
 { #category : #'as yet unclassified' }
 MEDModelObject >> descriptionContainer [
 	<magritteContainer>

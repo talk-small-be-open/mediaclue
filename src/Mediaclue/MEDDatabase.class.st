@@ -214,6 +214,16 @@ MEDDatabase >> findTagByTitle: aString [
 	^self tags detect: [ :each | each title asLowercase = lowercase ] ifNone: [ nil ]
 ]
 
+{ #category : #testing }
+MEDDatabase >> findTaggablesByTag: aTag [
+	| query result |
+	query := MEDSearchQuery new.
+	query addTag: aTag.
+	
+	result := self findMediaByQuery: query.
+	^ result allObjects
+]
+
 { #category : #finders }
 MEDDatabase >> findUserByEmail: aString [
 	^ MEDUser selectOne: [ :each | each email = aString ]

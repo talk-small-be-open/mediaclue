@@ -14,13 +14,16 @@ MEDGarbageCollector >> gcAll [
 MEDGarbageCollector >> gcMediaSetsWithNoOwner [
 	| mediaSets |
 
-	mediaSets := MEDMediaSet selectMany: [ :each | each owner isNil ].
+	mediaSets := MEDMediaSet selectMany: [ :each | each owner = nil ].
 "better alike?	mediaSets := MEDMediaSet selectMany: [ :each | each at: 'owner.__id' isNil ]."
 
-"TODO: activate. Dangerous.	mediaSets do: [ :each |
+	"Massive deletion stopper"
+	mediaSets := mediaSets firstAtMost: 10.
+
+	mediaSets do: [ :each |
 		self trash: each.
 		each delete.
-	]."
+	].
 
 	^ mediaSets 
 ]

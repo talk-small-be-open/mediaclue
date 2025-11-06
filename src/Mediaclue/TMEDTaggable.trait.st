@@ -117,6 +117,16 @@ TMEDTaggable >> matchesTagGrouping: aDictionary [
 ]
 
 { #category : #'as yet unclassified' }
+TMEDTaggable >> removeTag: aTag [
+	self tags: (self tags copyWithout: aTag)
+]
+
+{ #category : #'as yet unclassified' }
+TMEDTaggable >> removeTags: aCollection [
+	self tags: (self tags copyWithoutAll: aCollection asArray)
+]
+
+{ #category : #'as yet unclassified' }
 TMEDTaggable >> schoolSubjectTags [
 	^ self tags select: [ :each | each isSchoolSubject = true ]
 ]

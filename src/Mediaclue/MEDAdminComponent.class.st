@@ -7,7 +7,8 @@ Class {
 		'users',
 		'userGroups',
 		'ldapWizard',
-		'configEditor'
+		'configEditor',
+		'pageTitles'
 	],
 	#category : #'Mediaclue-View'
 }
@@ -35,6 +36,19 @@ MEDAdminComponent >> cleanupUsers [
 		].
 		self refresh.
 	]
+]
+
+{ #category : #actions }
+MEDAdminComponent >> createTag [
+	| title |
+	
+	title := self request: 'Name?'.
+	
+	title ifBlank: [ ^ self ].
+	
+	MEDTag findOrCreateFromString: title.
+	self flashMessage: 'Neu erstellt'
+
 ]
 
 { #category : #actions }
@@ -90,7 +104,25 @@ MEDAdminComponent >> editTag: aTag [
 MEDAdminComponent >> initialize [
 	super initialize.
 	
-	configEditor := WEBGlobalConfigurationEditor new
+	configEditor := WEBGlobalConfigurationEditor new.
+	
+	pageTitles := { 
+		#config -> 'Konfiguration'.
+		#butler -> 'Jobs'.
+		#stats -> 'Statistik'.
+		#userGroups -> 'Gruppen'.
+		#users -> 'Benutzer'.
+		#tags -> 'Schlagworte'.
+		#ldap -> 'LDAP'.
+		#demo -> 'Demo'.
+		#trash -> 'Papierkorb'.
+	 } asD
+]
+
+{ #category : #accessing }
+MEDAdminComponent >> mergeTags [
+	
+	self showWithBack: (MEDTagsMergeComponent new)
 ]
 
 { #category : #accessing }
@@ -195,10 +227,14 @@ MEDAdminComponent >> renderPageStatsOn: html [
 
 { #category : #rendering }
 MEDAdminComponent >> renderPageTagsOn: html [
-"	html buttonToolbar: [
-		html anchorButton
-			callback: [ self createUser ];
-			with: 'Erstellen' ]."
+	html buttonToolbar: [
+		html buttonGroup: [
+			html anchorButton
+				callback: [ self createTag ];
+				with: 'Erstellen'.
+			html anchorButton
+				callback: [ self mergeTags ];
+				with: 'Schlagworte zusammenführen ...' ] ].
 	
 	html table: [
 		self tags do: [ :each |
@@ -211,7 +247,8 @@ MEDAdminComponent >> renderPageTagsOn: html [
 				html tableData: [ 
 					html anchor
 						callback: [ self deleteTag: each ];
-						with: 'Löschen' ]
+						with: 'Löschen'.
+				]
 
 			]
 		]]
@@ -333,6 +370,13 @@ MEDAdminComponent >> syncLdapGroupMembers [
 { #category : #accessing }
 MEDAdminComponent >> tags [
 	^ self db tags sortedBySortKey
+]
+
+{ #category : #'as yet unclassified' }
+MEDAdminComponent >> titleOfPage: aPageName [
+
+	^ pageTitles at: aPageName ifAbsent: [ aPageName capitalized ]
+
 ]
 
 { #category : #accessing }
