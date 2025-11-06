@@ -30,12 +30,25 @@ MEDAdminComponent >> children [
 
 { #category : #actions }
 MEDAdminComponent >> cleanupUsers [
+	| component |
+
 	self confirmYesNo: 'Alle deaktivierten Users ohne Medien löschen?' ifYes: [ 
-		self db findDisabledUsers do: [ :each |
-			each canBeDeleted ifTrue: [ each delete ].
-		].
-		self refresh.
-	]
+	
+		component := WEBBackgroundJobComponent
+			jobTitle: 'cleanupusers'
+			named: 'Benutzer bereinigen'
+			block: [ self offloadedCleanupUsers ].
+
+		component beAutoClose.
+		
+		self show: component onAnswer: [
+			self refresh.
+			self flashMessage: 'Bereinigung abgeschlossen' ] ]
+]
+
+{ #category : #'as yet unclassified' }
+MEDAdminComponent >> clearTrash [
+	self confirmYesNo: 'Leeren?' ifYes: [ self db clearTrash ]
 ]
 
 { #category : #actions }
@@ -117,7 +130,7 @@ MEDAdminComponent >> initialize [
 		#tags -> 'Schlagworte'.
 		#ldap -> 'LDAP'.
 		#demo -> 'Demo'.
-		#trash -> 'Papierkorb'.
+		#trash -> 'Lösch-Logbuch'.
 	 } asD
 ]
 
@@ -125,6 +138,16 @@ MEDAdminComponent >> initialize [
 MEDAdminComponent >> mergeTags [
 	
 	self showWithBack: (MEDTagsMergeComponent new)
+]
+
+{ #category : #'as yet unclassified' }
+MEDAdminComponent >> offloadedCleanupUsers [
+	self db findDisabledUsers do: [ :each |
+		each canBeDeleted ifTrue: [
+			each delete.
+			self db addToTrash: each.
+		].
+	].
 ]
 
 { #category : #accessing }
@@ -258,22 +281,18 @@ MEDAdminComponent >> renderPageTagsOn: html [
 
 { #category : #rendering }
 MEDAdminComponent >> renderPageTrashOn: html [
-"	html buttonToolbar: [
+	html buttonToolbar: [
 		html anchorButton
-			callback: [ self createUser ];
-			with: 'Erstellen' ]."
+			callback: [ self clearTrash ];
+			with: 'Leeren' ].
 	
-	html paragraph: 'These objects have been automatically deleted. This list is just for logging purpose. The objects remain in memory, but have been deleted from the database.'.
+	html paragraph: 'Die folgenden Objekte wurden automatisch gelöscht. Diese Liste dient nur als Protokoll.'.
 	
 	html table: [
 		self db trashedObjects do: [ :each |
 			html tableRow: [
 				html tableData: each classDisplayName.
 				html tableData: each displayName.
-				html tableData: [ 
-"					html anchor
-						callback: [ self deleteUser: each ];
-						with: 'Löschen'" ]
 	]]]
 ]
 
