@@ -58,9 +58,13 @@ MEDTag class >> validateTitle: aString [
 
 { #category : #'submorphs-add/remove' }
 MEDTag >> canBeDeleted [
-	"Optimize: Maybe use self usageCount?"
-	^ (self db isTagInUse: self) not
 
+	self isSchoolSubject ifTrue: [ ^ false ].
+
+	"Optimize: Maybe use self usageCount?"
+	(self db isTagInUse: self) ifTrue: [ ^ false ].
+
+	^ true
 ]
 
 { #category : #accessing }
