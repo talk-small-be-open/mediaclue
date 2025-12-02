@@ -169,7 +169,8 @@ MEDUploadCockpitComponent >> saveAsNewMediaSet [
 
 	uploadingMediaSet
 		title: 'Unbenannt - Letzter Import';
-		owner: self currentUser;
+		owner: (self currentUser);
+		createdAt: (DateAndTime now);
 		save.
 		
 	self currentPortfolio newUploading.
