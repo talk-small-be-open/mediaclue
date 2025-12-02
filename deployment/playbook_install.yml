@@ -135,21 +135,21 @@
       user: "{{remoteUser}}"
       minute: "5"
       hour: "*/6"
-      job: "cd {{mediaclue.installationPath}}/server && ./backup-mongodb.sh"
+      job: "cd {{mediaclue.installationPath}}/server && cronic ./backup-mongodb.sh"
   - name: cronjob backup Pharo image
     cron:
       name: pharo backup
       user: "{{remoteUser}}"
       minute: "10"
       hour: "*/12"
-      job: "cd {{mediaclue.installationPath}}/server && ./backup-image-snapshot.sh"
+      job: "cd {{mediaclue.installationPath}}/server && cronic ./backup-image-snapshot.sh"
   - name: cronjob cleanup
     cron:
       name: mediaclue cleanup files
       user: "{{remoteUser}}"
       minute: "11"
       hour: "3"
-      job: "cd {{mediaclue.installationPath}}/server && ./cleanup.sh"
+      job: "cd {{mediaclue.installationPath}}/server && cronic ./cleanup.sh"
   - name: certbot renew weekly
     when: mediaclue.useSsl
     cron:

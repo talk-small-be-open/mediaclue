@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 pushd .. > /dev/null
 
 NOW=$(date +"%Y%m%d%H%M")
