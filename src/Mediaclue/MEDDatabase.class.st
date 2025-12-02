@@ -224,6 +224,22 @@ MEDDatabase >> findTaggablesByTag: aTag [
 	^ result allObjects
 ]
 
+{ #category : #'as yet unclassified' }
+MEDDatabase >> findUnusedTags [
+	^ self db tags select: [ :each |
+		| hasOne |
+		hasOne :=	(
+			(MEDMediaAsset selectOne: [ :e |
+				((e at: 'tagList.__id') = each voyageId) ]) notNil
+		) or: [
+			(MEDMediaSet selectOne: [ :e |
+				((e at: 'tagList.__id') = each voyageId) ]) notNil
+		].
+	
+		hasOne not
+	]
+]
+
 { #category : #finders }
 MEDDatabase >> findUserByEmail: aString [
 	^ MEDUser selectOne: [ :each | each email = aString ]

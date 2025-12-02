@@ -70,7 +70,7 @@ MEDMediaSet >> descriptionCreatedAt [
 	^ WEBMaDateAndTimeDescription new
 		accessor: #createdAt;
 		label: 'Erstellt am';
-		beReadonly;
+"		beReadonly;"
 		yourself
 ]
 

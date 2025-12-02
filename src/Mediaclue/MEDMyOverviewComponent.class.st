@@ -61,6 +61,8 @@ MEDMyOverviewComponent >> refresh [
 	my := self session myMediaSets.
 	empty := my isEmpty.
 	
+	cp cleanup.
+	
 	mediaSetsToplevel := (my reject: [ :each | each hasSortPath ]) sortedBySortKey.
 	mediaSetsOrderManual := (my copyWithoutAll: mediaSetsToplevel) groupedBy: [ :each |
 		each sortPath ] sortedBy: [ :each | each ].

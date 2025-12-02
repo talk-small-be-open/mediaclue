@@ -6,6 +6,7 @@ Class {
 	#instVars : [
 		'users',
 		'userGroups',
+		'tags',
 		'ldapWizard',
 		'configEditor',
 		'pageTitles'
@@ -29,21 +30,48 @@ MEDAdminComponent >> children [
 ]
 
 { #category : #actions }
-MEDAdminComponent >> cleanupUsers [
+MEDAdminComponent >> cleanupTags [
 	| component |
 
-	self confirmYesNo: 'Alle deaktivierten Users ohne Medien löschen?' ifYes: [ 
+	self confirmYesNo: 'Alle Schlagworte OHNE Verwendung löschen?' ifYes: [ 
 	
 		component := WEBBackgroundJobComponent
-			jobTitle: 'cleanupusers'
-			named: 'Benutzer bereinigen'
-			block: [ self offloadedCleanupUsers ].
+			jobTitle: 'cleanuptags'
+			named: 'Schlagworte bereinigen'
+			block: [ self offloadedCleanupTags ].
 
 		component beAutoClose.
 		
 		self show: component onAnswer: [
 			self refresh.
 			self flashMessage: 'Bereinigung abgeschlossen' ] ]
+]
+
+{ #category : #actions }
+MEDAdminComponent >> cleanupUsers [
+	| component deleteWithMedia labels chosen |
+
+	labels := {
+		'empty'->'01: Nur Deaktivierte löschen, die keine Medien haben'.
+		'all'->'02: Alle Deaktivierten und deren Medien löschen'.
+	} asD.
+	chosen := self chooseFrom: labels keys labels: [ :e | labels at: e ] caption: 'Deaktivierte löschen' default: nil.
+
+	chosen ifNil: [ ^ self ].
+	
+	deleteWithMedia := (chosen = 'all').
+
+	
+	component := WEBBackgroundJobComponent
+		jobTitle: 'cleanupusers'
+		named: 'Benutzer bereinigen'
+		block: [ self offloadedCleanupUsers: deleteWithMedia ].
+
+	component beAutoClose.
+	
+	self show: component onAnswer: [
+		self refresh.
+		self flashMessage: 'Bereinigung abgeschlossen' ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -141,8 +169,23 @@ MEDAdminComponent >> mergeTags [
 ]
 
 { #category : #'as yet unclassified' }
-MEDAdminComponent >> offloadedCleanupUsers [
+MEDAdminComponent >> offloadedCleanupTags [
+	self db findUnusedTags do: [ :each |
+		each canBeDeleted ifTrue: [
+			each delete.
+			self db addToTrash: each.
+		].
+	].
+]
+
+{ #category : #'as yet unclassified' }
+MEDAdminComponent >> offloadedCleanupUsers: aDeleteMediaBoolean [
 	self db findDisabledUsers do: [ :each |
+		
+		aDeleteMediaBoolean ifTrue: [
+			each deleteAllMyMedia
+		].
+		
 		each canBeDeleted ifTrue: [
 			each delete.
 			self db addToTrash: each.
@@ -159,6 +202,7 @@ MEDAdminComponent >> pages [
 MEDAdminComponent >> refresh [
 	users := nil.
 	userGroups := nil.
+	tags := nil.
 ]
 
 { #category : #rendering }
@@ -256,10 +300,21 @@ MEDAdminComponent >> renderPageTagsOn: html [
 		html buttonGroup: [
 			html anchorButton
 				callback: [ self createTag ];
-				with: 'Erstellen'.
+				with: '+ Erstellen'.
+			html anchorButton
+				callback: [ self showAllTags ];
+				with: 'Zeige alle'.
+			html anchorButton
+				callback: [ self showUnusedTags ];
+				with: 'Zeige nicht-verwendete'.
+			html anchorButton
+				callback: [ self cleanupTags ];
+				with: 'Schlagworte bereinigen'.
 			html anchorButton
 				callback: [ self mergeTags ];
-				with: 'Schlagworte zusammenführen ...' ] ].
+				with: '2 Schlagworte zusammenführen ...'.
+		].
+	].
 	
 	html table: [
 		self tags do: [ :each |
@@ -356,6 +411,12 @@ MEDAdminComponent >> renderPageUsersOn: html [
 		]]
 ]
 
+{ #category : #accessing }
+MEDAdminComponent >> showAllTags [
+	"indirect"
+	tags := nil
+]
+
 { #category : #'as yet unclassified' }
 MEDAdminComponent >> showAllUsers [
 	"indirect"
@@ -365,6 +426,11 @@ MEDAdminComponent >> showAllUsers [
 { #category : #'as yet unclassified' }
 MEDAdminComponent >> showDisabledUsers [
 	users := self db findDisabledUsers sortedBySortKey
+]
+
+{ #category : #accessing }
+MEDAdminComponent >> showUnusedTags [
+	tags := self db findUnusedTags sortedBySortKey
 ]
 
 { #category : #actions }
@@ -390,7 +456,7 @@ MEDAdminComponent >> syncLdapGroupMembers [
 
 { #category : #accessing }
 MEDAdminComponent >> tags [
-	^ self db tags sortedBySortKey
+	^ tags ifNil: [ tags := self db tags sortedBySortKey ]
 ]
 
 { #category : #'as yet unclassified' }

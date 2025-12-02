@@ -34,19 +34,11 @@ MEDUser >> beAdmin [
 { #category : #removing }
 MEDUser >> canBeDeleted [
 
+	"If the user owns media, we rather not delete him"
 	(self db countMediasByOwner: self) > 0 ifTrue: [ ^ false ].
 
-	"Sets which are not empty and are made for others too"
-"Geht nicht, zu wirre Mongo-Query Voodoo	(MEDMediaSet count: [ :each |
-		((each at: 'owner.__id' ) = self voyageId) &
-			((each medias size = 0) not)
-	]) > 0 ifTrue: [ ^ false ]."
-
-	(self portfolio mediaSets anySatisfy: [ :each | each isEmpty not ]) ifTrue: [ ^ false ].
-	
-"zu ungenau. Liefer auch die speziellen Kollektionen, welche es immer gibt
-	(self db countMediaSetsByOwner: self) > 0 ifTrue: [ ^ false ]."
-	
+	"We DONT check, if the user has sets, because they are not of substantial value."
+"	(self portfolio mediaSets anySatisfy: [ :each | each isEmpty not ]) ifTrue: [ ^ false ]."
 	
 	^ true
 ]
