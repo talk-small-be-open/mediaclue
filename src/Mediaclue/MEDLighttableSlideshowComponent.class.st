@@ -3,7 +3,8 @@ Class {
 	#superclass : #MEDSlideshowComponentBase,
 	#instVars : [
 		'size',
-		'showTools'
+		'showReportMisuse',
+		'showDownload'
 	],
 	#category : #'Mediaclue-View'
 }
@@ -19,8 +20,13 @@ MEDLighttableSlideshowComponent >> beMedium [
 ]
 
 { #category : #'as yet unclassified' }
-MEDLighttableSlideshowComponent >> beShowTools [
-	showTools := true
+MEDLighttableSlideshowComponent >> beShowDownload [
+	showDownload := true
+]
+
+{ #category : #'as yet unclassified' }
+MEDLighttableSlideshowComponent >> beShowReportMisuse [
+	showReportMisuse := true
 ]
 
 { #category : #actions }
@@ -46,7 +52,8 @@ MEDLighttableSlideshowComponent >> gridFraction [
 MEDLighttableSlideshowComponent >> initialize [ 
 	super initialize.
 	self beSmall.
-	showTools := false
+	showReportMisuse := false.
+	showDownload := false.
 ]
 
 { #category : #testing }
@@ -103,15 +110,17 @@ MEDLighttableSlideshowComponent >> renderToolbarOn: html [
 
 { #category : #rendering }
 MEDLighttableSlideshowComponent >> renderToolsFor: aMedia on: html [
-	showTools ifTrue: [
+	(showReportMisuse or: [ showDownload ]) ifTrue: [
 		html div class: 'imageTools'; with: [ 
-			html anchor
-				callback: [ self downloadImage: aMedia ];
-				with: 'Herunterladen'.
-			html space; space.
-			html anchor
-				callback: [ self reportMisuse: aMedia ];
-				with: 'Löschung'.
+			showDownload ifTrue: [
+				html anchor
+					callback: [ self downloadImage: aMedia ];
+					with: 'Herunterladen' ].
+			showReportMisuse ifTrue: [
+				html space; space.
+				html anchor
+					callback: [ self reportMisuse: aMedia ];
+					with: 'Löschung' ].
 		]
 	]
 ]
@@ -119,4 +128,14 @@ MEDLighttableSlideshowComponent >> renderToolsFor: aMedia on: html [
 { #category : #actions }
 MEDLighttableSlideshowComponent >> reportMisuse: aMedia [
 	self show: (MEDReportMisuseComponent media: aMedia)
+]
+
+{ #category : #accessing }
+MEDLighttableSlideshowComponent >> showDownload [
+	^ showDownload
+]
+
+{ #category : #accessing }
+MEDLighttableSlideshowComponent >> showDownload: anObject [
+	showDownload := anObject
 ]

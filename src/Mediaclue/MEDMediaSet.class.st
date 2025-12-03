@@ -13,7 +13,8 @@ Class {
 		'createdAt',
 		'readPermittedAuthorities',
 		'writePermittedAuthorities',
-		'isGallery'
+		'isGallery',
+		'allowGalleryDownload'
 	],
 	#category : #'Mediaclue-Models'
 }
@@ -32,6 +33,16 @@ MEDMediaSet class >> mongoTagList [
 		attributeName: 'tagList';
 		beEager;
 		yourself
+]
+
+{ #category : #accessing }
+MEDMediaSet >> allowGalleryDownload [
+	^ allowGalleryDownload = true
+]
+
+{ #category : #accessing }
+MEDMediaSet >> allowGalleryDownload: anObject [
+	allowGalleryDownload := anObject
 ]
 
 { #category : #accessing }
@@ -62,6 +73,19 @@ MEDMediaSet >> description [
 { #category : #accessing }
 MEDMediaSet >> description: anObject [
 	description := anObject
+]
+
+{ #category : #magritte }
+MEDMediaSet >> descriptionAllowGalleryDownload [
+	<magritteDescription>
+	^ MABooleanDescription new
+		accessor: #allowGalleryDownload;
+		label: 'Fotogalerie-Download';
+		trueString: 'Ja';
+		falseString: 'Nein';
+		checkboxLabel: 'Ja, Download erlaubt';
+		default: false;
+		yourself
 ]
 
 { #category : #magritte }
@@ -182,6 +206,7 @@ MEDMediaSet >> initialize [
 "	tagList := OrderedCollection new."
 	createdAt := DateAndTime now.
 	isGallery := false.
+	allowGalleryDownload := false.
 ]
 
 { #category : #initialization }
