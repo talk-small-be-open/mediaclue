@@ -273,6 +273,7 @@ MEDMediaSetEditor >> renderModelOn: html [
 		html maGrid: #sortPath.
 		html maGrid: #createdAt.
 		html maGrid: #isGallery.
+		html maGrid: #allowGalleryDownload.
 
 		isWithBulkOperations ifTrue: [
 			self renderBulkOperationsOn: html].

@@ -149,8 +149,11 @@ MEDGalleriesComponentBase >> setMediaSets: aCollection [
 { #category : #actions }
 MEDGalleriesComponentBase >> showAsLighttable [
 	slideshowComponent := (MEDLighttableSlideshowComponent imagesFromMediaSet: selectedMediaSet viewer: self currentUser)
-		beShowTools;
-		yourself
+		beShowReportMisuse;
+		yourself.
+		
+	slideshowComponent showDownload: selectedMediaSet allowGalleryDownload
+	
 ]
 
 { #category : #actions }
