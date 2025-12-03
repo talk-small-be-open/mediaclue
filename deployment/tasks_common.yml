@@ -80,6 +80,13 @@
       update_cache: yes
 
 
+  # TODO: xpra kann nicht installiert werden, weil es eine neuere Version will, welche aber nicht auf 18.04. vollständig hinterlegt ist...
+  - name: Install xpra if possible
+    ignore_errors: yes
+    apt:
+      state: present
+      name: apt
+
   - name: Install basic apt packages
     apt:
       state: present
@@ -88,8 +95,6 @@
         - 'git'
         - 'imagemagick'
         - 'xauth'
-        # TODO: xpra kann nicht installiert werden, weil es eine neuere Version will, welche aber nicht auf 18.04. vollständig hinterlegt ist...
-        - 'xpra'
         - 'htop'
         - 'unzip'
         - 'zip'
@@ -104,6 +109,7 @@
         - 'mediainfo'
         - 'ffmpeg'
         - 'figlet'
+        - 'cronic'
 
   - name: Check if wkhtmltopdf is present
     stat:
