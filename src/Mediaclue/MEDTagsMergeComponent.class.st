@@ -103,15 +103,22 @@ MEDTagsMergeComponent >> offloadedMerge [
 { #category : #rendering }
 MEDTagsMergeComponent >> renderContentOn: html [
 
+	| options |
+	options := {
+#plugins -> #('clear_button').
+#setFirstOptionActive -> true.
+}.
+
 	html pageHeader: 'Schlagworte zusammenführen' body: [
 
 		html form class: 'bottomBuffer'; with: [
 			html div class: 'bottomBuffer'; with: [
 				html div: 'Altes Schlagwort (wird gelöscht):'.
-				html selectizeSelect
+				(html selectizeSelect: options)
 					list: (allTags copyWithout: targetTag);
 					labels: [ :each | each title ];
 					beOptional;
+					optionalLabel: 'Bitte wählen ...';
 					on: #sourceTag of: self.
 
 				sourceTag ifNotNil: [
@@ -124,10 +131,11 @@ MEDTagsMergeComponent >> renderContentOn: html [
 			html div class: 'bottomBuffer'; with: [ 		
 				html div: '... wird übertragen auf bestehendes Schlagwort:'.
 
-				html selectizeSelect
+				(html selectizeSelect: options)
 					list: (allTags copyWithout: sourceTag);
 					labels: [ :each | each title ];
 					beOptional;
+					optionalLabel: 'Bitte wählen ...';
 					on: #targetTag of: self.
 
 				targetTag ifNotNil: [

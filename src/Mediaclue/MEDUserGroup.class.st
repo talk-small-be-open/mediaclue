@@ -102,7 +102,7 @@ MEDUserGroup >> isMember: aUser [
 
 { #category : #adding }
 MEDUserGroup >> removeUser: aUser [
-	users remove: aUser
+	users removeIfPresent: aUser
 ]
 
 { #category : #accessing }

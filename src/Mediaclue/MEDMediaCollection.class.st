@@ -10,6 +10,11 @@ Class {
 	#category : #'Mediaclue-Models'
 }
 
+{ #category : #accessing }
+MEDMediaCollection class >> displayName [
+	^'Media collection'
+]
+
 { #category : #testing }
 MEDMediaCollection class >> isVoyageRoot [
 	^false

@@ -14,7 +14,7 @@ MEDPowerSearchComponent >> initializeMyself [
 	permissionTypeLabels := MEDHelper permissionTypeMap.
 	
 	"Wording"
-	permissionTypeLabels at: #groups put: 'Spezifische Gruppen und Benutzer'
+	permissionTypeLabels at: #groups put: 'Spezifische Gruppe'
 ]
 
 { #category : #initialization }
@@ -97,14 +97,33 @@ MEDPowerSearchComponent >> renderOptionsOn: html [
 				value: (searchQuery isGallery = true).
 			html text: ' Nur Galerien' ].	
 	
-		html label with: [
+	
+		html label: [
+			| optionClassSetter id |
+
+			id := html nextId.
+			optionClassSetter := ((html jQuery id: id) parent propertyAt: 'class' put: (
+				(JSStream on: '"permissionType option" + ') javascript: ((html jQuery id: id) propertyAt: 'selectedIndex' ))
+			).
+
 			html span: 'Sichtbarkeit: '.
+
 			html select
+				id: id;
 				list: MEDHelper permissionTypeCodes;
 				labels: [ :each | permissionTypeLabels at: each ];
-				"			optionalLabel: 'Alle';"
+"				titles: [ :each | each asString ];"
 				beOptional;
-				on: #permissionType of: searchQuery ].
+				onChange: optionClassSetter;
+				script: optionClassSetter;
+				on: #permissionType of: searchQuery.
+				
+			html select
+				class: 'readPermittedAuthority';
+				list: self db userGroups sortedBySortKey;
+				beOptional;
+				on: #readPermittedAuthority of: searchQuery.
+		].
 
 		html label with: [
 			html span: 'Limite: '.

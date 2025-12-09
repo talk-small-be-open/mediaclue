@@ -450,6 +450,10 @@ MEDHtmlCanvas >> selectizeSelect [
 
 { #category : #enumerating }
 MEDHtmlCanvas >> selectizeSelect: options [
+
+	"Options, see
+	https://selectize.dev/docs/usage"
+
 	^ self select
 		script: (self jQuery this call: 'selectize' with: options asD);
 		yourself

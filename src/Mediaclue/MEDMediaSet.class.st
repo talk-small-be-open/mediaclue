@@ -19,6 +19,11 @@ Class {
 	#category : #'Mediaclue-Models'
 }
 
+{ #category : #accessing }
+MEDMediaSet class >> displayName [
+	^'Media set'
+]
+
 { #category : #testing }
 MEDMediaSet class >> isVoyageRoot [
 	^true
