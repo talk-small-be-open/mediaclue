@@ -29,6 +29,7 @@
 
 @import "/lib/selectize/less/selectize.default.less";
 @import "/lib/selectize/less/plugins/remove_button.less";
+@import "/lib/selectize/less/plugins/clear_button.less";
 
 // @fa-font-path: "lib/fontawesome-free-5.11.2-web/webfonts";
 
@@ -1288,6 +1289,21 @@ div.MEDSearchComponentBase {
       margin-bottom: 1em;
     }
   }
+  
+  &.MEDPowerSearchComponent {
+    label.permissionType {
+      select.readPermittedAuthority {
+        display: none;
+      }
+
+      &.option2 {
+        select.readPermittedAuthority {
+          display: unset;
+        }
+      }
+    }
+  }
+
 }
 
 .ui-sortable-handle {
