@@ -84,6 +84,18 @@ MEDUserGroup >> descriptionUsers [
 		yourself
 ]
 
+{ #category : #magritte }
+MEDUserGroup >> descriptionUsersSorted [
+	<magritteDescription>
+	^ MEDMaMultipleOptionDescription new
+		accessor: #usersSorted;
+		label: 'Users, alphabetisch';
+"		optionsBlock: [ self db users sortedBySortKey ];"
+		priority: 20;
+		beReadonly;
+		yourself
+]
+
 { #category : #accessing }
 MEDUserGroup >> displayName [
 	^ self title
@@ -134,4 +146,15 @@ MEDUserGroup >> users [
 MEDUserGroup >> users: aCollection [
 	users removeAll.
 	users addAll: aCollection
+]
+
+{ #category : #accessing }
+MEDUserGroup >> usersSorted [
+	^ users sortedBySortKey
+]
+
+{ #category : #accessing }
+MEDUserGroup >> usersSorted: aCollection [
+	"Convenience, Magritte accessor"
+	^ self users: aCollection
 ]

@@ -23,7 +23,7 @@ MEDUserGroupViewer >> renderModelOn: html [
 			with: 'Bearbeiten'.
 				
 		html maGrid: #title.
-		html maGrid: #users.
+		html maGrid: #usersSorted.
 		html maGrid: #canUpload.
 		html maGrid: #uid.
 	]
