@@ -9,7 +9,7 @@ MEDLdapIdentityProvider >> createNewUserFromLdapResult: aResult [
 	| user |
 	user := MEDUser new.
 	user
-		ldapUid: (aResult attrAt: self globalConfiguration ldapUidField);
+		ldapUid: (aResult attrAt: self globalConfiguration ldapUidField) asString;
 		firstName: (aResult attrAt: 'givenName') asString;
 		lastName: (aResult attrAt: 'sn') asString;
 		email: (aResult attrAt: 'mail').
