@@ -313,6 +313,6 @@
     cron:
       name: nightly trigger
       user: "{{remoteUser}}"
-      minute: "0"
+      minute: "1"
       hour: "2"
       job: "cd {{mediaclue.installationPath}}/server && ./run-task.sh runNightlyTasks 240"
