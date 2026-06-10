@@ -31,7 +31,7 @@ MEDTagEditor >> renderModelOn: html [
 		
 		html maGrid: #title.
 "obsolete?		html maGrid: #category."
-		html maGrid: #isSchoolSubject.
+		html maGrid: #isMainTag.
 	]
 
 ]

@@ -7,7 +7,9 @@ Class {
 		'suggesterTagId',
 		'topTags',
 		'myTopTags',
-		'subjectTags'
+		'mainTags',
+		'mainTagGroups',
+		'allTags'
 	],
 	#category : #'Mediaclue-Magritte'
 }
@@ -27,9 +29,21 @@ MEDMaTagListInputComponent class >> memento: aMemento description: aDescription 
 MEDMaTagListInputComponent >> initialize [
 	super initialize.
 	
-	subjectTags := self session schoolSubjectTags.
+	mainTagGroups := self session mainTagGroups.
+
+	mainTags := self session mainTags.
 	topTags := self session topTags.
 	myTopTags := self session myTopTags.
+
+	allTags := Set new.
+	allTags
+		addAll: self model tags;
+		addAll: mainTags;
+		addAll: topTags;
+		addAll: myTopTags.
+		
+	mainTagGroups do: [ :each |
+		allTags addAll: each tags ].
 
 "	restTags := self model tags copyWithoutAll: (subjectTags, topTags, myTopTags)."
 
@@ -55,17 +69,28 @@ MEDMaTagListInputComponent >> renderInputOn: html [
 
 { #category : #rendering }
 MEDMaTagListInputComponent >> renderSelectizeJsOn: html [
-	| options optgroups |
+	| options optgroups restTags |
+	
+	restTags := self restTags.
+	
 	options := OrderedCollection new.
 	optgroups := {
-		{ 'value'->'subject'. 'label'->'Haupt-Schlagworte' } asD.
+		{ 'value'->'main'. 'label'->'Haupt-Schlagworte' } asD.
 		{ 'value'->'top'. 'label'->'Top-Schlagworte' } asD.
 		{ 'value'->'mytop'. 'label'->'Meine Top-Schlagworte' } asD.
 		{ 'value'->'rest'. 'label'->'Weitere' } asD.
-	}.
-	
-	subjectTags do: [ :each |
-		options add: { 'optgroup'->'subject'. 'value'->(each title). 'text'->(each displayName) } asD
+	} asOrderedCollection.
+
+	mainTagGroups do: [ :each |
+		| groupName |
+		groupName := 'mainGroup', each uuid.
+		optgroups add: { 'value'->groupName. 'label'->('Kontext ', each title) } asD.
+"		each tags do: [ :eachTag |
+			options add: { 'optgroup'->groupName. 'value'->(eachTag title). 'text'->eachTag displayName } asD ]."
+	].
+
+"	mainTags do: [ :each |
+		options add: { 'optgroup'->'main'. 'value'->(each title). 'text'->(each displayName) } asD
 	].
 	topTags do: [ :each |
 		options add: { 'optgroup'->'top'. 'value'->(each title). 'text'->(each displayName) } asD
@@ -74,13 +99,34 @@ MEDMaTagListInputComponent >> renderSelectizeJsOn: html [
 		options add: { 'optgroup'->'mytop'. 'value'->(each title). 'text'->(each displayName) } asD
 	].
 
-	self restTags do: [ :each |
+	restTags do: [ :each |
 		options add: { 'optgroup'->'rest'. 'value'->(each title). 'text'->(each displayName) } asD
 	].
+"
+
+	allTags do: [ :each |
+		| groups |
+		groups := Array streamContents: [ :a |
+			( mainTags includes: each ) ifTrue: [ a nextPut: 'main' ].
+			( topTags includes: each ) ifTrue: [ a nextPut: 'top' ].
+			( myTopTags includes: each ) ifTrue: [ a nextPut: 'mytop' ].
+			( restTags includes: each ) ifTrue: [ a nextPut: 'rest' ].
+	
+			mainTagGroups do: [ :eachMtg |
+				| groupName |
+				groupName := 'mainGroup', eachMtg uuid.
+				( eachMtg hasTag: each ) ifTrue: [ a nextPut: groupName ].
+		]].
+	
+		options add: { 'optgroup'->groups. 'value'->(each title). 'text'->(each displayName) } asD.
+	].
+
 
 	html script: '
 $("#', self id, '").selectize({
-	plugins: ["remove_button"],
+	plugins: ["remove_button",
+		{name: "optgroup_columns", options: {equalizeWidth: true, equalizeHeight: false}}
+	],
 	optgroups: ', optgroups asJavascript,',
 	options: ', options asJavascript,',
 	delimiter: ",",
@@ -103,7 +149,7 @@ $("#', self id, '").selectize({
 MEDMaTagListInputComponent >> renderSuggestedTagsOn: html [
 
 	html strong: 'Haupt-Schlagworte: '.
-	self renderTags: subjectTags on: html.
+	self renderTags: mainTags on: html.
 
 	html strong: ' Top-Schlagworte: '.
 	self renderTags: topTags on: html.
@@ -126,6 +172,6 @@ MEDMaTagListInputComponent >> renderTags: aCollection on: html [
 
 { #category : #initialization }
 MEDMaTagListInputComponent >> restTags [
-	^ self model tags copyWithoutAll: (subjectTags, topTags, myTopTags).
+	^ self model tags copyWithoutAll: (mainTags, topTags, myTopTags).
 
 ]

@@ -92,7 +92,9 @@ MEDStandardSearchComponent >> renderContentOn: html [
 				html div class: 'smartSuggestedTags'; with: [
 					self renderTags: suggestedTags title: 'Häufigste Sub-Schlagworte:' on: html ].
 
-				self renderTags: subjectTags title: 'Haupt-Schlagworte:' on: html.
+				self renderTagGroups: mainTagGroups title: 'Schlagwortgruppen:' on: html.
+
+				self renderTags: mainTags title: 'Haupt-Schlagworte:' on: html.
 			
 				self renderTags: topTags title: 'Top-Schlagworte:' on: html.
 

@@ -121,7 +121,7 @@ MEDMediaSetEditor >> doBulkOperationsOnForm [
 		bulkTags = #subjects ifTrue: [
 			| tags |
 			tags := MEDTag tagsFromString: (self formAt: #tagsCommaSeparatedTrimmed).
-			tags := tags select: [ :eachTag | eachTag isSchoolSubject ].
+			tags := tags select: [ :eachTag | eachTag isMainTag ].
 			tags ifNotEmpty: [
 				| newTagsString |
 				newTagsString := MEDTag stringFromTags: tags.
@@ -166,7 +166,7 @@ MEDMediaSetEditor >> doBulkOperationsOnModel [
 		
 			bulkTags = #subjects ifTrue: [
 				| newTags |
-				newTags := model schoolSubjectTags.
+				newTags := model mainTags.
 				newTags ifNotEmpty: [
 					each addTags: newTags]
 			].

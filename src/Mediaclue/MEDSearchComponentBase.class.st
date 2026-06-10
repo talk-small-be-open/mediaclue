@@ -6,10 +6,11 @@ Class {
 		'searchQuery',
 		'topTags',
 		'myTopTags',
-		'subjectTags',
 		'suggestedTags',
 		'allTags',
-		'minorSelectedTags'
+		'minorSelectedTags',
+		'mainTags',
+		'mainTagGroups'
 	],
 	#category : #'Mediaclue-View'
 }
@@ -70,6 +71,15 @@ MEDSearchComponentBase >> clickTag: aTag [
 	self search
 ]
 
+{ #category : #initializing }
+MEDSearchComponentBase >> clickTagGroup: aTagGroup [
+	(searchQuery tagGroups includes: aTagGroup)
+		ifTrue: [ searchQuery removeTagGroup: aTagGroup ]
+		ifFalse: [ searchQuery addTagGroup: aTagGroup ].
+
+	self search
+]
+
 { #category : #actions }
 MEDSearchComponentBase >> clipboardClear [
 	self currentPortfolio clipboard clear; save.
@@ -103,7 +113,8 @@ MEDSearchComponentBase >> initializeMyself [
 	topTags := self session topTags.
 	myTopTags := self session myTopTags.
 
-	subjectTags := self session schoolSubjectTags.
+	mainTags := self session mainTags.
+	mainTagGroups := self session mainTagGroups.
 
 	allTags := self db tags sortedBySortKey.
 	
@@ -126,9 +137,14 @@ MEDSearchComponentBase >> isSelectedTag: aTag [
 	^ self selectedTags includes: aTag
 ]
 
+{ #category : #testing }
+MEDSearchComponentBase >> isSelectedTagGroup: aTagGroup [
+	^ self selectedTagGroups includes: aTagGroup
+]
+
 { #category : #initialization }
 MEDSearchComponentBase >> majorTags [
-	^ topTags, myTopTags, subjectTags
+	^ topTags, myTopTags, mainTags
 
 ]
 
@@ -236,6 +252,24 @@ MEDSearchComponentBase >> renderSearchBarOn: html [
 ]
 
 { #category : #rendering }
+MEDSearchComponentBase >> renderTagGroups: aCollection title: aString on: html [
+	aCollection ifEmpty: [ ^self ].
+	
+	html div class: 'tagGroupsArea'; with: [
+		html span class: 'title'; with: aString.
+		html space.
+		html span: [
+			aCollection do: [ :each |
+				html anchor
+					class: 'item';
+					class: 'selected' if: (self isSelectedTagGroup: each);
+					callback: [ self clickTagGroup: each ];
+					with: each title
+			] separatedBy: [ html span: ', ' ]
+		] ]
+]
+
+{ #category : #rendering }
 MEDSearchComponentBase >> renderTags: aCollection title: aString on: html [
 	aCollection ifEmpty: [ ^self ].
 	
@@ -245,7 +279,7 @@ MEDSearchComponentBase >> renderTags: aCollection title: aString on: html [
 		html span: [
 			aCollection do: [ :each |
 				html anchor
-					class: 'tag';
+					class: 'item';
 					class: 'selected' if: (self isSelectedTag: each);
 					callback: [ self clickTag: each ];
 					with: each title
@@ -280,6 +314,11 @@ MEDSearchComponentBase >> search [
 MEDSearchComponentBase >> searchAndAddTag: aTag [
 	searchQuery addTag: aTag.
 	self search
+]
+
+{ #category : #testing }
+MEDSearchComponentBase >> selectedTagGroups [
+	^ searchQuery tagGroups
 ]
 
 { #category : #testing }

@@ -4,9 +4,10 @@ Class {
 	#instVars : [
 		'topTags',
 		'myTopTags',
-		'schoolSubjectTags',
 		'myMediaSets',
-		'canUpload'
+		'canUpload',
+		'mainTags',
+		'mainTagGroups'
 	],
 	#category : #'Mediaclue-View'
 }
@@ -34,6 +35,16 @@ MEDFrontendSession >> login: aUser [
 ]
 
 { #category : #accessing }
+MEDFrontendSession >> mainTagGroups [
+	^ mainTagGroups
+]
+
+{ #category : #accessing }
+MEDFrontendSession >> mainTags [
+	^ mainTags
+]
+
+{ #category : #accessing }
 MEDFrontendSession >> myMediaSets [
 	^ myMediaSets ifNil: [ myMediaSets := self user portfolio mediaSets ]
 ]
@@ -47,16 +58,12 @@ MEDFrontendSession >> myTopTags [
 MEDFrontendSession >> refreshCaches [
 	self user portfolio cleanup.
 	
-	schoolSubjectTags := self db schoolSubjectTags sortedBySortKey.
-	topTags := self db topTags: 10 excluding: schoolSubjectTags.
-	myTopTags := self db topTags: 10 excluding: schoolSubjectTags by: self user.
+	mainTags := self db mainTags sortedBySortKey.
+	mainTagGroups := self db mainTagGroups sortedBySortKey.
+	topTags := self db topTags: 10 excluding: mainTags.
+	myTopTags := self db topTags: 10 excluding: mainTags by: self user.
 	myMediaSets := nil.
 	canUpload := nil.
-]
-
-{ #category : #accessing }
-MEDFrontendSession >> schoolSubjectTags [
-	^ schoolSubjectTags
 ]
 
 { #category : #accessing }

@@ -396,6 +396,11 @@ MEDMediaAsset >> longitude [
 	^ (self metaDataAt: 'GPSLongitude') ifNotNil: [ :t | t copyReplaceAll: ' deg' with: '°' ]
 ]
 
+{ #category : #'as yet unclassified' }
+MEDMediaAsset >> mainTags [
+	^ self tags select: [ :each | each isMainTag = true ]
+]
+
 { #category : #accessing }
 MEDMediaAsset >> metaData [
 	^ metaData

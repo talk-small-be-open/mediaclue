@@ -25,8 +25,8 @@ MEDTag class >> isVoyageRoot [
 ]
 
 { #category : #'as yet unclassified' }
-MEDTag class >> stringContainsSchoolSubject: aString [
-	^ (self tagsFromString: aString) anySatisfy: [ :each | each isSchoolSubject ]
+MEDTag class >> stringContainsMainTag: aString [
+	^ (self tagsFromString: aString) anySatisfy: [ :each | each isMainTag ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -59,7 +59,7 @@ MEDTag class >> validateTitle: aString [
 { #category : #'submorphs-add/remove' }
 MEDTag >> canBeDeleted [
 
-	self isSchoolSubject ifTrue: [ ^ false ].
+	self isMainTag ifTrue: [ ^ false ].
 
 	"Optimize: Maybe use self usageCount?"
 	(self db isTagInUse: self) ifTrue: [ ^ false ].
@@ -80,6 +80,7 @@ MEDTag >> category: anObject [
 { #category : #'submorphs-add/remove' }
 MEDTag >> delete [
 	self removeMeInAllTaggables.
+	self removeMeInTagGroups.
 	self remove.
 "	self cleanupAfterDeletion."
 
@@ -97,10 +98,10 @@ MEDTag >> descriptionCategory [
 ]
 
 { #category : #magritte }
-MEDTag >> descriptionIsSchoolSubject [
+MEDTag >> descriptionIsMainTag [
 	<magritteDescription>
 	^ MABooleanDescription new
-		accessor: #isSchoolSubject;
+		accessor: #isMainTag;
 		label: 'Ist Haupt-Schlagwort';
 		trueString: 'Ja';
 		falseString: 'Nein';
@@ -132,12 +133,12 @@ MEDTag >> initialize [
 ]
 
 { #category : #testing }
-MEDTag >> isSchoolSubject [
+MEDTag >> isMainTag [
 	^ isSchoolSubject
 ]
 
 { #category : #testing }
-MEDTag >> isSchoolSubject: aBoolean [
+MEDTag >> isMainTag: aBoolean [
 	isSchoolSubject := aBoolean
 ]
 
@@ -146,6 +147,18 @@ MEDTag >> removeMeInAllTaggables [
 
 	| all |
 	all := self db findTaggablesByTag: self.
+
+	all do: [ :each |
+		each removeTag: self.
+		each save.
+	]
+]
+
+{ #category : #'submorphs-add/remove' }
+MEDTag >> removeMeInTagGroups [
+
+	| all |
+	all := self db findTagGroupsByTag: self.
 
 	all do: [ :each |
 		each removeTag: self.

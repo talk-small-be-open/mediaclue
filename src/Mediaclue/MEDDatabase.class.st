@@ -215,6 +215,11 @@ MEDDatabase >> findTagByTitle: aString [
 ]
 
 { #category : #testing }
+MEDDatabase >> findTagGroupsByTag: aTag [
+	^ MEDTagGroup selectMany: [ self shouldBeImplemented ]
+]
+
+{ #category : #testing }
 MEDDatabase >> findTaggablesByTag: aTag [
 	| query result |
 	query := MEDSearchQuery new.
@@ -278,14 +283,24 @@ MEDDatabase >> isTagInUse: aTag [
 	^ result isEmpty not
 ]
 
+{ #category : #'as yet unclassified' }
+MEDDatabase >> mainTagGroups [
+	^ MEDTagGroup selectMany: [ :each | each isMainTagGroup = true ]
+]
+
+{ #category : #'as yet unclassified' }
+MEDDatabase >> mainTags [
+	^ MEDTag selectMany: [ :each | each isMainTag = true ]
+]
+
 { #category : #accessing }
 MEDDatabase >> mediaSets [
 	^MEDMediaSet selectAll
 ]
 
-{ #category : #'as yet unclassified' }
-MEDDatabase >> schoolSubjectTags [
-	^ MEDTag selectMany: [ :each | each isSchoolSubject = true ]
+{ #category : #accessing }
+MEDDatabase >> tagGroups [
+	^ MEDTagGroup selectAll
 ]
 
 { #category : #accessing }
