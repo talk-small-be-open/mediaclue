@@ -30,12 +30,7 @@ MEDProjectInfo >> defaultLoggedInMainComponentClass [
 ]
 
 { #category : #'as yet unclassified' }
-MEDProjectInfo >> defaultPublicMainComponentClass [
-	^MEDPublicMainComponent
-]
-
-{ #category : #'as yet unclassified' }
-MEDProjectInfo >> defaultSchoolSubjectNames [
+MEDProjectInfo >> defaultMainTagNames [
 	^{
 'Biologie'.
 'Bildnerisches Gestalten'.
@@ -64,6 +59,11 @@ MEDProjectInfo >> defaultSchoolSubjectNames [
 'Sport'. 
 'Theater'.
 }
+]
+
+{ #category : #'as yet unclassified' }
+MEDProjectInfo >> defaultPublicMainComponentClass [
+	^MEDPublicMainComponent
 ]
 
 { #category : #'as yet unclassified' }

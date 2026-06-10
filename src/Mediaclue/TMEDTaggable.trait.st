@@ -98,6 +98,11 @@ TMEDTaggable >> hasTags: aCollection [
 	^aCollection allSatisfy: [ :each | self hasTag: each ]
 ]
 
+{ #category : #'as yet unclassified' }
+TMEDTaggable >> mainTags [
+	^ self tags select: [ :each | each isMainTag = true ]
+]
+
 { #category : #testing }
 TMEDTaggable >> matchesAnyTag: aCollection [
 	^aCollection anySatisfy: [ :each | self matchesTag: each ]
@@ -124,11 +129,6 @@ TMEDTaggable >> removeTag: aTag [
 { #category : #'as yet unclassified' }
 TMEDTaggable >> removeTags: aCollection [
 	self tags: (self tags copyWithoutAll: aCollection asArray)
-]
-
-{ #category : #'as yet unclassified' }
-TMEDTaggable >> schoolSubjectTags [
-	^ self tags select: [ :each | each isSchoolSubject = true ]
 ]
 
 { #category : #accessing }

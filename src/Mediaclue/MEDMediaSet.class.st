@@ -232,6 +232,11 @@ MEDMediaSet >> isGallery: anObject [
 	isGallery := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+MEDMediaSet >> mainTags [
+	^ self tags select: [ :each | each isMainTag = true ]
+]
+
 { #category : #accessing }
 MEDMediaSet >> owner [
 	^ owner

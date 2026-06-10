@@ -180,11 +180,11 @@ MEDApplicationManager class >> loadDefaultData [
 
 { #category : #'as yet unclassified' }
 MEDApplicationManager class >> loadDefaultTags [
-	self pi defaultSchoolSubjectNames do: [ :each |
+	self pi defaultMainTagNames do: [ :each |
 		| tag |
 		tag := MEDTag findOrCreateFromString: each.
 		
-		tag isSchoolSubject: true.
+		tag isMainTag: true.
 		tag save.
 	]
 ]

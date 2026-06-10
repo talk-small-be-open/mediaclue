@@ -9,7 +9,8 @@ Class {
 		'tags',
 		'ldapWizard',
 		'configEditor',
-		'pageTitles'
+		'pageTitles',
+		'tagGroups'
 	],
 	#category : #'Mediaclue-View'
 }
@@ -87,7 +88,21 @@ MEDAdminComponent >> createTag [
 	title ifBlank: [ ^ self ].
 	
 	MEDTag findOrCreateFromString: title.
+	self refresh.
 	self flashMessage: 'Neu erstellt'
+
+]
+
+{ #category : #actions }
+MEDAdminComponent >> createTagGroup [
+	| new |
+	new := MEDTagGroup new.
+	self show: (MEDTagGroupEditor model: new) onAnswer: [ :answer |
+		answer ifNotNil: [
+			self refresh.
+			self flashMessage: 'Neu erstellt'
+		]
+	]
 
 ]
 
@@ -97,6 +112,7 @@ MEDAdminComponent >> createUser [
 	new := MEDUser new.
 	self show: (MEDUserEditor model: new) onAnswer: [:answer |
 		answer ifNotNil: [
+			self refresh.
 			self flashMessage: 'Neu erstellt']
 	]
 ]
@@ -107,6 +123,7 @@ MEDAdminComponent >> createUserGroup [
 	new := MEDUserGroup new.
 	self show: (MEDUserGroupEditor model: new) onAnswer: [:answer |
 		answer ifNotNil: [
+			self refresh.
 			self flashMessage: 'Neu erstellt']
 	]
 ]
@@ -119,6 +136,13 @@ MEDAdminComponent >> deleteTag: aTag [
 			self delete: aTag then: [
 				self flashMessage: 'Gelöscht'.
 				self refresh]]
+]
+
+{ #category : #actions }
+MEDAdminComponent >> deleteTagGroup: aTagGroup [
+	self delete: aTagGroup then: [
+		self flashMessage: 'Gelöscht'.
+		self refresh]
 ]
 
 { #category : #actions }
@@ -140,6 +164,11 @@ MEDAdminComponent >> editTag: aTag [
 	self showWithBack: (MEDTagEditor model: aTag)
 ]
 
+{ #category : #accessing }
+MEDAdminComponent >> editTagGroup: aTagGroup [
+	self showWithBack: (MEDTagGroupEditor model: aTagGroup)
+]
+
 { #category : #initialization }
 MEDAdminComponent >> initialize [
 	super initialize.
@@ -155,6 +184,7 @@ MEDAdminComponent >> initialize [
 		#userGroups -> 'Gruppen'.
 		#users -> 'Benutzer'.
 		#tags -> 'Schlagworte'.
+		#tagGroups -> 'Schlagwortgruppen'.
 		#ldap -> 'LDAP'.
 		#demo -> 'Demo'.
 		#trash -> 'Lösch-Logbuch'.
@@ -234,7 +264,7 @@ MEDAdminComponent >> offloadedCleanupUsers: cleanupType [
 
 { #category : #accessing }
 MEDAdminComponent >> pages [
-	^ #(config butler stats userGroups users tags ldap demo trash)
+	^ #(config butler stats userGroups users tags tagGroups ldap demo trash)
 ]
 
 { #category : #accessing }
@@ -242,6 +272,7 @@ MEDAdminComponent >> refresh [
 	users := nil.
 	userGroups := nil.
 	tags := nil.
+	tagGroups := nil
 ]
 
 { #category : #rendering }
@@ -330,6 +361,37 @@ MEDAdminComponent >> renderPageStatsOn: html [
 			html tableData: 'Anzahl Benutzer'.
 			html tableData: MEDUser count asString ]
 	]
+]
+
+{ #category : #rendering }
+MEDAdminComponent >> renderPageTagGroupsOn: html [
+	html buttonToolbar: [
+		html buttonGroup: [
+			html anchorButton
+				callback: [ self createTagGroup ];
+				with: '+ Erstellen'.
+"			html anchorButton
+				callback: [ self showAllTags ];
+				with: 'Zeige alle'."
+		].
+	].
+	
+	html table: [
+		self tagGroups do: [ :each |
+			html tableRow: [
+				html tableData: [
+					html anchor
+						callback: [ self editTagGroup: each ];
+						with: each displayName].
+				html tableData: [ each tags do: [ :eachTag | html span: eachTag displayName ] separatedBy: [ html text: ', ' ] ].
+				html tableData: [ 
+					html anchor
+						callback: [ self deleteTagGroup: each ];
+						with: 'Löschen'.
+				]
+
+			]
+		]]
 ]
 
 { #category : #rendering }
@@ -491,6 +553,11 @@ MEDAdminComponent >> syncLdapGroupMembers [
 	component beAutoClose.
 	
 	self show: component
+]
+
+{ #category : #accessing }
+MEDAdminComponent >> tagGroups [
+	^ tagGroups ifNil: [ tagGroups := self db tagGroups sortedBySortKey ]
 ]
 
 { #category : #accessing }

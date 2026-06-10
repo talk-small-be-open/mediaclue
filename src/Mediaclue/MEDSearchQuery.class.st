@@ -5,6 +5,7 @@ Class {
 		'title',
 		'text',
 		'tags',
+		'tagGroups',
 		'myMediaOnly',
 		'notificationsEnabled',
 		'lastNotificationDatetime',
@@ -31,6 +32,11 @@ MEDSearchQuery >> addTag: aTag [
 	tags addIfNotPresent: aTag
 ]
 
+{ #category : #adding }
+MEDSearchQuery >> addTagGroup: aTagGroup [
+	tagGroups addIfNotPresent: aTagGroup
+]
+
 { #category : #accessing }
 MEDSearchQuery >> allowedUser [
 	^ allowedUser
@@ -43,7 +49,9 @@ MEDSearchQuery >> allowedUser: anObject [
 
 { #category : #converting }
 MEDSearchQuery >> asMongoQuery [
-	| mongoQuery andConditions |
+	| mongoQuery andConditions tagConditions |
+
+	"See mongo query syntax: https://www.mongodb.com/docs/manual/reference/mql/"
 
 	mongoQuery := Dictionary new.
 
@@ -78,13 +86,40 @@ MEDSearchQuery >> asMongoQuery [
 	].
 
 	"Tags"
-	self tags ifNotBlank: [ :collection |
+	tagConditions := OrderedCollection new.
+
+	self isTagsFiltered ifTrue: [
 		| titles |
-		titles := collection collect: #title.
-		mongoQuery at: 'tagTitleList' put: {
+		titles := self tags collect: #title.
+"		tagConditions add: {
 			'$all'->titles.
-		} asD.
+		} asD."
+		andConditions add: { 'tagTitleList'->{
+			'$all'->titles.
+		} asD } asD.
+
+"		mongoQuery at: 'tagTitleList' put: {
+			'$all'->titles.
+		} asD."
 	].
+
+	"Tags Groups"
+	self isTagsGroupFiltered ifTrue: [
+		self tagGroups do: [ :each |
+			| titles |
+			titles := each tags collect: #title.
+"			tagConditions add: {
+				'$in'->titles.
+			} asD."
+			andConditions add: { 'tagTitleList'->{
+				'$in'->titles.
+			} asD } asD.
+
+		]
+	].
+
+"	tagConditions ifNotEmpty: [
+		mongoQuery at: 'tagTitleList' put: { '$and'->tagConditions } asD ]."
 
 
 	"Permissions and user-specific checks"
@@ -173,6 +208,7 @@ MEDSearchQuery >> beforeExecution [
 MEDSearchQuery >> clearFilter [
 	text := nil.
 	tags := OrderedCollection new.
+	tagGroups := OrderedCollection new.
 	myMediaOnly := false.
 	includeAudio := true.
 	includeVideo := true.
@@ -291,6 +327,11 @@ MEDSearchQuery >> isTagsFiltered [
 	^ tags notBlank
 ]
 
+{ #category : #testing }
+MEDSearchQuery >> isTagsGroupFiltered [
+	^ tagGroups notBlank
+]
+
 { #category : #accessing }
 MEDSearchQuery >> lastNotificationDatetime [
 	^ lastNotificationDatetime
@@ -355,6 +396,8 @@ MEDSearchQuery >> permissionType: anObject [
 MEDSearchQuery >> postCopy [
 	super postCopy.
 	tags := tags copy.
+	tagGroups := tagGroups copy.
+	readPermittedAuthorities := readPermittedAuthorities copy.
 ]
 
 { #category : #accessing }
@@ -388,12 +431,27 @@ MEDSearchQuery >> removeTag: aTag [
 	tags remove: aTag
 ]
 
+{ #category : #adding }
+MEDSearchQuery >> removeTagGroup: aTagGroup [
+	tagGroups remove: aTagGroup
+]
+
 { #category : #'as yet unclassified' }
 MEDSearchQuery >> sanitizeQuery [
 	({includeAudio. includeVideo. includeDocument. includeImage} allSatisfy: [ :each | each = false ])
 		ifTrue: [ self includeAllMedia ].
 		
 	allowedUser ifNil: [ myMediaOnly := false ]
+]
+
+{ #category : #accessing }
+MEDSearchQuery >> tagGroups [
+	^ tagGroups ifNil: [ #() ]
+]
+
+{ #category : #accessing }
+MEDSearchQuery >> tagGroups: anObject [
+	tagGroups := anObject
 ]
 
 { #category : #accessing }
