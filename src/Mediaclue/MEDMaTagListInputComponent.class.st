@@ -44,6 +44,8 @@ MEDMaTagListInputComponent >> initialize [
 		
 	mainTagGroups do: [ :each |
 		allTags addAll: each tags ].
+	
+	allTags := allTags sortedBySortKey.
 
 "	restTags := self model tags copyWithoutAll: (subjectTags, topTags, myTopTags)."
 
@@ -125,7 +127,7 @@ MEDMaTagListInputComponent >> renderSelectizeJsOn: html [
 	html script: '
 $("#', self id, '").selectize({
 	plugins: ["remove_button",
-		{name: "optgroup_columns", options: {equalizeWidth: true, equalizeHeight: false}}
+		{name: "optgroup_columns", options: {equalizeWidth: false, equalizeHeight: false}}
 	],
 	optgroups: ', optgroups asJavascript,',
 	options: ', options asJavascript,',
