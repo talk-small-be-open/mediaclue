@@ -30,6 +30,7 @@
 @import "/lib/selectize/less/selectize.default.less";
 @import "/lib/selectize/less/plugins/remove_button.less";
 @import "/lib/selectize/less/plugins/clear_button.less";
+@import "/lib/selectize/less/plugins/optgroup_columns.less";
 
 // @fa-font-path: "lib/fontawesome-free-5.11.2-web/webfonts";
 
@@ -1255,10 +1256,10 @@ div.MEDSearchComponentBase {
   div.searchTags {
     font-size: smaller;
     margin: 0.5em 0;
-    div.tagsArea {
+    div.tagsArea, div.tagGroupsArea {
       background-color: whitesmoke;
       margin: 0.5em 0;
-      a.tag {
+      a.item {
         &.selected {
           background-color: yellow;
         }

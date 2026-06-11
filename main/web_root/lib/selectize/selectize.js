@@ -1,6 +1,7 @@
 /**
- * Selectize (v0.15.2)
- * https://selectize.dev
+ * Selectize (v0.15.2) + Modifications Andreas Brodbeck for mediaclue
+ * https://selectize.dev oder https://github.com/selectize/selectize.js (Archiviert seit 2026)
+ *
  *
  * Copyright (c) 2013-2015 Brian Reavis & contributors
  * Copyright (c) 2020-2022 Selectize Team & contributors
@@ -1489,7 +1490,7 @@ $.extend(Selectize.prototype, {
         return '<div class="item">' + escape(data[field_label]) + '</div>';
       },
       'option_create': function(data, escape) {
-        return '<div class="create">Add <strong>' + escape(data.input) + '</strong>&#x2026;</div>';
+        return '<div class="create">Neu: <strong>' + escape(data.input) + '</strong>&#x2026;</div>';
       }
     };
 
@@ -2325,11 +2326,11 @@ $.extend(Selectize.prototype, {
 
     for (i = 0; i < n; i++) {
       option      = self.options[results.items[i].id];
-      option_html = self.render('option', option);
       optgroup    = option[self.settings.optgroupField] || '';
       optgroups   = Array.isArray(optgroup) ? optgroup : [optgroup];
 
       for (j = 0, k = optgroups && optgroups.length; j < k; j++) {
+        option_html = self.render('option', option);
         optgroup = optgroups[j];
         if (!self.optgroups.hasOwnProperty(optgroup) && typeof self.settings.optionGroupRegister === 'function') {
           var regGroup;
@@ -2375,7 +2376,6 @@ $.extend(Selectize.prototype, {
         html.appendChild(groups[optgroup]);
       }
     }
-
     $dropdown_content.html(html);
 
     // highlight matching terms inline
@@ -3535,24 +3535,25 @@ $.extend(Selectize.prototype, {
 
     if (templateName === 'option' || templateName === 'item') {
       value = hash_key(data[self.settings.valueField]);
-      cache = !!value;
+      // Andreas Brodbeck: Never Cache, prohibits multiple identical elements in DOM: cache = !!value;
     }
 
     // pull markup from cache if it exists
-    if (cache) {
-      if (!isset(self.renderCache[templateName])) {
-        self.renderCache[templateName] = {};
-      }
-      if (self.renderCache[templateName].hasOwnProperty(value)) {
-        return self.renderCache[templateName][value];
-      }
-    }
+ //   if (cache) {
+ //     if (!isset(self.renderCache[templateName])) {
+ //       self.renderCache[templateName] = {};
+ //     }
+ //     if (self.renderCache[templateName].hasOwnProperty(value)) {
+ //       return self.renderCache[templateName][value];
+ //     }
+ //   }
 
     // render markup
     html = $(self.settings.render[templateName].apply(this, [data, escape_html]));
 
     // add mandatory attributes
     if (templateName === 'option' || templateName === 'option_create') {
+//debug      html.attr('data-uniqueness', Math.floor((Math.random() * 10000000000)).toString());
       if (!data[self.settings.disabledField]) {
         html.attr('data-selectable', '');
       }
@@ -3569,9 +3570,9 @@ $.extend(Selectize.prototype, {
     }
 
     // update cache
-    if (cache) {
-      self.renderCache[templateName][value] = html[0];
-    }
+//    if (cache) {
+//      self.renderCache[templateName][value] = html[0];
+//    }
 
     return html[0];
   },
@@ -3651,7 +3652,7 @@ Selectize.defaults = {
   disabledField: 'disabled',
   optgroupLabelField: 'label',
   optgroupValueField: 'value',
-  lockOptgroupOrder: false,
+  lockOptgroupOrder: true,
 
   sortField: '$order',
   searchField: ['text'],
