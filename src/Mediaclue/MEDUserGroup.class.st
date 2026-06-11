@@ -148,6 +148,11 @@ MEDUserGroup >> users: aCollection [
 	users addAll: aCollection
 ]
 
+{ #category : #'as yet unclassified' }
+MEDUserGroup >> usersCount [
+	^ users size
+]
+
 { #category : #accessing }
 MEDUserGroup >> usersSorted [
 	^ users sortedBySortKey

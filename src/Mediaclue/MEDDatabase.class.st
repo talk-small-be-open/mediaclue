@@ -247,9 +247,14 @@ MEDDatabase >> findUserByEmail: aString [
 
 { #category : #finders }
 MEDDatabase >> findUserByLdapUid: aString [
+	| lowercase |
 	aString ifBlank: [ ^ nil ].
 	
-	^ MEDUser selectOne: [ :each | each ldapUid = aString ]
+	lowercase := aString asLowercase trimBoth.
+	
+	^ MEDUser selectOne: [ :each | each ldapUid = lowercase ]
+
+"DOES NOT WORK, no full regexp allowed	^ MEDUser selectOne: [ :each | each ldapUid matchesRegex: ('/^', lowercase, '$/i') ]"
 ]
 
 { #category : #finders }

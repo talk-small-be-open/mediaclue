@@ -31,6 +31,11 @@ MEDUser >> beAdmin [
 	isAdmin := true
 ]
 
+{ #category : #attributes }
+MEDUser >> beDisabled [
+	self disabled: true
+]
+
 { #category : #removing }
 MEDUser >> canBeDeleted [
 
@@ -232,6 +237,12 @@ MEDUser >> isAuthenticateAtLdap [
 	^ ldapUid notBlank
 ]
 
+{ #category : #testing }
+MEDUser >> isEmpty [
+
+	^ { firstName. lastName. email. ldapUid  } allSatisfy: [ :each | each isBlank ]
+]
+
 { #category : #accessing }
 MEDUser >> lastName [
 	^ lastName
@@ -249,7 +260,7 @@ MEDUser >> ldapUid [
 
 { #category : #accessing }
 MEDUser >> ldapUid: aValue [
-	ldapUid := aValue
+	ldapUid := aValue asLowercase
 ]
 
 { #category : #accessing }

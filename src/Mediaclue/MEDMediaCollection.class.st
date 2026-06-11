@@ -110,6 +110,11 @@ MEDMediaCollection >> isEmpty [
 	^ self medias isEmpty
 ]
 
+{ #category : #testing }
+MEDMediaCollection >> isGallery [
+	^ false
+]
+
 { #category : #accessing }
 MEDMediaCollection >> medias [
 	^ medias copy

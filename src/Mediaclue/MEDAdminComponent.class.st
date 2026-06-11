@@ -49,23 +49,22 @@ MEDAdminComponent >> cleanupTags [
 
 { #category : #actions }
 MEDAdminComponent >> cleanupUsers [
-	| component deleteWithMedia labels chosen |
+	| component labels chosenCleanupType |
 
 	labels := {
-		'empty'->'01: Nur Deaktivierte löschen, die keine Medien haben'.
-		'all'->'02: Alle Deaktivierten und deren Medien löschen'.
+		'deleteEmptyDisabled'->'01: Deaktivierte löschen, die keine Medien haben'.
+		'deleteAllDisabled'->'02: Alle Deaktivierten und deren Medien löschen'.
+		'disableLdapDuplicates'->'03: LDAP-Duplikate deaktivieren'.
 	} asD.
-	chosen := self chooseFrom: labels keys labels: [ :e | labels at: e ] caption: 'Deaktivierte löschen' default: nil.
+	chosenCleanupType := self chooseFrom: labels keys labels: [ :e | labels at: e ] caption: 'Benutzerbereinigung:' default: nil.
 
-	chosen ifNil: [ ^ self ].
+	chosenCleanupType ifNil: [ ^ self ].
 	
-	deleteWithMedia := (chosen = 'all').
-
 	
 	component := WEBBackgroundJobComponent
 		jobTitle: 'cleanupusers'
 		named: 'Benutzer bereinigen'
-		block: [ self offloadedCleanupUsers: deleteWithMedia ].
+		block: [ self offloadedCleanupUsers: chosenCleanupType ].
 
 	component beAutoClose.
 	
@@ -179,17 +178,57 @@ MEDAdminComponent >> offloadedCleanupTags [
 ]
 
 { #category : #'as yet unclassified' }
-MEDAdminComponent >> offloadedCleanupUsers: aDeleteMediaBoolean [
-	self db findDisabledUsers do: [ :each |
-		
-		aDeleteMediaBoolean ifTrue: [
-			each deleteAllMyMedia
+MEDAdminComponent >> offloadedCleanupUsers: cleanupType [
+
+	(cleanupType = 'deleteEmptyDisabled') ifTrue: [
+		self db findDisabledUsers do: [ :each |
+			each canBeDeleted ifTrue: [
+				each delete.
+				self db addToTrash: each.
+			]
 		].
-		
-		each canBeDeleted ifTrue: [
+	
+		^ self
+	].
+
+
+	(cleanupType = 'deleteAllDisabled') ifTrue: [
+		self db findDisabledUsers do: [ :each |
+			each deleteAllMyMedia.
 			each delete.
 			self db addToTrash: each.
 		].
+
+		^ self
+	].
+
+
+	(cleanupType = 'disableLdapDuplicates') ifTrue: [
+		| grouped |
+		
+		grouped := (self db users select: [ :each | each ldapUid notBlank ]) groupedBy: [ :each | each ldapUid asLowercase ].
+		grouped := grouped select: [ :each | each size >= 2 ].
+		grouped do: [ :eachDuplicates |
+			| keep disable |
+			
+			"Probably keep all"
+			keep := eachDuplicates copy.
+			
+			"Dont keep the ones which could be deleted"
+			keep removeAllSuchThat: [ :each | each canBeDeleted ].
+			
+			"If keep is empty, we at least keep one"
+			keep ifEmpty: [ keep add: eachDuplicates first ].
+			
+			"... and deactivate the others"
+			disable := eachDuplicates copyWithoutAll: keep.			
+			disable do: [ :each |
+				each beDisabled.
+				each save.
+			]
+		].
+
+		^ self
 	].
 ]
 
@@ -266,15 +305,14 @@ MEDAdminComponent >> renderPageLdapOn: html [
 	
 	hasLdap ifFalse: [ html paragraph: 'LDAP nicht aktiviert'. ^ self ].
 	
-	ldapWizard ifNil: [
-		html buttonToolbar: [
-			html buttonGroup: [
-				html anchorButton
-					callback: [ self startLdapWizard ];
-					with: 'Personen abgleichen ...'.
-				html anchorButton
-					callback: [ self syncLdapGroupMembers ];
-					with: 'Gruppenmitglieder jetzt aktualisieren ...'. ] ] ].
+	html buttonToolbar: [
+		html buttonGroup: [
+			html anchorButton
+				callback: [ self startLdapWizard ];
+				with: 'Personen abgleichen ...'.
+			html anchorButton
+				callback: [ self syncLdapGroupMembers ];
+				with: 'Gruppenmitglieder jetzt aktualisieren ...'. ] ].
 
 	html render: ldapWizard	
 ]
@@ -366,6 +404,7 @@ MEDAdminComponent >> renderPageUserGroupsOn: html [
 						callback: [ self viewUserGroup: each ];
 						with: each displayName.
 				].
+				html tableData: each usersCount asString.
 				html tableData: [
 					html anchor
 						callback: [ self deleteUserGroup: each ];
