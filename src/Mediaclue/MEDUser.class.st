@@ -260,7 +260,7 @@ MEDUser >> ldapUid [
 
 { #category : #accessing }
 MEDUser >> ldapUid: aValue [
-	ldapUid := aValue asLowercase
+	ldapUid := aValue ifNotBlank: [ :s | s asLowercase ]
 ]
 
 { #category : #accessing }
