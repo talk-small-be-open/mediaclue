@@ -290,7 +290,9 @@ MEDDatabase >> mainTagGroups [
 
 { #category : #'as yet unclassified' }
 MEDDatabase >> mainTags [
-	^ MEDTag selectMany: [ :each | each isMainTag = true ]
+	^ MEDTag selectMany: [ :each |
+		"Muss isSchoolSubject heissen und nicht isMainTag, wegen Mongo-Query"
+		each isSchoolSubject = true ]
 ]
 
 { #category : #accessing }

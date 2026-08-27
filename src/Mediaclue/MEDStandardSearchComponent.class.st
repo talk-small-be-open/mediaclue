@@ -92,7 +92,7 @@ MEDStandardSearchComponent >> renderContentOn: html [
 				html div class: 'smartSuggestedTags'; with: [
 					self renderTags: suggestedTags title: 'Häufigste Sub-Schlagworte:' on: html ].
 
-				self renderTagGroups: mainTagGroups title: 'Schlagwortgruppen:' on: html.
+				self renderTagGroups: mainTagGroups title: 'Schlagwort-Gruppen:' on: html.
 
 				self renderTags: mainTags title: 'Haupt-Schlagworte:' on: html.
 			
@@ -156,9 +156,10 @@ MEDStandardSearchComponent >> renderOptionsOn: html [
 			html text: ' Dokumente' ].
 		html label with: [
 			html checkbox on: #myMediaSetsOnly of: self.
-			html text: ' Nur in eigenen Kollektionen suchen'].
+			html text: ' Nur in eigenen Kollektionen'].
 	
-		html span: 'Limite: '.
+		html span: 'Limite:'.
+		html space.
 		html select
 			list: #(10 25 50 100 500);
 			optionalLabel: 'Alle';

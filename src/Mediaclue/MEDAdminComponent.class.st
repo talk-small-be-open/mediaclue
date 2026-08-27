@@ -383,6 +383,7 @@ MEDAdminComponent >> renderPageTagGroupsOn: html [
 					html anchor
 						callback: [ self editTagGroup: each ];
 						with: each displayName].
+				html tableData: (each isMainTagGroup ifTrue: [ 'HAUPT' ]).
 				html tableData: [ each tags do: [ :eachTag | html span: eachTag displayName ] separatedBy: [ html text: ', ' ] ].
 				html tableData: [ 
 					html anchor
@@ -424,6 +425,7 @@ MEDAdminComponent >> renderPageTagsOn: html [
 					html anchor
 						callback: [ self editTag: each ];
 						with: each displayName].
+				html tableData: (each isMainTag ifTrue: [ 'HAUPT' ]).
 				html tableData: [ 
 					html anchor
 						callback: [ self deleteTag: each ];

@@ -52,7 +52,7 @@ MEDPowerSearchComponent >> renderContentOn: html [
 				html div class: 'smartSuggestedTags'; with: [
 					self renderTags: suggestedTags title: 'Häufigste Sub-Schlagworte:' on: html ].
 
-				self renderTagGroups: mainTagGroups title: 'Schlagwortgruppen:' on: html.
+				self renderTagGroups: mainTagGroups title: 'Schlagwort-Gruppen:' on: html.
 
 				self renderTags: mainTags title: 'Haupt-Schlagworte:' on: html.
 			
