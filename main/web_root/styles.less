@@ -32,6 +32,9 @@
 @import "/lib/selectize/less/plugins/clear_button.less";
 @import "/lib/selectize/less/plugins/optgroup_columns.less";
 
+// Selectize re-config
+@selectize-max-height-dropdown: 400px;
+
 // @fa-font-path: "lib/fontawesome-free-5.11.2-web/webfonts";
 
 // Zahlen synchron mit pure.css
@@ -1262,6 +1265,9 @@ div.MEDSearchComponentBase {
       a.item {
         &.selected {
           background-color: yellow;
+          border: 1px solid grey;
+          padding-left: 2px;
+          padding-right: 2px;
         }
       }
     }
