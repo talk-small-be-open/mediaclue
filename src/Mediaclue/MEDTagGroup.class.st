@@ -72,7 +72,7 @@ MEDTagGroup >> hasTag: aTag [
 { #category : #initialization }
 MEDTagGroup >> initialize [
 	super initialize.
-	isMainTagGroup := false.
+	isMainTagGroup := true.
 ]
 
 { #category : #accessing }

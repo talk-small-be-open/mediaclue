@@ -142,6 +142,12 @@ MEDTag >> isMainTag: aBoolean [
 	isSchoolSubject := aBoolean
 ]
 
+{ #category : #testing }
+MEDTag >> isSchoolSubject [
+	"Legay und Kompatibilität mit MongoQuery. Es muss identischen Namen haben wie das Feld in Mongo"
+	^ isSchoolSubject
+]
+
 { #category : #'submorphs-add/remove' }
 MEDTag >> removeMeInAllTaggables [
 

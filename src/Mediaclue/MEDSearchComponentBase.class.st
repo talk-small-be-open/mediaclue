@@ -118,6 +118,8 @@ MEDSearchComponentBase >> initializeMyself [
 
 	allTags := self db tags sortedBySortKey.
 	
+"	restTags := allTags copyWithoutAll: (mainTags, topTags, myTopTags)."
+	
 "	myMediaSets := self currentPortfolio mediaSets."
 
 ]
@@ -170,35 +172,88 @@ MEDSearchComponentBase >> removeTag: aTag [
 MEDSearchComponentBase >> renderAllTagsOn: html [
 	| options |
 	
-	html div class: 'tagsArea'; with: [
-		html span class: 'title'; with: 'Alle Schlagworte: '.
-		html space.
-		html span: [
-			minorSelectedTags do: [ :each |
-				html anchor
-					class: 'tag';
-					class: 'selected';
-					callback: [ self clickTag: each ];
-					with: each title
-			] separatedBy: [ html span: ', ' ]
-		].
+	self renderTags: minorSelectedTags title: 'Sonstige Schlagworte: ' on: html.
+
+	html fieldSet with: [
+		html legend: 'Weitere Schlagworte ...'.
 
 		options := {
 #plugins -> #('remove_button').
-#delimiter->','.
 #closeAfterSelect->true.
 }.
 
+		"Einfache Liste nach alphabet"
 		(html selectizeMultiSelect: options)
-"			submitOnChange;"
-"			script: (html jQuery this call: 'selectize' with: options);"
+			list: allTags;
+			attributeAt: 'placeholder' put: '... nach Alphabet gelistet';
+			labels: [ :each | each title ];
+			callback: [ :tags | self addTags: tags ].
+
+		"Liste nach Gruppen"
+		html multiSelect
+			id: html nextId;
+			attributeAt: 'placeholder' put: '... nach Gruppe gelistet';
 			list: allTags;
 			labels: [ :each | each title ];
-			callback: [ :tags | self addTags: tags ]
+			callback: [ :tags | self addTags: tags ].
+			
+		self renderAllTagsSelectize: html lastId jsOn: html
 	
 	]	
 	
 
+]
+
+{ #category : #rendering }
+MEDSearchComponentBase >> renderAllTagsSelectize: anId jsOn: html [
+	| options optgroups |
+	
+	
+	options := OrderedCollection new.
+	optgroups := {
+		{ 'value'->'main'. 'label'->'Haupt-Schlagworte' } asD.
+		{ 'value'->'top'. 'label'->'Top-Schlagworte' } asD.
+		{ 'value'->'mytop'. 'label'->'Meine Top-Schlagworte' } asD.
+	} asOrderedCollection.
+
+	mainTagGroups do: [ :each |
+		| groupName |
+		groupName := 'mainGroup', each uuid.
+		optgroups add: { 'value'->groupName. 'label'->('Kontext ', each title) } asD.
+	].
+
+
+	allTags do: [ :each |
+		| groups |
+		groups := Array streamContents: [ :a |
+			( mainTags includes: each ) ifTrue: [ a nextPut: 'main' ].
+			( topTags includes: each ) ifTrue: [ a nextPut: 'top' ].
+			( myTopTags includes: each ) ifTrue: [ a nextPut: 'mytop' ].
+	
+			mainTagGroups do: [ :eachMtg |
+				( eachMtg hasTag: each ) ifTrue: [
+					| groupName |
+					groupName := 'mainGroup', eachMtg uuid.
+					a nextPut: groupName ].
+		]].
+	
+		options add: { 'optgroup'->groups. 'text'->(each displayName) } asD.
+	].
+
+
+	html script: '
+$("#', anId greaseString, '").selectize({
+	plugins: [
+		{name: "remove_button"},
+		{name: "optgroup_columns", options: {equalizeWidth: false, equalizeHeight: false}}
+	],
+	optgroups: ', optgroups asJavascript,',
+	options: ', options asJavascript,',
+//	persist: false,
+	hideSelected: false,
+	closeAfterSelect: true,
+});
+'
 ]
 
 { #category : #rendering }
@@ -210,7 +265,8 @@ MEDSearchComponentBase >> renderButtonBarOn: html [
 				callback: [ self search ];
 				with: [
 					html iconSearch.
-					html span class: 'pure-hidden-sm'; with: ' Suchen'].
+"					html span class: 'pure-hidden-sm'; with: ' Suchen']."
+					html span with: 'Suchen'].
 			html anchorButton
 				callback: [ self reset ];
 				with: [
@@ -224,17 +280,17 @@ MEDSearchComponentBase >> renderSearchBarOn: html [
 	html grid class: 'searchBar'; with: [
 		html gridUnitFraction: 1/2 with: [
 			html textInput
-"				placeholder: 'Suchtext'"
+				placeholder: 'Suchtext';
 				class: 'searchText';
 				on: #text of: searchQuery].
 		html gridUnitFraction: 1/2 with: [
 			html buttonGroup: [
-				html submitButton
+				html submitButtonPrimary
 					class: 'searchButton';
 					callback: [ self search ];
 					with: [
 						html iconSearch.
-"						html span class: 'pure-hidden-sm'; with: ' Suchen'"].
+						html span class: 'pure-hidden-sm'; with: 'Suchen'].
 "				html anchorButton
 					callback: [ self reset ];
 					with: [
